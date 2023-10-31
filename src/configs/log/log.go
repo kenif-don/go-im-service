@@ -1,7 +1,7 @@
 package log
 
 import (
-	utils "IM-Service/configs/err"
+	"IM-Service/src/configs/err"
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/pkg/errors"

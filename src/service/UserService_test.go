@@ -1,7 +1,7 @@
 package service
 
 import (
-	"IM-Service/configs/log"
+	"IM-Service/src/configs/log"
 	"testing"
 )
 

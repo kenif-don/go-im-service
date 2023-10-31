@@ -1,9 +1,9 @@
 package util
 
 import (
-	"IM-Service/configs/conf"
-	"IM-Service/configs/log"
-	"IM-Service/entity"
+	"IM-Service/src/configs/conf"
+	"IM-Service/src/configs/log"
+	"IM-Service/src/entity"
 	"fmt"
 	"testing"
 )

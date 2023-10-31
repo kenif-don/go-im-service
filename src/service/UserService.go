@@ -1,11 +1,11 @@
 package service
 
 import (
-	utils "IM-Service/configs/err"
-	"IM-Service/configs/log"
-	"IM-Service/dto"
-	"IM-Service/entity"
-	"IM-Service/util"
+	"IM-Service/src/configs/err"
+	"IM-Service/src/configs/log"
+	"IM-Service/src/dto"
+	"IM-Service/src/entity"
+	"IM-Service/src/util"
 )
 
 type UserService struct {

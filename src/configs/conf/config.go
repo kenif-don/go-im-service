@@ -1,7 +1,7 @@
 package conf
 
 import (
-	"IM-Service/configs/log"
+	"IM-Service/src/configs/log"
 	"github.com/don764372409/go-im-sdk/client"
 	"gopkg.in/yaml.v3"
 	"os"
