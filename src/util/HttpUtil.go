@@ -2,10 +2,11 @@ package util
 
 import (
 	"IM-Service/src/configs/conf"
-	"IM-Service/src/configs/log"
+	utils "IM-Service/src/configs/err"
 	"IM-Service/src/dto"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -38,10 +39,16 @@ func Post(url string, body interface{}) (*dto.ResultDTO, error) {
 	if err != nil {
 		return nil, err
 	}
+	if resultDTO.Code != 200 {
+		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
+	}
 	return &resultDTO, nil
 }
 func addHeader(req *http.Request, data []byte) {
 	req.Header.Add("Content-Type", "application/json")
+	if conf.LoginInfo.Token != "" {
+		req.Header.Add("v-token", conf.LoginInfo.Token)
+	}
 	//添加签名
 	timestamp, sign := GetSign()
 	req.Header.Add("timestamp", strconv.FormatInt(timestamp, 10))
@@ -54,6 +61,6 @@ func addHeader(req *http.Request, data []byte) {
 	if data != nil {
 		param = string(data)
 	}
-	log.Debug(param)
+	fmt.Println(param)
 	req.Header.Add("sign", MD5(sign+param))
 }

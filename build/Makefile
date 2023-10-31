@@ -38,8 +38,8 @@ android:proto_go
 	go get golang.org/x/mobile
 	go mod download golang.org/x/exp
 	GOARCH=arm64 gomobile bind -v -trimpath -ldflags "-s -w" \
-	-o ${BUILD_TARGET}/build_android/IM-SDK.aar -target=android ./api
-	unzip -d $(BUILD_TARGET)/build_android/sources $(BUILD_TARGET)/build_android/IM-SDK-sources.jar
+	-o ${BUILD_TARGET}/build_android/im-service.aar -target=android ./api
+	unzip -d $(BUILD_TARGET)/build_android/sources $(BUILD_TARGET)/build_android/im-service-sources.jar
 repo_android:android
 	cd  ${ANDROID_SDK_DIR}/ && chmod +x gradlew
 	cd  ${ANDROID_SDK_DIR}/ && gradlew -Dhttp.proxyHost generateLib

@@ -9,7 +9,8 @@ enum ResultDTOCode {
   DEFAULT = 0;
   SUCCESS = 200;
   ERROR = 500;
-  NOT_AUTH = 401;
+  /** 跳转2级密码输入页 */
+  TO_INPUT_PWD2 = 2000;
 }
 /** 注册 */
 message RegisterReq{

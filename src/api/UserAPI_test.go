@@ -19,7 +19,7 @@ func init() {
 	resp := InitConfig(req)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
+	log.Debugf("配置初始化成功！ %+v", result)
 }
 func TestRegister(t *testing.T) {
 	user := &api.RegisterReq{
@@ -28,6 +28,17 @@ func TestRegister(t *testing.T) {
 	}
 	req, _ := proto.Marshal(user)
 	resp := Register(req)
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debugf("%+v", result)
+}
+func TestLogin(t *testing.T) {
+	user := &api.RegisterReq{
+		Username: "test123",
+		Password: "123456",
+	}
+	req, _ := proto.Marshal(user)
+	resp := Login(req)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("%+v", result)

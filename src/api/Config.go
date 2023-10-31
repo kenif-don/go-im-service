@@ -20,6 +20,7 @@ func InitConfig(data []byte) []byte {
 		WsHost:     req.WsHost,
 	})
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
 	res, _ := proto.Marshal(resp)
 	return res
 }

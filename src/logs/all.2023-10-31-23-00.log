@@ -1,0 +1,264 @@
+2023-10-31 15:02:04.721 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:02:04.735 [DEBU][UserAPI_test.go:44] code:200 msg:"SUCCESS"
+2023-10-31 15:02:43.366 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:02:43.376 [DEBU][UserAPI_test.go:44] code:200  msg:"SUCCESS"
+2023-10-31 15:02:43.376 [DEBU][UserAPI_test.go:45] []
+2023-10-31 15:03:21.222 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:03:21.233 [DEBU][UserAPI_test.go:44] code:200  msg:"SUCCESS"
+2023-10-31 15:03:21.233 [DEBU][UserAPI_test.go:45] [[]]
+2023-10-31 15:03:31.475 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:03:31.486 [DEBU][UserAPI_test.go:44] code:200  msg:"SUCCESS"
+2023-10-31 15:03:31.486 [DEBU][UserAPI_test.go:45] []
+2023-10-31 15:06:33.207 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:06:33.217 [DEBU][UserAPI_test.go:44] code:200  msg:"SUCCESS"
+2023-10-31 15:06:33.217 [DEBU][UserAPI_test.go:45] []
+2023-10-31 15:07:19.177 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:07:19.195 [DEBU][UserAPI_test.go:44] code:200  msg:"SUCCESS"
+2023-10-31 15:07:19.195 [DEBU][UserAPI_test.go:45] []
+2023-10-31 15:07:39.285 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:07:39.294 [DEBU][UserAPI_test.go:44] code:200 msg:"SUCCESS"
+2023-10-31 15:07:39.294 [DEBU][UserAPI_test.go:45] []
+2023-10-31 15:08:05.970 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:08:05.980 [DEBU][HttpUtil.go:41] {Code:200 Msg:SUCCESS Data:32ad2b61d8153b0c5c805c7b7cbe92c2}
+2023-10-31 15:08:05.980 [DEBU][UserAPI_test.go:44] code:200 msg:"SUCCESS"
+2023-10-31 15:08:05.980 [DEBU][UserAPI_test.go:45] []
+2023-10-31 15:10:49.083 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:10:49.093 [DEBU][UserAPI_test.go:44] code:200 msg:"SUCCESS" data:"8cc5b37f84b7fb3de4b0051a9a9ea5ff"
+2023-10-31 15:10:49.093 [DEBU][UserAPI_test.go:45] [8cc5b37f84b7fb3de4b0051a9a9ea5ff]
+2023-10-31 15:11:03.308 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:11:03.317 [DEBU][UserAPI_test.go:44] code:200  msg:"SUCCESS"  data:"95e12928258d71e5c56639c9b4156fad"
+2023-10-31 15:11:03.317 [DEBU][UserAPI_test.go:45] [95e12928258d71e5c56639c9b4156fad]
+2023-10-31 15:11:09.330 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:11:09.341 [DEBU][UserAPI_test.go:44] code:200 msg:"SUCCESS" data:"1c40a18e7072a503f7d874d1a77b03e0"
+2023-10-31 15:30:32.643 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:30:32.662 [ERRO][UserService.go:83] -> Code:401, Msg:0x00002, MsgZh:0x00002 []
+2023-10-31 15:30:32.663 [ERRO][log.go:180] this is a error stack: -> Code:401, Msg:0x00002, MsgZh:0x00002
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:83
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:30:32.663 [ERRO][UserService.go:74] -> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002 []
+2023-10-31 15:30:32.663 [DEBU][UserAPI_test.go:44] code:500 msg:"-> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002"
+2023-10-31 15:31:14.674 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:31:14.684 [DEBU][UserService.go:71] [7489ce4fc193a0876a07d969b3f23339]
+2023-10-31 15:31:14.685 [ERRO][UserService.go:84] -> Code:401, Msg:0x00002, MsgZh:0x00002 []
+2023-10-31 15:31:14.685 [ERRO][log.go:180] this is a error stack: -> Code:401, Msg:0x00002, MsgZh:0x00002
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:84
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:73
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:31:14.686 [ERRO][UserService.go:75] -> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002 []
+2023-10-31 15:31:14.686 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002"
+2023-10-31 15:32:14.889 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:32:14.905 [ERRO][UserService.go:83] -> Code:401, Msg:0x00002, MsgZh:0x00002 []
+2023-10-31 15:32:14.906 [ERRO][log.go:180] this is a error stack: -> Code:401, Msg:0x00002, MsgZh:0x00002
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:83
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:32:14.906 [ERRO][UserService.go:74] -> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002 []
+2023-10-31 15:32:14.906 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002"
+2023-10-31 15:32:36.936 [DEBU][UserAPI_test.go:22] code:200
+2023-10-31 15:32:36.948 [ERRO][UserService.go:83] -> Code:401, Msg:0x00002, MsgZh:0x00002 []
+2023-10-31 15:32:36.948 [ERRO][log.go:180] this is a error stack: -> Code:401, Msg:0x00002, MsgZh:0x00002
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:83
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:32:36.948 [ERRO][UserService.go:74] -> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002 []
+2023-10-31 15:32:36.948 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002"
+2023-10-31 15:33:16.485 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:33:16.495 [ERRO][UserService.go:83] -> Code:401, Msg:0x00002, MsgZh:0x00002 []
+2023-10-31 15:33:16.496 [ERRO][log.go:180] this is a error stack: -> Code:401, Msg:0x00002, MsgZh:0x00002
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:83
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:33:16.496 [ERRO][UserService.go:74] -> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002 []
+2023-10-31 15:33:16.496 [DEBU][UserAPI_test.go:44] code:500 msg:"-> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002"
+2023-10-31 15:34:22.607 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:34:22.622 [ERRO][UserService.go:83] -> Code:401, Msg:0x00002, MsgZh:0x00002 []
+2023-10-31 15:34:22.622 [ERRO][log.go:180] this is a error stack: -> Code:401, Msg:0x00002, MsgZh:0x00002
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:83
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:34:22.622 [ERRO][UserService.go:74] -> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002 []
+2023-10-31 15:34:22.622 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:401, Msg:-> Code:401, Msg:0x00002, MsgZh:0x00002, MsgZh:0x00002"
+2023-10-31 15:35:05.973 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:35:05.989 [ERRO][UserService.go:74] -> Code:500, Msg:login fail, MsgZh:登录失败 []
+2023-10-31 15:35:05.990 [ERRO][log.go:180] this is a error stack: -> Code:500, Msg:login fail, MsgZh:登录失败
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:74
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:35:05.990 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:500, Msg:-> Code:500, Msg:login fail, MsgZh:登录失败, MsgZh:登录失败"
+2023-10-31 15:36:06.969 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:36:06.983 [ERRO][UserService.go:91] -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败 []
+2023-10-31 15:36:06.984 [ERRO][log.go:180] this is a error stack: -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:91
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:36:06.984 [ERRO][UserService.go:74] -> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败 []
+2023-10-31 15:36:06.984 [DEBU][UserAPI_test.go:44] code:500 msg:"-> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败"
+2023-10-31 15:36:26.666 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:36:26.677 [DEBU][UserService.go:89] map[bg:<nil> burstPassword:<nil> createTime:<nil> email:<nil> headImg:<nil> id:57 intro:<nil> keyword:<nil> newBurstPassword:<nil> newPassword:<nil> newPassword2:<nil> nickname:用户128638 noticeTime:<nil> noticeType:1 password:<nil> password2:<nil> publicKey:<nil> qrcode:/upload/qrcode/user57.png updateTime:<nil> username:test123 versionCode:<nil>]
+2023-10-31 15:36:26.677 [ERRO][UserService.go:92] -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败 []
+2023-10-31 15:36:26.678 [ERRO][log.go:180] this is a error stack: -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:92
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:36:26.678 [ERRO][UserService.go:74] -> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败 []
+2023-10-31 15:36:26.678 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败"
+2023-10-31 15:37:08.196 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:37:08.408 [DEBU][UserService.go:89] map[id:57 nickname:用户128638 noticeType:1 qrcode:/upload/qrcode/user57.png username:test123]
+2023-10-31 15:37:08.408 [ERRO][UserService.go:92] -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败 []
+2023-10-31 15:37:08.408 [ERRO][log.go:180] this is a error stack: -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:92
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:37:08.408 [ERRO][UserService.go:74] -> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败 []
+2023-10-31 15:37:08.408 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败"
+2023-10-31 15:37:22.920 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:37:22.934 [DEBU][UserService.go:89] map[id:57 nickname:用户128638 noticeType:1 qrcode:/upload/qrcode/user57.png username:test123]
+2023-10-31 15:37:22.934 [ERRO][UserService.go:92] -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败 []
+2023-10-31 15:37:22.935 [ERRO][log.go:180] this is a error stack: -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:92
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:37:22.935 [ERRO][UserService.go:74] -> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败 []
+2023-10-31 15:37:22.935 [DEBU][UserAPI_test.go:44] code:500 msg:"-> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败"
+2023-10-31 15:38:10.814 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:38:10.828 [DEBU][UserService.go:89] map[id:57 nickname:用户128638 noticeType:1 qrcode:/upload/qrcode/user57.png username:test123]
+2023-10-31 15:38:10.828 [ERRO][UserService.go:92] -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败 []
+2023-10-31 15:38:10.829 [ERRO][log.go:180] this is a error stack: -> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败
+IM-Service/src/configs/log.WithError
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/configs/log/log.go:168
+IM-Service/src/service.(*UserService).LoginInfo
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:92
+IM-Service/src/service.(*UserService).Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/service/UserService.go:72
+IM-Service/src/api.Login
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI.go:34
+IM-Service/src/api.TestLogin
+	C:/Users/Administrator/Desktop/workspace/IM/IM-Service/src/api/UserAPI_test.go:41
+testing.tRunner
+	C:/Program Files/Go/src/testing/testing.go:1595
+runtime.goexit
+	C:/Program Files/Go/src/runtime/asm_amd64.s:1650
+2023-10-31 15:38:10.829 [ERRO][UserService.go:74] -> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败 []
+2023-10-31 15:38:10.829 [DEBU][UserAPI_test.go:44] code:500  msg:"-> Code:500, Msg:-> Code:500, Msg:login info get fail, MsgZh:登录信息获取失败, MsgZh:登录信息获取失败"
+2023-10-31 15:42:23.927 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200
+2023-10-31 15:42:23.939 [DEBU][UserAPI_test.go:44] code:200
