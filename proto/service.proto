@@ -1,0 +1,46 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.master.world.bean";
+option java_outer_classname = "BtcAddressProto";
+option go_package = "service/v1;api";
+option objc_class_prefix = "World";
+
+enum ResultDTOCode {
+  DEFAULT = 0;
+  SUCCESS = 200;
+  ERROR = 500;
+  NOT_AUTH = 401;
+}
+/** 注册 */
+message RegisterReq{
+  string  username = 1;
+  string  password = 2;
+}
+
+message ConfigReq {
+  string baseDir = 1; //配置根目录
+  DeviceType deviceType = 2; //设备类型
+  LogSwitch logSwitch = 3; //日志开关
+  string ApiHost = 4;
+  string WsHost = 5;
+  enum LogSwitch{
+    LogSwitchUNKNOWN = 0;
+    CLOSE = 2;        //关闭日志
+    CONSOLE = 3;      //控制台日志
+    FILE = 4;         //文件日志
+    CONSOLE_FILE = 5; //控制台+文件
+  }
+
+  enum DeviceType {
+    Unknown = 0;
+    PC = 1;     // 电脑端
+    Android = 2; // 手机端
+    IOS = 3;    // IOS
+    H5 = 4;     // H5
+  }
+}
+message ResultDTOResp{
+  uint32 code = 1;
+  string msg = 2;
+  string data = 3;
+}

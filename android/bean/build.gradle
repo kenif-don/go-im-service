@@ -1,0 +1,124 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id "com.google.protobuf"
+}
+
+android {
+    compileSdk 33
+    defaultConfig {
+        minSdk 23
+        targetSdk 33
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            proto {
+                srcDir '../../proto'
+                exclude '*.api.proto'
+            }
+        }
+    }
+    packagingOptions {
+        exclude '**/*.proto'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.6.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+//    implementation 'com.google.protobuf:protobuf-java:3.21.1'
+//    implementation 'com.google.protobuf:protobuf-kotlin:3.21.1'
+
+    implementation 'com.google.protobuf:protobuf-javalite:3.21.1'
+    implementation 'com.google.protobuf:protobuf-kotlin-lite:3.21.1'
+
+
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.1"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+                kotlin {
+                    option "lite"
+                }
+            }
+        }
+    }
+}
+
+apply plugin: 'maven-publish'
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+//    from android.sourceSets.main.java.srcDirs
+    println android.sourceSets.main.java.srcDirs
+    from "build/generated/source/proto/release/java"
+}
+
+def versionData = "0.2"
+def versionProd = "0.2"
+def isDev = true
+
+
+def SNAPSHOT_REPOSITORY_URL = "http://113.52.132.53:8081/repository/maven-snapshots/"
+def RELEASE_REPOSITORY_URL = "http://113.52.132.53:8081/repository/maven-android/"
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId "com.master.world"
+            artifactId "${project.name}"
+            if (isDev) {
+                versionData = versionData + "-SNAPSHOT"
+            }else{
+                versionData =versionProd
+            }
+            version versionData
+            artifact(androidSourcesJar)
+            def projectName = project.getName()
+            artifact "build/outputs/aar/${projectName}-release.aar"
+        }
+    }
+    repositories {
+        maven {
+            url = isDev ? SNAPSHOT_REPOSITORY_URL : RELEASE_REPOSITORY_URL
+            println url
+            allowInsecureProtocol = true
+            credentials {
+                username 'admin'
+                password 'Fr@KCEqCWt4bR8z'
+            }
+        }
+    }
+
+}
+
+
+task generateBeanLib {
+    dependsOn publishMavenPublicationToMavenRepository
+    group 'publishing'
+}
