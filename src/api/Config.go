@@ -1,6 +1,7 @@
 package api
 
 import (
+	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	"google.golang.org/protobuf/proto"
 )
