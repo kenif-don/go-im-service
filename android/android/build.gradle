@@ -21,6 +21,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    ndkVersion '21.3.6528147'
 }
 task androidSourcesJar(type: Jar) {
     archiveClassifier.set('sources')
@@ -39,7 +40,7 @@ def RELEASE_REPOSITORY_URL = "http://113.52.132.53:8081/repository/maven-android
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId "com.bbk"
+            groupId "com.master.world"
             artifactId "api"
             if (isDev) {
                 versionData = versionData + "-SNAPSHOT"
@@ -48,7 +49,7 @@ publishing {
             }
             version versionData
             artifact(androidSourcesJar)
-            artifact "../../build/build_android/BtcApi.aar"
+            artifact "../../build/build_android/IM-SDK.aar"
         }
     }
     repositories {
@@ -65,5 +66,4 @@ publishing {
 task generateLib {
     group 'publishing'
     dependsOn publishMavenPublicationToMavenRepository
-
 }
