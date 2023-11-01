@@ -15,3 +15,10 @@ func Map2Obj(m interface{}, obj interface{}) error {
 	}
 	return json.Unmarshal(data, obj)
 }
+func Obj2Str(obj interface{}) (string, error) {
+	b, err := json.Marshal(obj)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}

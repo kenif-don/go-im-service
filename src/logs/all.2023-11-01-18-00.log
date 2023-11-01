@@ -1,0 +1,10 @@
+2023-11-01 10:15:41.374 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200  msg:"success"
+2023-11-01 10:16:47.743 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200  msg:"success"
+2023-11-01 10:18:06.932 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200  msg:"success"
+2023-11-01 10:18:27.066 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200  msg:"success"
+2023-11-01 10:18:30.967 [DEBU][UserAPI_test.go:44] code:200  msg:"success"
+2023-11-01 10:19:44.726 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200  msg:"success"
+2023-11-01 10:19:51.020 [DEBU][UserAPI_test.go:44] code:200  msg:"success"
+2023-11-01 10:23:04.980 [DEBU][UserAPI_test.go:22] 配置初始化成功！ code:200 msg:"success"
+2023-11-01 10:23:05.633 [DEBU][UserAPI_test.go:44] code:200 msg:"success"
+2023-11-01 10:55:55.749 [DEBU][CryptoService_test.go:24] {PublicKey:173c01ee05dafb2d599a52dcb1d2cc992af4f1 PrivateKey:8ef425f457e563bce9bf03fb315d678f2b3f0}

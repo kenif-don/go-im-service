@@ -19,6 +19,10 @@ proto_oc:
 	mkdir -p $(BUILD_TARGET)/build_ios/proto
 	protoc proto/*.proto -Iproto \
 		--objc_out=$(BUILD_TARGET)/build_ios/proto
+proto_oc_windows:
+	rmdir /s /q $(BUILD_TARGET)\\build_ios\\proto
+	mkdir -p $(BUILD_TARGET)\\build_ios\\proto
+	protoc proto\\*.proto -Iproto --objc_out=$(BUILD_TARGET)\\build_ios\\proto
 
 proto_kt:
 	cd ${ANDROID_SDK_DIR}/ && chmod +x gradlew && ./gradlew -Dhttp.proxyHost :bean:clean && ./gradlew -Dhttp.proxyHost :bean:assembleRelease

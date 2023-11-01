@@ -1,4 +1,0 @@
-2023-10-31 14:51:53.537 [DEBU][UserAPI_test.go:22] code:200
-2023-10-31 14:51:53.627 [DEBU][UserAPI_test.go:44] code:200  msg:"账号已存在"
-2023-10-31 14:52:43.732 [DEBU][UserAPI_test.go:22] code:200
-2023-10-31 14:52:43.874 [DEBU][UserAPI_test.go:44] code:200 msg:"SUCCESS"
