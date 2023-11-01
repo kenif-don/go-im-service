@@ -3,6 +3,7 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
+	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
@@ -17,14 +18,14 @@ func Info() []byte {
 	resp := &api.ResultDTOResp{}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(err, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Data = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(err, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
 	}
 	return res
 }
@@ -32,7 +33,7 @@ func Login(data []byte) []byte {
 	req := &api.RegisterReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
-		return SyncPutErr(err, resp)
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	// 判断是否有登录者
 	if conf.GetLoginInfo().Token != "" {
@@ -44,7 +45,10 @@ func Login(data []byte) []byte {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		}
 		resp.Msg = "success"
-		res, _ := proto.Marshal(resp)
+		res, err := proto.Marshal(resp)
+		if err != nil {
+			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		}
 		return res
 	}
 	// 需要登录
@@ -78,12 +82,11 @@ func Login(data []byte) []byte {
 	return res
 }
 
-// func Register(data []byte, callback RegisterListener)[]byte {
 func Register(data []byte) []byte {
 	req := &api.RegisterReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
-		return SyncPutErr(err, resp)
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	err := service.NewUserServiceNoDB().Register(req.GetUsername(), req.GetPassword())
 	if err != nil {

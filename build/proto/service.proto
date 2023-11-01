@@ -12,6 +12,9 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message UploadReq{
+  string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png
+}
 /** 注册 */
 message RegisterReq{
   string  username = 1;

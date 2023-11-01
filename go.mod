@@ -19,6 +19,7 @@ require (
 replace im-sdk => github.com/don764372409/im-sdk v0.1.6
 
 require (
+	github.com/aws/aws-sdk-go v1.47.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.21.2 // indirect
 	github.com/go-netty/go-netty v1.6.4 // indirect
@@ -29,6 +30,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect

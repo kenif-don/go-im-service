@@ -39,13 +39,13 @@ func (_self *UserService) Create(obj *entity.User) error {
 }
 
 // UpdateLoginUserKeys 修改公私钥
-func (_self *UserService) UpdateLoginUserKeys(keys EncryptKeys) error {
+func (_self *UserService) UpdateLoginUserKeys(keys EncryptKeys) *utils.Error {
 	obj, err := QueryUser(conf.LoginInfo.User.Id, _self.repo)
 	if err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
 	if obj == nil {
-		return log.WithError(utils.ERR_USER_NOT_EXIST)
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
 	obj.PublicKey = keys.PublicKey
 	obj.PrivateKey = keys.PrivateKey
@@ -56,25 +56,29 @@ func (_self *UserService) UpdateLoginUserKeys(keys EncryptKeys) error {
 		}
 	}()
 	if err := tx.Error; err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
 	//发起请求修改后台用户信息
 	_, err = util.Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
 	if err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
 	//修改本地信息
 	err = _self.repo.Update(obj)
 	if err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
 	//修改登录者
 	conf.PutLoginInfo(*obj)
-	return tx.Commit().Error
+	err = tx.Commit().Error
+	if err != nil {
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
+	}
+	return nil
 }
 
 // Register 用户注册
-func (_self *UserService) Register(username, password string) (err error) {
+func (_self *UserService) Register(username, password string) *utils.Error {
 	if username == "" {
 		return log.WithError(utils.ERR_USER_REGISTER_USERNAME_NULL)
 	}
@@ -91,14 +95,14 @@ func (_self *UserService) Register(username, password string) (err error) {
 		Username: username,
 		Password: password,
 	}
-	_, err = util.Post("/api/user/register", params)
+	_, err := util.Post("/api/user/register", params)
 	if err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_REGISTER_FAIL)
 	}
 	return nil
 }
 
-func (_self *UserService) Login(username, password string) (err error) {
+func (_self *UserService) Login(username, password string) *utils.Error {
 	if username == "" {
 		return log.WithError(utils.ERR_USER_REGISTER_USERNAME_NULL)
 	}
@@ -117,52 +121,43 @@ func (_self *UserService) Login(username, password string) (err error) {
 		Password: password,
 	}
 	resultDTO, err := util.Post("/api/user/login", params)
-	if err != nil {
-		return log.WithError(err)
-	}
-	if resultDTO.Data == nil {
-		return utils.NewError(500, "login fail", "登录失败")
+	if err != nil || resultDTO == nil || resultDTO.Data == nil {
+		return log.WithError(utils.ERR_LOGIN_FAIL)
 	}
 	//缓存登录token
 	conf.PutToken(resultDTO.Data.(string))
 	// 不知道是否需要输入
 	conf.UpdateInputPwd2(1)
 	//获取用户信息
-	err = _self.LoginInfo()
-	if err != nil {
-		return log.WithError(err)
-	}
-	return nil
+	return _self.LoginInfo()
 }
 
 // LoginInfo 获取用户信息
-func (_self *UserService) LoginInfo() (err error) {
+func (_self *UserService) LoginInfo() *utils.Error {
 	resultDTO, err := util.Post("/api/user/info", nil)
-	if err != nil {
-		return log.WithError(err)
-	}
-	if resultDTO.Data == nil {
-		return log.WithError(utils.NewError(500, "login info get fail", "登录信息获取失败"))
+	if err != nil || resultDTO == nil || resultDTO.Data == nil {
+		return log.WithError(utils.ERR_GET_USER_INFO)
 	}
 	//缓存用户信息
 	var user entity.User
 	err = util.Map2Obj(resultDTO.Data, &user)
 	if err != nil {
-		return log.WithError(utils.NewError(500, "login info get fail", "登录信息获取失败"))
+		return log.WithError(utils.ERR_GET_USER_INFO)
 	}
 	//存到文件
 	conf.PutLoginInfo(user)
 	//数据库不存在 就添加 这里不做修改
 	sysUser, err := QueryUser(user.Id, _self.repo)
 	if err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_GET_USER_INFO)
 	}
+	//数据存在 就不再创建
 	if sysUser != nil {
 		return nil
 	}
 	err = _self.Create(&user)
 	if err != nil {
-		return log.WithError(err)
+		return log.WithError(utils.ERR_GET_USER_INFO)
 	}
 	return nil
 }

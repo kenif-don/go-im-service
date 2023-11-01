@@ -3,6 +3,7 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
+	utils "IM-Service/src/configs/err"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -10,7 +11,7 @@ func InitConfig(data []byte) []byte {
 	req := &api.ConfigReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
-		return SyncPutErr(err, resp)
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	conf.InitConfig(&conf.BaseConfig{
 		BaseDir:    req.BaseDir,

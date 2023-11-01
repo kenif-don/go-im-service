@@ -3,7 +3,6 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/log"
-	"fmt"
 	"google.golang.org/protobuf/proto"
 	"testing"
 )
@@ -49,6 +48,15 @@ func TestInfo(t *testing.T) {
 	resp := Info()
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
-	fmt.Println(result.Data)
+	log.Debugf("%+v", result)
+}
+func TestUpload(t *testing.T) {
+	uploadReq := &api.UploadReq{
+		Path: "C:\\Users\\Administrator\\Desktop\\result.png",
+	}
+	req, _ := proto.Marshal(uploadReq)
+	resp := Upload(req)
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
 	log.Debugf("%+v", result)
 }

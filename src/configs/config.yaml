@@ -8,3 +8,9 @@ data:
   excludeUri: /api/user/login,/api/user/info,/api/user/register,/api/user/resetPublicKey,/api/test/index,/back/admin/login,/back/admin/info,/back/admin/resetPublicKey
   prime: 262074f1e0e19618f0d2af786779d6ad9e814b
   publicKey: 19311a1a18656914b9381c058c309083022301
+aws:
+  id: WHZGIHUSERKPOCCITVOPDJPM
+  secret: haYlDZAdsSN4zckmX64W0zKSDg7IWxdH1lOkxm9N
+  endpoint: https://world.sgs3.layerstackobjects.com
+  region: Singapore
+  bucket: world

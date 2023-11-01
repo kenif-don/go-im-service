@@ -38,7 +38,7 @@ type BaseConfig struct {
 }
 
 // InitConfig 初始化方法
-func InitConfig(baseConfig *BaseConfig) (string, error) {
+func InitConfig(baseConfig *BaseConfig) {
 	//初始化日志
 	once.Do(func() {
 		Base = &BaseConfig{
@@ -55,7 +55,7 @@ func InitConfig(baseConfig *BaseConfig) (string, error) {
 		c := client.New(Base.WsHost)
 		err := c.Startup()
 		if err != nil {
-			log.Error(err)
+			_ = log.WithError(err, "启动长连接失败")
 		}
 		//读取yaml
 		configBytes, _ := os.ReadFile("../configs/config.yaml")
@@ -67,7 +67,6 @@ func InitConfig(baseConfig *BaseConfig) (string, error) {
 			User:  nil,
 		}
 	})
-	return baseConfig.BaseDir, nil
 }
 func GetLoginInfo() *LoginInfoMode {
 	if LoginInfo == nil {
@@ -107,8 +106,15 @@ type Config struct {
 	Debug  bool
 	Logger *Logger
 	Data   *Data
+	Aws    *Aws
 }
-
+type Aws struct {
+	Id       string
+	Secret   string
+	Endpoint string
+	Region   string
+	Bucket   string
+}
 type Database struct {
 	Driver string
 	Source string

@@ -149,35 +149,27 @@ func GetNetLogger() *logrus.Logger {
 	return logger.Logger
 }
 
-func WithError(err error, message ...string) error {
+func WithError(err error, message ...string) *utils.Error {
 	var u *utils.Error
-
 	if !errors.As(err, &u) {
 		u = utils.NewSysError(err)
 	}
-
 	if logger == nil {
 		defaultLog()
 	}
-
 	logger.WithFields(logrus.Fields{}).Errorln(u, message)
-
 	if !u.IsHasStack {
-		var err error
 		if len(message) == 0 {
 			err = errors.WithStack(u)
 		} else {
 			err = errors.Wrap(u, message[0])
 		}
-
 		tmpErr := &utils.Error{
 			Code:       u.Code,
-			Msg:        err,
+			Msg:        u.Msg,
 			MsgZh:      u.MsgZh,
 			IsHasStack: true,
 		}
-
-		Errorf("this is a error stack: %+v", tmpErr.Msg)
 		u = tmpErr
 	}
 
