@@ -29,12 +29,12 @@ proto_kt:
 	cp ${ANDROID_SDK_DIR}/bean/build/outputs/aar/bean-release.aar  ${BUILD_TARGET}/android/
 
 ios:proto_go proto_oc
-	rm -rf $(BUILD_TARGET)/build_ios/Wallet.xcframework
+	rm -rf $(BUILD_TARGET)/build_ios/WorldIMSDK.xcframework
 	mkdir -p $(BUILD_TARGET)/build_ios
 	go get golang.org/x/mobile
 	go mod download golang.org/x/exp
 	GOARCH=arm64 gomobile bind -v -trimpath -ldflags "-s -w" \
- 	-o ${BUILD_TARGET}/build_ios/Wallet.xcframework -target=ios ./api
+ 	-o ${BUILD_TARGET}/build_ios/WorldIMSDK.xcframework -target=ios ../src/api
 
 android:proto_go
 	rm -rf ${BUILD_TARGET}/build_android
@@ -42,7 +42,7 @@ android:proto_go
 	go get golang.org/x/mobile
 	go mod download golang.org/x/exp
 	GOARCH=arm64 gomobile bind -v -trimpath -ldflags "-s -w" \
-	-o ${BUILD_TARGET}/build_android/im-service.aar -target=android ./api
+	-o ${BUILD_TARGET}/build_android/im-service.aar -target=android ../src/api
 	unzip -d $(BUILD_TARGET)/build_android/sources $(BUILD_TARGET)/build_android/im-service-sources.jar
 repo_android:android
 	cd  ${ANDROID_SDK_DIR}/ && chmod +x gradlew
