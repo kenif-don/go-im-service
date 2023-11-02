@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"im-sdk/client"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -61,11 +62,7 @@ func InitConfig(baseConfig *BaseConfig) {
 		configBytes, _ := os.ReadFile("../configs/config.yaml")
 		Conf = &Config{}
 		_ = yaml.Unmarshal(configBytes, Conf)
-		//设置登录者的缓存
-		LoginInfo = &LoginInfoMode{
-			Token: "",
-			User:  nil,
-		}
+		Conf.ExUris = strings.Split(Conf.Uris, ",")
 	})
 }
 func GetLoginInfo() *LoginInfoMode {
@@ -103,9 +100,10 @@ func WriteFile(url string, data any) {
 }
 
 type Config struct {
-	Debug  bool
-	Logger *Logger
-	Data   *Data
+	Uris   string
+	ExUris []string
+	Prime  string
+	Pk     string
 	Aws    *Aws
 }
 type Aws struct {
@@ -114,19 +112,4 @@ type Aws struct {
 	Endpoint string
 	Region   string
 	Bucket   string
-}
-type Database struct {
-	Driver string
-	Source string
-}
-
-type Data struct {
-	Database   *Database
-	ExcludeUri []string
-	Prime      string
-	publicKey  string
-}
-
-type Logger struct {
-	Level string
 }

@@ -6,7 +6,12 @@ import (
 )
 
 func IndexOfString(target string, arr []string) int {
-	return sort.SearchStrings(arr, target)
+	sort.Strings(arr)
+	index := sort.SearchStrings(arr, target)
+	if index < len(arr) && arr[index] == target {
+		return index
+	}
+	return -1
 }
 func Map2Obj(m interface{}, obj interface{}) error {
 	data, err := json.Marshal(m)

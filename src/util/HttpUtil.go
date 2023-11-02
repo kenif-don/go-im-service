@@ -21,55 +21,64 @@ import (
 )
 
 // Post 发起POST json请求
-func Post(url string, body interface{}) (*dto.ResultDTO, error) {
+func Post(url string, body interface{}) (*dto.ResultDTO, *utils.Error) {
 	data, _ := json.Marshal(body)
-	req, err := http.NewRequest("POST", conf.Base.ApiHost+url, bytes.NewReader(data))
+	req, err := http.NewRequest("POST", conf.Base.ApiHost+url, nil)
 	if err != nil {
-		return nil, err
+		return nil, log.WithError(err)
 	}
 	//添加请求头
-	addHeader(req, data)
+	err = addContent(req, data)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
 	client := &http.Client{
 		Timeout: time.Second * 60,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, log.WithError(err)
 	}
 	defer resp.Body.Close()
 	result, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, log.WithError(err)
 	}
 	var resultDTO dto.ResultDTO
 	err = json.Unmarshal(result, &resultDTO)
 	if err != nil {
-		return nil, err
+		return nil, log.WithError(err)
 	}
 	if resultDTO.Code != 200 {
 		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
 	}
 	return &resultDTO, nil
 }
-func addHeader(req *http.Request, data []byte) {
+func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("Content-Type", "application/json")
-	if conf.LoginInfo.Token != "" {
+	if conf.GetLoginInfo().Token != "" {
 		req.Header.Add("v-token", conf.LoginInfo.Token)
 	}
 	//添加签名
 	timestamp, sign := GetSign()
 	req.Header.Add("timestamp", strconv.FormatInt(timestamp, 10))
 	//放行
-	if IndexOfString(req.URL.Path, conf.Conf.Data.ExcludeUri) != -1 {
+	if IndexOfString(req.URL.Path, conf.Conf.ExUris) != -1 || len(data) == 0 {
 		req.Header.Add("sign", sign)
-		return
+		req.Body = io.NopCloser(bytes.NewBuffer(data))
+		return nil
 	}
-	param := ""
-	if data != nil {
-		param = string(data)
+	//参数加密 服务器公钥+自己的私钥 协商出来共享秘钥加密参数
+	key := SharedAESKey(conf.Conf.Pk, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
+	newData, err := EncryptAes(string(data), key)
+	if err != nil {
+		return err
 	}
-	log.Debug(param)
-	req.Header.Add("sign", MD5(sign+param))
+	//将字符串赋值给请求对象body
+	req.Body = io.NopCloser(bytes.NewBuffer([]byte(newData)))
+	log.Debugf("param:%s", newData)
+	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))
+	return nil
 }
 
 func Upload(filename string) (string, *utils.Error) {

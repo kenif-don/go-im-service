@@ -12,7 +12,105 @@ import (
 //	type RegisterListener interface {
 //		On(data []byte)
 //	}
-//
+func UpdateHeadImg(data []byte) []byte {
+	req := &api.UpdateUserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdateHeadImg(req.Id, req.Data)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Data = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
+func UpdateEmail(data []byte) []byte {
+	req := &api.UpdateUserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdateEmail(req.Id, req.Data)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Data = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
+func UpdateIntro(data []byte) []byte {
+	req := &api.UpdateUserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdateIntro(req.Id, req.Data)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Data = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
+func UpdateNickname(data []byte) []byte {
+	req := &api.UpdateUserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdateNickname(req.Id, req.Data)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Data = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+
+}
+
 // Info 获取登录者信息
 func Info() []byte {
 	resp := &api.ResultDTOResp{}
@@ -60,7 +158,7 @@ func Login(data []byte) []byte {
 	// 判断是否存在公钥
 	if conf.LoginInfo.User.PublicKey == "" {
 		//没有公钥 创建公私钥
-		keys := service.CreateDHKey("262074f1e0e19618f0d2af786779d6ad9e814b", "02")
+		keys := util.CreateDHKey(conf.Conf.Prime, "02")
 		err = userService.UpdateLoginUserKeys(keys)
 		if err != nil {
 			return SyncPutErr(err, resp)

@@ -2,6 +2,7 @@ package api
 
 import (
 	api "IM-Service/build/generated/service/v1"
+	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
@@ -12,8 +13,10 @@ func init() {
 		BaseDir:    "..",
 		LogSwitch:  api.ConfigReq_CONSOLE_FILE,
 		DeviceType: api.ConfigReq_Android,
-		ApiHost:    "http://hp9kwse9.beesnat.com",
-		WsHost:     "ws://ggeejj9f.beesnat.com:13191",
+		//ApiHost:    "http://hp9kwse9.beesnat.com",
+		//WsHost:     "ws://ggeejj9f.beesnat.com:13191",
+		ApiHost: "http://127.0.0.1:8886",
+		WsHost:  "ws://127.0.0.1:8003",
 	}
 	req, _ := proto.Marshal(config)
 	resp := InitConfig(req)
@@ -56,6 +59,50 @@ func TestUpload(t *testing.T) {
 	}
 	req, _ := proto.Marshal(uploadReq)
 	resp := Upload(req)
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debugf("%+v", result)
+}
+func TestUpdateNickname(t *testing.T) {
+	updateReq := &api.UpdateUserReq{
+		Id:   conf.GetLoginInfo().User.Id,
+		Data: "冷风",
+	}
+	req, _ := proto.Marshal(updateReq)
+	resp := UpdateNickname(req)
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debugf("%+v", result)
+}
+func TestUpdateIntro(t *testing.T) {
+	updateReq := &api.UpdateUserReq{
+		Id:   conf.GetLoginInfo().User.Id,
+		Data: "冷霜自拌无情雨，孤叶何须罪秋风",
+	}
+	req, _ := proto.Marshal(updateReq)
+	resp := UpdateIntro(req)
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debugf("%+v", result)
+}
+func TestUpdateEmail(t *testing.T) {
+	updateReq := &api.UpdateUserReq{
+		Id:   conf.GetLoginInfo().User.Id,
+		Data: "123@qq.com",
+	}
+	req, _ := proto.Marshal(updateReq)
+	resp := UpdateEmail(req)
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debugf("%+v", result)
+}
+func TestUpdateHeadImg(t *testing.T) {
+	updateReq := &api.UpdateUserReq{
+		Id:   conf.GetLoginInfo().User.Id,
+		Data: "https://123.png",
+	}
+	req, _ := proto.Marshal(updateReq)
+	resp := UpdateHeadImg(req)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("%+v", result)
