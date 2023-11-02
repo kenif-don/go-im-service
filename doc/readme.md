@@ -18,7 +18,7 @@ enum ResultDTOCode {
   TO_INPUT_PWD2 = 2000;
 }
 ```
-## 一、 初始化配置
+## 一、 初始化配置 InitConfig
 ### 参数
 ```text
 请求参数没有默认值，请务必全部传
@@ -53,7 +53,7 @@ message ConfigReq {
 ```text
 成功-200 失败-500 失败才会有错误消息 否则都是success
 ```
-## 二、 注册
+## 二、 注册 Register
 ### 参数
 ```protobuf
 syntax = "proto3";
@@ -66,7 +66,7 @@ message RegisterReq{
 ```text
 成功-200 失败-500 失败才会有错误消息 否则都是success
 ```
-## 三、 登录
+## 三、 登录 Login
 ### 参数
 ```protobuf
 syntax = "proto3";
@@ -80,7 +80,7 @@ message RegisterReq{
 成功-200 失败-500 失败才会有错误消息 否则都是success
 code-2000 跳转2级密码输入页
 ```
-## 四、 获取登录者信息
+## 四、 获取登录者信息 Info
 ```text
 code-200 成功 会携带data数据 内容是user对象的json字符串，请自行解析
 ```
@@ -126,7 +126,7 @@ type User struct {
 	NoticeType    int    `json:"noticeType"`
 }
 ```
-## 上传
+## 五、 上传 Upload
 ```text
 code-200 成功 会携带访问链接
 ```
@@ -139,4 +139,23 @@ message UploadReq{
 ### 结果
 ```text
 仅有公共结果集 Data中存有访问链接
+```
+## 六、 修改昵称、签名、邮箱、头像
+```text
+参数采用通用模型，掉的方法不一样
+修改昵称：UpdateNickname
+修改签名：UpdateIntro
+修改邮箱：UpdateEmail
+修改头像：UpdateHeadImg
+```
+### 参数
+```protobuf
+message UpdateUserReq{
+  uint64 id = 1;//用户ID
+  string data = 2;//可以是昵称、签名、邮箱、头像
+}
+```
+### 结果
+```text
+结果与获取登录者信息info返回一致
 ```

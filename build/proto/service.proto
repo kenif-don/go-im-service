@@ -12,6 +12,10 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message UpdateUserReq{
+  uint64 id = 1;//用户ID
+  string data = 2;//可以是昵称、签名、邮箱、头像
+}
 message UploadReq{
   string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png
 }
