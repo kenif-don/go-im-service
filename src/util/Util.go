@@ -5,6 +5,7 @@ import (
 	"sort"
 )
 
+// IndexOfString 查找字符串在数组中的位置
 func IndexOfString(target string, arr []string) int {
 	sort.Strings(arr)
 	index := sort.SearchStrings(arr, target)
