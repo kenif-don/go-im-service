@@ -1,8 +1,8 @@
 .PHONY: proto_go
 
 GENERATE_DIR := generated
-BUILD_TARGET := ./build
-ANDROID_SDK_DIR=./android
+BUILD_TARGET := ../build
+ANDROID_SDK_DIR=../build/android
 proto_go_windows:
 	rmdir /s /q ${GENERATE_DIR}
 	mkdir $(GENERATE_DIR)
@@ -24,9 +24,6 @@ proto_oc_windows:
 	mkdir -p $(BUILD_TARGET)\\build_ios\\proto
 	protoc proto\\*.proto -Iproto --objc_out=$(BUILD_TARGET)\\build_ios\\proto
 
-proto_kt:
-	cd ${ANDROID_SDK_DIR}/ && chmod +x gradlew && ./gradlew -Dhttp.proxyHost :bean:clean && ./gradlew -Dhttp.proxyHost :bean:assembleRelease
-	cp ${ANDROID_SDK_DIR}/bean/build/outputs/aar/bean-release.aar  ${BUILD_TARGET}/android/
 
 ios:proto_go proto_oc
 	rm -rf $(BUILD_TARGET)/build_ios/WorldIMSDK.xcframework
@@ -35,6 +32,11 @@ ios:proto_go proto_oc
 	go mod download golang.org/x/exp
 	GOARCH=arm64 gomobile bind -v -trimpath -ldflags "-s -w" \
  	-o ${BUILD_TARGET}/build_ios/WorldIMSDK.xcframework -target=ios ../src/api
+
+proto_kt:
+	cd ${ANDROID_SDK_DIR}/ && chmod +x gradlew && ./gradlew -Dhttp.proxyHost :bean:clean && ./gradlew -Dhttp.proxyHost :bean:assembleRelease
+	cp ${ANDROID_SDK_DIR}/bean/build/outputs/aar/bean-release.aar  ${BUILD_TARGET}/android/
+
 
 android:proto_go
 	rm -rf ${BUILD_TARGET}/build_android
