@@ -59,7 +59,7 @@ func InitConfig(baseConfig *BaseConfig) {
 			_ = log.WithError(err, "启动长连接失败")
 		}
 		//读取yaml
-		configBytes, _ := os.ReadFile("../configs/config.yaml")
+		configBytes, _ := os.ReadFile("./config.yaml")
 		Conf = &Config{}
 		_ = yaml.Unmarshal(configBytes, Conf)
 		Conf.ExUris = strings.Split(Conf.Uris, ",")

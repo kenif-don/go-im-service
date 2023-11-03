@@ -13,10 +13,8 @@ func init() {
 		BaseDir:    "..",
 		LogSwitch:  api.ConfigReq_CONSOLE_FILE,
 		DeviceType: api.ConfigReq_Android,
-		//ApiHost:    "http://hp9kwse9.beesnat.com",
-		//WsHost:     "ws://ggeejj9f.beesnat.com:13191",
-		ApiHost: "http://127.0.0.1:8886",
-		WsHost:  "ws://127.0.0.1:8003",
+		ApiHost:    "http://hp9kwse9.beesnat.com",
+		WsHost:     "ws://ggeejj9f.beesnat.com:13191",
 	}
 	req, _ := proto.Marshal(config)
 	resp := InitConfig(req)
@@ -26,8 +24,8 @@ func init() {
 }
 func TestRegister(t *testing.T) {
 	user := &api.RegisterReq{
-		Username: "test123",
-		Password: "123456",
+		Username: "666666",
+		Password: "666666",
 	}
 	req, _ := proto.Marshal(user)
 	resp := Register(req)
