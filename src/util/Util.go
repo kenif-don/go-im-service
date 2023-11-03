@@ -28,3 +28,6 @@ func Obj2Str(obj interface{}) (string, error) {
 	}
 	return string(b), nil
 }
+func Str2Obj(s string, obj interface{}) error {
+	return json.Unmarshal([]byte(s), obj)
+}

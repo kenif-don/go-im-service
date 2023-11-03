@@ -111,17 +111,21 @@ func Base64UrlSafeEncode(source []byte) string {
 	return safeurl
 }
 
-func DecryptAes(crypted, key []byte) ([]byte, error) {
-	block, err := aes.NewCipher(key)
+func DecryptAes(data, key string) (string, error) {
+	crypted, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
-		return nil, err
+		return "", err
+	}
+	//crypted := []byte(data)
+	block, err := aes.NewCipher([]byte(key))
+	if err != nil {
+		return "", err
 	}
 	blockMode := NewECBDecrypter(block)
 	origData := make([]byte, len(crypted))
 	blockMode.CryptBlocks(origData, crypted)
 	origData = PKCS5UnPadding(origData)
-	fmt.Println("source is :", origData, string(origData))
-	return origData, nil
+	return string(origData), nil
 }
 
 func EncryptAes(src, key string) (string, error) {
@@ -137,7 +141,6 @@ func EncryptAes(src, key string) (string, error) {
 	content = PKCS5Padding(content, block.BlockSize())
 	crypted := make([]byte, len(content))
 	ecb.CryptBlocks(crypted, content)
-	// 普通base64编码加密 区别于urlsafe base64
 	return base64.StdEncoding.EncodeToString(crypted), nil
 }
 

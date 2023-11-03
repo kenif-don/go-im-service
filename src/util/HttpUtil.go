@@ -27,7 +27,7 @@ func Post(url string, body interface{}) (*dto.ResultDTO, *utils.Error) {
 	if err != nil {
 		return nil, log.WithError(err)
 	}
-	//添加请求头
+	//添加请求头和body
 	err = addContent(req, data)
 	if err != nil {
 		return nil, log.WithError(err)
@@ -52,7 +52,25 @@ func Post(url string, body interface{}) (*dto.ResultDTO, *utils.Error) {
 	if resultDTO.Code != 200 {
 		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
 	}
+	d, e := handlerResult(req, &resultDTO)
+	if e != nil {
+		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
+	}
+	resultDTO.Data = d
 	return &resultDTO, nil
+}
+func handlerResult(req *http.Request, resultDTO *dto.ResultDTO) (interface{}, error) {
+	if resultDTO.Data == nil {
+		return nil, nil
+	}
+	if IndexOfString(req.URL.Path, conf.Conf.ExUris) == -1 {
+		data, e := DecryptAes(resultDTO.Data.(string), conf.Conf.Key)
+		if e != nil {
+			return nil, e
+		}
+		return data, nil
+	}
+	return resultDTO.Data, nil
 }
 func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("Content-Type", "application/json")
@@ -68,15 +86,17 @@ func addContent(req *http.Request, data []byte) error {
 		req.Body = io.NopCloser(bytes.NewBuffer(data))
 		return nil
 	}
+	if conf.GetLoginInfo().User == nil {
+		return utils.ERR_NOT_LOGIN
+	}
 	//参数加密 服务器公钥+自己的私钥 协商出来共享秘钥加密参数
-	key := SharedAESKey(conf.Conf.Pk, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
-	newData, err := EncryptAes(string(data), key)
+	conf.Conf.Key = SharedAESKey(conf.Conf.Pk, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
+	newData, err := EncryptAes(string(data), conf.Conf.Key)
 	if err != nil {
 		return err
 	}
 	//将字符串赋值给请求对象body
 	req.Body = io.NopCloser(bytes.NewBuffer([]byte(newData)))
-	log.Debugf("param:%s", newData)
 	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))
 	return nil
 }

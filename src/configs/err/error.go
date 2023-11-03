@@ -23,6 +23,10 @@ var (
 	ERR_EMAIL_UPDATE_FAIL    = NewError(1013, "email update fail", "邮箱修改失败")
 	ERR_HEADIMG_UPDATE_FAIL  = NewError(1014, "headimg update fail", "头像修改失败")
 	ERR_USER_UPDATE_FAIL     = NewError(1015, "user update fail", "用户信息修改失败")
+	ERR_ADD_FRIEND_FAIL      = NewError(1016, "add friend fail", "添加好友失败")
+	ERR_OPERATION_FAIL       = NewError(1017, "operation fail", "操作失败")
+	ERR_QUERY_FAIL           = NewError(1018, "query fail", "查询失败")
+	ERR_NOT_LOGIN            = NewError(1019, "not login", "未登录")
 )
 
 type Error struct {

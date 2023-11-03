@@ -37,14 +37,6 @@ func defaultLog() {
 	InitLog("../logs", CONSOLE_FILE)
 }
 
-func NewPrivateLog(dir string, logLevel uint32) {
-	logger = loggerInit(dir, logLevel)
-}
-
-func GetLogger() *Logger {
-	return logger
-}
-
 type UTCFormatter struct {
 	logrus.Formatter
 }
@@ -119,34 +111,18 @@ func initRotateLogs(rotationTime time.Duration, maxRemainNum uint, level string,
 	}
 }
 
-func Info(args ...interface{}) {
-	logger.WithFields(logrus.Fields{}).Infoln(args)
-}
 func Error(args ...interface{}) {
 	logger.WithFields(logrus.Fields{}).Errorln(args)
 }
 func Debug(args ...interface{}) {
 	logger.WithFields(logrus.Fields{}).Debugln(args)
 }
-func Warn(args ...interface{}) {
-	logger.WithFields(logrus.Fields{}).Warnln(args)
-}
 func Debugf(format string, args ...interface{}) {
 	logger.WithFields(logrus.Fields{}).Debugf(format, args...)
 }
 
-func Infof(format string, args ...interface{}) {
-	logger.WithFields(logrus.Fields{}).Infof(format, args...)
-}
 func Errorf(format string, args ...interface{}) {
 	logger.WithFields(logrus.Fields{}).Errorf(format, args...)
-}
-func Warnf(format string, args ...interface{}) {
-	logger.WithFields(logrus.Fields{}).Warnf(format, args...)
-}
-
-func GetNetLogger() *logrus.Logger {
-	return logger.Logger
 }
 
 func WithError(err error, message ...string) *utils.Error {

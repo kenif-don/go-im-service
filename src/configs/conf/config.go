@@ -52,18 +52,24 @@ func InitConfig(baseConfig *BaseConfig) {
 		log.InitLog(baseConfig.BaseDir+"/logs", baseConfig.LogSwitch)
 		//初始化数据库路径
 		DbPath = baseConfig.BaseDir + "/configs/db/" + DbPath
-		////启动长连接
-		c := client.New(Base.WsHost)
-		err := c.Startup()
-		if err != nil {
-			_ = log.WithError(err, "启动长连接失败")
-		}
 		//读取yaml
 		configBytes, _ := os.ReadFile("./config.yaml")
 		Conf = &Config{}
 		_ = yaml.Unmarshal(configBytes, Conf)
 		Conf.ExUris = strings.Split(Conf.Uris, ",")
+		//启动长连接
+		Conf.Connected = true
+		c := client.New(Base.WsHost)
+		err := c.Startup()
+		if err != nil {
+			_ = log.WithError(err, "启动长连接失败")
+			Conf.Connected = false
+		}
 	})
+}
+func ClearLoginInfo() {
+	LoginInfo = nil
+	WriteFile(Base.BaseDir+"/configs/LoginInfo.json", &LoginInfoMode{})
 }
 func GetLoginInfo() *LoginInfoMode {
 	if LoginInfo == nil {
@@ -100,11 +106,13 @@ func WriteFile(url string, data any) {
 }
 
 type Config struct {
-	Uris   string
-	ExUris []string
-	Prime  string
-	Pk     string
-	Aws    *Aws
+	Uris      string
+	ExUris    []string
+	Prime     string
+	Pk        string
+	Aws       *Aws
+	Key       string // 与服务器交互的key
+	Connected bool   //长连接是否链接成功
 }
 type Aws struct {
 	Id       string

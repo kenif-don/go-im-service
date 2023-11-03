@@ -35,21 +35,23 @@ func TestRegister(t *testing.T) {
 }
 func TestLogin(t *testing.T) {
 	user := &api.RegisterReq{
-		Username: "test123",
-		Password: "123456",
+		//Username: "test123",
+		//Password: "123456",
+		Username: "666666",
+		Password: "666666",
 	}
 	req, _ := proto.Marshal(user)
 	resp := Login(req)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
+	log.Debug(result)
 }
 
 func TestInfo(t *testing.T) {
 	resp := Info()
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
+	log.Debug(result)
 }
 func TestUpload(t *testing.T) {
 	uploadReq := &api.UploadReq{
@@ -104,4 +106,23 @@ func TestUpdateHeadImg(t *testing.T) {
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("%+v", result)
+}
+func TestSearch(t *testing.T) {
+	searchReq := &api.SearchReq{
+		Keyword: "冷风",
+	}
+	req, _ := proto.Marshal(searchReq)
+	resp := Search(req)
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Debug(err)
+	}
+	log.Debug(result)
+}
+func TestLogout(t *testing.T) {
+	resp := Logout()
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debug(result)
 }
