@@ -2,6 +2,7 @@ package db
 
 import (
 	"IM-Service/src/configs/conf"
+	l "IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"context"
 	"gorm.io/driver/sqlite"
@@ -34,11 +35,11 @@ func initDB() {
 		Logger: newLogger,
 	})
 	if err != nil {
-		panic(err)
+		l.Error(err)
 	}
 	err = db.AutoMigrate(&entity.User{}, &entity.FriendApply{})
 	if err != nil {
-		panic(err)
+		l.Error(err)
 	}
 
 	DefaultDB = &DB{
