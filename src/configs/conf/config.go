@@ -4,7 +4,6 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"encoding/json"
-	"im-sdk/client"
 	"os"
 	"sync"
 )
@@ -61,14 +60,6 @@ func InitConfig(baseConfig *BaseConfig) {
 				Region:   "Singapore",
 				Bucket:   "world",
 			},
-		}
-		//启动长连接
-		Conf.Connected = true
-		c := client.New(Base.WsHost)
-		e := c.Startup()
-		if e != nil {
-			_ = log.WithError(e, "启动长连接失败")
-			Conf.Connected = false
 		}
 	})
 }

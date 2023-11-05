@@ -13,8 +13,7 @@ import (
 type IFriendApplyRepo interface {
 	Query(obj *entity.FriendApply) (*entity.FriendApply, error)
 	QueryAll(obj *entity.FriendApply) (*[]entity.FriendApply, error)
-	Update(obj *entity.FriendApply) error
-	Create(obj *entity.FriendApply) error
+	Save(obj *entity.FriendApply) error
 	Delete(obj *entity.FriendApply) error
 	BeginTx() *gorm.DB
 }
@@ -27,8 +26,8 @@ func NewFriendApplyService() *FriendApplyService {
 		repo: repository.NewFriendApplyRepo(),
 	}
 }
-func QueryFriendApply(id uint64, repo IFriendApplyRepo) (*entity.FriendApply, error) {
-	return repo.Query(&entity.FriendApply{Id: id})
+func QueryFriendApply(fa *entity.FriendApply, repo IFriendApplyRepo) (*entity.FriendApply, error) {
+	return repo.Query(fa)
 }
 
 // QueryFriendApplyAll 查询登录者的所有好友请求
@@ -37,6 +36,25 @@ func QueryFriendApplyAll(repo IFriendApplyRepo) (*[]entity.FriendApply, error) {
 		return &[]entity.FriendApply{}, nil
 	}
 	return repo.QueryAll(&entity.FriendApply{To: conf.GetLoginInfo().User.Id})
+}
+
+// UpdateOne 查询单个 然后同步到数据库
+func (_self *FriendApplyService) UpdateOne(obj *entity.FriendApply) *utils.Error {
+	//没用查到 就从后台查一次
+	resultDTO, err := util.Post("/api/friend-apply/selectOne", obj)
+	if err != nil {
+		return log.WithError(err)
+	}
+	var fa entity.FriendApply
+	_ = util.Str2Obj(resultDTO.Data.(string), &fa)
+	if fa.Id != 0 {
+		//保存到数据库
+		e := _self.repo.Save(&fa)
+		if e != nil {
+			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+	}
+	return nil
 }
 
 // SelectAll 查询登录者的所有好友请求 别人请求自己的
@@ -64,8 +82,8 @@ func (_self *FriendApplyService) SelectAll() (*[]entity.FriendApply, *utils.Erro
 		return nil, log.WithError(err)
 	}
 	var fas []entity.FriendApply
-	_ = util.Str2Obj(resultDTO.Data.(string), &fas)
-	if fas == nil {
+	e = util.Str2Obj(resultDTO.Data.(string), &fas)
+	if e != nil || fas == nil {
 		return &[]entity.FriendApply{}, nil
 	}
 	tx := _self.repo.BeginTx()
@@ -80,7 +98,7 @@ func (_self *FriendApplyService) SelectAll() (*[]entity.FriendApply, *utils.Erro
 	r, err := func() (*[]entity.FriendApply, *utils.Error) {
 		// 保存到数据库
 		for _, v := range fas {
-			e := _self.repo.Create(&v)
+			e := _self.repo.Save(&v)
 			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
@@ -94,7 +112,7 @@ func (_self *FriendApplyService) SelectAll() (*[]entity.FriendApply, *utils.Erro
 			if sysUser != nil {
 				continue
 			}
-			e = userService.Create(v.FromUser)
+			e = userService.Save(v.FromUser)
 			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
@@ -126,7 +144,7 @@ func (_self *FriendApplyService) Update(id uint64, state int) *utils.Error {
 		}
 	}()
 	err := func() *utils.Error {
-		sysFriendApply, e := QueryFriendApply(id, _self.repo)
+		sysFriendApply, e := QueryFriendApply(&entity.FriendApply{Id: id}, _self.repo)
 		if e != nil || sysFriendApply == nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}
@@ -139,7 +157,7 @@ func (_self *FriendApplyService) Update(id uint64, state int) *utils.Error {
 			return log.WithError(err)
 		}
 		// 请求存到数据库
-		e = _self.repo.Update(sysFriendApply)
+		e = _self.repo.Save(sysFriendApply)
 		if e != nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}

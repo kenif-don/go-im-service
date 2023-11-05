@@ -13,8 +13,7 @@ import (
 type IUserRepo interface {
 	Query(obj *entity.User) (*entity.User, error)
 	QueryAll(obj *entity.User) (*[]entity.User, error)
-	Update(obj *entity.User) error
-	Create(obj *entity.User) error
+	Save(obj *entity.User) error
 	Delete(obj *entity.User) error
 	BeginTx() *gorm.DB
 }
@@ -33,8 +32,8 @@ func NewUserService() *UserService {
 func QueryUser(id uint64, repo IUserRepo) (*entity.User, error) {
 	return repo.Query(&entity.User{Id: id})
 }
-func (_self *UserService) Create(obj *entity.User) error {
-	return _self.repo.Create(obj)
+func (_self *UserService) Save(obj *entity.User) error {
+	return _self.repo.Save(obj)
 }
 func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 	if keyword == "" {
@@ -106,7 +105,7 @@ func (_self *UserService) Update(obj *entity.User) *utils.Error {
 			return log.WithError(err)
 		}
 		//修改数据库
-		e := _self.repo.Update(obj)
+		e := _self.repo.Save(obj)
 		if e != nil {
 			return log.WithError(utils.ERR_USER_UPDATE_FAIL)
 		}
@@ -151,7 +150,7 @@ func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Erro
 			return log.WithError(err)
 		}
 		//修改本地信息
-		e = _self.repo.Update(obj)
+		e = _self.repo.Save(obj)
 		if e != nil {
 			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 		}
@@ -248,7 +247,7 @@ func (_self *UserService) LoginInfo() *utils.Error {
 		conf.PutLoginInfo(user)
 		return nil
 	}
-	e = _self.Create(&user)
+	e = _self.Save(&user)
 	if e != nil {
 		return log.WithError(utils.ERR_GET_USER_INFO)
 	}

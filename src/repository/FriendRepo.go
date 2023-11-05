@@ -7,14 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type FriendApplyRepo struct {
+type FriendRepo struct {
 	*db.Transaction
 }
 
-func NewFriendApplyRepo() *FriendApplyRepo {
-	return &FriendApplyRepo{Transaction: db.NewTransaction()}
+func NewFriendRepo() *FriendRepo {
+	return &FriendRepo{Transaction: db.NewTransaction()}
 }
-func (_self *FriendApplyRepo) Query(obj *entity.FriendApply) (*entity.FriendApply, error) {
+func (_self *FriendRepo) Query(obj *entity.Friend) (*entity.Friend, error) {
 	tx := _self.Data.Db.Where(obj).First(obj)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return nil, nil
@@ -24,22 +24,22 @@ func (_self *FriendApplyRepo) Query(obj *entity.FriendApply) (*entity.FriendAppl
 	}
 	return obj, nil
 }
-func (_self *FriendApplyRepo) QueryAll(obj *entity.FriendApply) (*[]entity.FriendApply, error) {
-	objs := &[]entity.FriendApply{}
+func (_self *FriendRepo) QueryAll(obj *entity.Friend) (*[]entity.Friend, error) {
+	objs := &[]entity.Friend{}
 	tx := _self.Data.Db.Where(obj).Find(objs)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 	return objs, nil
 }
-func (_self *FriendApplyRepo) Save(obj *entity.FriendApply) error {
+func (_self *FriendRepo) Save(obj *entity.Friend) error {
 	tx := _self.Data.Db.Where(obj.Id).Save(obj)
 	if tx.Error != nil {
 		return tx.Error
 	}
 	return nil
 }
-func (_self *FriendApplyRepo) Delete(obj *entity.FriendApply) error {
+func (_self *FriendRepo) Delete(obj *entity.Friend) error {
 	tx := _self.Data.Db.Where(obj).Delete(obj)
 	if tx.Error != nil {
 		return tx.Error

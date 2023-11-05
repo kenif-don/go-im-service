@@ -5,11 +5,13 @@ import (
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
+	"time"
 )
 
 func TestAddFriend(t *testing.T) {
+
 	oldReq := &api.FriendApplyReq{
-		Id:     2,
+		Id:     1,
 		Remark: "加我",
 	}
 	req, _ := proto.Marshal(oldReq)
@@ -20,15 +22,19 @@ func TestAddFriend(t *testing.T) {
 		log.Debug(err)
 	}
 	log.Debug(result)
+
 }
 func TestSelectAllFriendApply(t *testing.T) {
+	TestLogin(nil)
 	resp := SelectAllFriendApply()
 	result := &api.ResultDTOResp{}
 	err := proto.Unmarshal(resp, result)
 	if err != nil {
 		log.Debug(err)
 	}
+
 	log.Debug(result)
+	time.Sleep(time.Hour * 24)
 }
 func TestUpdateFriendApply(t *testing.T) {
 	oldReq := &api.FriendApplyReq{

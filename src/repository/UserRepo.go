@@ -32,15 +32,8 @@ func (_self *UserRepo) QueryAll(obj *entity.User) (*[]entity.User, error) {
 	}
 	return objs, nil
 }
-func (_self *UserRepo) Create(obj *entity.User) error {
-	tx := _self.Data.Db.Create(obj)
-	if tx.Error != nil {
-		return tx.Error
-	}
-	return nil
-}
-func (_self *UserRepo) Update(obj *entity.User) error {
-	tx := _self.Data.Db.Save(obj)
+func (_self *UserRepo) Save(obj *entity.User) error {
+	tx := _self.Data.Db.Where(obj.Id).Save(obj)
 	if tx.Error != nil {
 		return tx.Error
 	}

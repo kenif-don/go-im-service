@@ -8,6 +8,9 @@ import (
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
+	"im-sdk/handler"
+	"im-sdk/model"
+	"strconv"
 )
 
 //	type RegisterListener interface {
@@ -165,8 +168,8 @@ func Login(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	// 判断是否有登录者
-	if conf.GetLoginInfo().Token != "" {
+	//用户没有传账号密码 直接通过缓存登录
+	if req.Username == "" && conf.GetLoginInfo().Token != "" {
 		//判断是否需要输入二级密码
 		if conf.GetLoginInfo().InputPwd2 == 2 {
 			//需要输入二级密码
@@ -175,9 +178,14 @@ func Login(data []byte) []byte {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		}
 		resp.Msg = "success"
-		res, err := proto.Marshal(resp)
-		if err != nil {
+		res, e := proto.Marshal(resp)
+		if e != nil {
 			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		}
+		//登录IM
+		err := loginIM()
+		if err != nil {
+			return SyncPutErr(err, resp)
 		}
 		return res
 	}
@@ -220,8 +228,14 @@ func Login(data []byte) []byte {
 		conf.UpdateInputPwd2(-1)
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	}
+	//登录IM
+	err = loginIM()
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
 	resp.Msg = "success"
 	res, _ := proto.Marshal(resp)
+
 	return res
 }
 
@@ -239,4 +253,18 @@ func Register(data []byte) []byte {
 	resp.Msg = "success"
 	res, _ := proto.Marshal(resp)
 	return res
+}
+
+// loginIM 如果已经存在登录者 直接登录 否则走完整登录流程 然后再登录IM
+func loginIM() *utils.Error {
+	//获取登录者 组装登录IM请求参数
+	loginInfo := &model.LoginInfo{
+		Id:     strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
+		Device: conf.Base.DeviceType,
+		Token:  conf.GetLoginInfo().Token,
+	}
+	handler.GetClientHandler().GetMessageManager().SendLogin(loginInfo)
+	//登录成功后 获取离线消息
+	err := service.NewMessageService().GetOfflineMessage()
+	return err
 }
