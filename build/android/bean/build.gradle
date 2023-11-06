@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     defaultConfig {
         minSdk 23
         targetSdk 33
@@ -27,14 +27,14 @@ android {
         main {
             proto {
                 srcDir '../../proto'
-//                exclude '*.api.proto'
+                exclude '*.api.proto'
             }
         }
     }
     packagingOptions {
         exclude '**/*.proto'
     }
-    ndkVersion '21.3.6528147'
+    ndkVersion = "26.1.10909125"
 }
 
 dependencies {
@@ -44,9 +44,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-//    implementation 'com.google.protobuf:protobuf-java:3.21.1'
-//    implementation 'com.google.protobuf:protobuf-kotlin:3.21.1'
-
     implementation 'com.google.protobuf:protobuf-javalite:3.21.1'
     implementation 'com.google.protobuf:protobuf-kotlin-lite:3.21.1'
 
@@ -79,8 +76,8 @@ task androidSourcesJar(type: Jar) {
     from "build/generated/source/proto/release/java"
 }
 
-def versionData = "0.2"
-def versionProd = "0.2"
+def versionData = "0.2.1"
+def versionProd = "0.2.1"
 def isDev = true
 
 
