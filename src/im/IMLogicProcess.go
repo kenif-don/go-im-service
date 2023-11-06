@@ -3,12 +3,11 @@ package im
 import (
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
 	"IM-Service/src/service"
-	"IM-Service/src/util"
 	"im-sdk/client"
 	"im-sdk/handler"
 	"im-sdk/model"
+	"time"
 )
 
 type LogicProcess struct{}
@@ -61,16 +60,9 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 // ReceivedMessage 接收到消息
 func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 	log.Debugf("接收到服务器IM消息:%v", protocol)
-	switch protocol.Type {
-	case 101: //当别人申请添加自己为好友时 如果自己在线 自己就会接收到好友申请 否则就通过离线消息进行更新
-		err := service.NewFriendApplyService().UpdateOne(&entity.FriendApply{
-			From: util.Str2Uint64(protocol.From),
-			To:   util.Str2Uint64(protocol.To),
-		})
-		log.Error(err)
-		break
-	case 102: //
-
+	err := service.NewMessageService().Handler(protocol)
+	if err != nil {
+		log.Errorf("解析服务器IM消息失败:%v", err)
 	}
 }
 
@@ -80,4 +72,9 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 }
 func (_self *LogicProcess) Exception(msg string) {
 	log.Errorf("exception:%v", msg)
+	if msg == "unexpected EOF" {
+		log.Debug("服务器断开连接,进行重连")
+		StartIM()
+		time.Sleep(time.Second * 2)
+	}
 }

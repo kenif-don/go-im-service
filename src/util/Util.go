@@ -34,9 +34,9 @@ func Str2Obj(s string, obj interface{}) error {
 	return json.Unmarshal([]byte(s), obj)
 }
 func Str2Uint64(s string) uint64 {
-	i, e := strconv.ParseInt(s, 10, 64)
+	i, e := strconv.ParseUint(s, 10, 64)
 	if e != nil {
 		log.Error(e)
 	}
-	return uint64(i)
+	return i
 }
