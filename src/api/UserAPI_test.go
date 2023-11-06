@@ -4,8 +4,10 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
+	"IM-Service/src/im"
 	"google.golang.org/protobuf/proto"
 	"testing"
+	"time"
 )
 
 func init() {
@@ -21,9 +23,13 @@ func init() {
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("配置初始化成功！ %+v", result)
+	im.StartIM()
+	time.Sleep(time.Second * 2)
 }
 func TestRegister(t *testing.T) {
 	user := &api.RegisterReq{
+		//Username: "test123",
+		//Password: "123456",
 		Username: "666666",
 		Password: "666666",
 	}
@@ -35,21 +41,23 @@ func TestRegister(t *testing.T) {
 }
 func TestLogin(t *testing.T) {
 	user := &api.RegisterReq{
-		Username: "test123",
-		Password: "123456",
+		//Username: "test123",
+		//Password: "123456",
+		Username: "666666",
+		Password: "666666",
 	}
 	req, _ := proto.Marshal(user)
 	resp := Login(req)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
+	log.Debug(result)
 }
 
 func TestInfo(t *testing.T) {
 	resp := Info()
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
+	log.Debug(result)
 }
 func TestUpload(t *testing.T) {
 	uploadReq := &api.UploadReq{
@@ -104,4 +112,23 @@ func TestUpdateHeadImg(t *testing.T) {
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("%+v", result)
+}
+func TestSearch(t *testing.T) {
+	searchReq := &api.SearchReq{
+		Keyword: "冷风",
+	}
+	req, _ := proto.Marshal(searchReq)
+	resp := Search(req)
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Debug(err)
+	}
+	log.Debug(result)
+}
+func TestLogout(t *testing.T) {
+	resp := Logout()
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debug(result)
 }

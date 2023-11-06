@@ -27,7 +27,7 @@ android {
         main {
             proto {
                 srcDir '../../proto'
-                exclude '*.api.proto'
+//                exclude '*.api.proto'
             }
         }
     }

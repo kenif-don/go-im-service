@@ -159,3 +159,64 @@ message UpdateUserReq{
 ```text
 结果与获取登录者信息info返回一致
 ```
+## 七、 退出登录
+```text
+无参 code==200 代表退出成功
+```
+
+## 八、 根据昵称搜索
+```text
+原需求为： 搜索好友、非好友、所在群、非所在群  目前近保留非好友记录
+```
+### 参数
+```protobuf
+/** 搜索用户、群聊得到的请求参数 */
+message SearchReq{
+  string keyword = 1; // 搜索关键字
+}
+```
+### 结果
+```text
+结果为0-20个用户模型数组 未做分页
+```
+## 九、 添加好友
+### 参数
+```protobuf
+/** 好友请求参数 */
+message FriendApplyReq{
+  uint64 id = 1;//添加好友时是用户ID 同意或拒绝好友时是新朋友记录ID
+  string remark = 2;//备注 同意或拒绝时留空
+  int32 state = 3;//-1拒绝 2同意
+}
+```
+### 结果
+```text
+无参 code==200 代表请求发送成功
+```
+## 十、 获取"新朋友"列表
+```text
+无参,默认获取登录者全部新朋友
+```
+### 结果
+```go
+type FriendApply struct {
+	Id     uint64 `gorm:"unique;<-:create" json:"id"`
+	From   uint64 `json:"from"`
+	To     uint64 `json:"to"`
+	Remark string `json:"remark"`
+	State  int    `json:"state"`
+
+	FromUser *User `gorm:"-"` // 用户模型 发起人
+}
+```
+### 十一、 同意或拒绝好友请求
+```protobuf
+message FriendApplyReq{
+  uint64 id = 1;//添加好友时是用户ID 同意或拒绝好友时是新朋友记录ID
+  string remark = 2;//备注 同意或拒绝时留空
+  int32 state = 3;//-1拒绝 2同意
+}
+```
+```text
+无参 code==200 代表操作成功
+```

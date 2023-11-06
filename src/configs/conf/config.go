@@ -4,10 +4,7 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"encoding/json"
-	"gopkg.in/yaml.v3"
-	"im-sdk/client"
 	"os"
-	"strings"
 	"sync"
 )
 
@@ -34,7 +31,6 @@ type BaseConfig struct {
 	ApiHost    string
 	WsHost     string
 	LogSwitch  string
-	LogFile    string
 	DeviceType string
 }
 
@@ -44,48 +40,54 @@ func InitConfig(baseConfig *BaseConfig) {
 	once.Do(func() {
 		Base = &BaseConfig{
 			BaseDir:    baseConfig.BaseDir,
-			LogFile:    baseConfig.BaseDir + "/logs",
 			ApiHost:    baseConfig.ApiHost,
 			WsHost:     baseConfig.WsHost,
 			DeviceType: baseConfig.DeviceType,
 		}
-		log.InitLog(baseConfig.BaseDir+"/logs", baseConfig.LogSwitch)
+		log.InitLog(mkdirAndReturn(baseConfig.BaseDir+"/logs"), baseConfig.LogSwitch)
 		//初始化数据库路径
-		DbPath = baseConfig.BaseDir + "/configs/db/" + DbPath
-		////启动长连接
-		c := client.New(Base.WsHost)
-		err := c.Startup()
-		if err != nil {
-			_ = log.WithError(err, "启动长连接失败")
-		}
+		DbPath = mkdirAndReturn(baseConfig.BaseDir+"/configs/db") + "/" + DbPath
+		log.Debug("数据库路径:", DbPath)
 		//读取yaml
-		configBytes, _ := os.ReadFile("./config.yaml")
-		Conf = &Config{}
-		_ = yaml.Unmarshal(configBytes, Conf)
-		Conf.ExUris = strings.Split(Conf.Uris, ",")
+		Conf = &Config{
+			ExUris: []string{"/api/user/login", "/api/user/info", "/api/user/register", "/api/user/resetPublicKey", "/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe"},
+			Prime:  "262074f1e0e19618f0d2af786779d6ad9e814b",
+			Pk:     "19311a1a18656914b9381c058c309083022301",
+			Aws: &Aws{
+				Id:       "WHZGIHUSERKPOCCITVOPDJPM",
+				Secret:   "haYlDZAdsSN4zckmX64W0zKSDg7IWxdH1lOkxm9N",
+				Endpoint: "https://world.sgs3.layerstackobjects.com",
+				Region:   "Singapore",
+				Bucket:   "world",
+			},
+		}
 	})
+}
+func ClearLoginInfo() {
+	LoginInfo = nil
+	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", &LoginInfoMode{})
 }
 func GetLoginInfo() *LoginInfoMode {
 	if LoginInfo == nil {
 		LoginInfo = &LoginInfoMode{}
 	}
-	ReadFile(Base.BaseDir+"/configs/LoginInfo.json", LoginInfo)
+	ReadFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
 	return LoginInfo
 }
 func PutLoginInfo(user entity.User) {
 	LoginInfo = GetLoginInfo()
 	LoginInfo.User = &user
-	WriteFile(Base.BaseDir+"/configs/LoginInfo.json", LoginInfo)
+	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
 }
 func PutToken(token string) {
 	LoginInfo = GetLoginInfo()
 	LoginInfo.Token = token
-	WriteFile(Base.BaseDir+"/configs/LoginInfo.json", LoginInfo)
+	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
 }
 func UpdateInputPwd2(inputPwd2 int) {
 	LoginInfo = GetLoginInfo()
 	LoginInfo.InputPwd2 = inputPwd2
-	WriteFile(Base.BaseDir+"/configs/LoginInfo.json", LoginInfo)
+	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
 }
 func ReadFile(url string, data any) {
 	bytes, _ := os.ReadFile(url)
@@ -98,13 +100,21 @@ func WriteFile(url string, data any) {
 	bytes, _ := json.Marshal(data)
 	f.Write(bytes)
 }
+func mkdirAndReturn(path string) string {
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		log.Error(err)
+	}
+	return path
+}
 
 type Config struct {
-	Uris   string
-	ExUris []string
-	Prime  string
-	Pk     string
-	Aws    *Aws
+	ExUris    []string
+	Prime     string
+	Pk        string
+	Aws       *Aws
+	Key       string // 与服务器交互的key
+	Connected bool   //长连接是否链接成功
 }
 type Aws struct {
 	Id       string

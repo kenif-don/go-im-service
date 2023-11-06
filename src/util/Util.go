@@ -1,8 +1,10 @@
 package util
 
 import (
+	"IM-Service/src/configs/log"
 	"encoding/json"
 	"sort"
+	"strconv"
 )
 
 // IndexOfString 查找字符串在数组中的位置
@@ -27,4 +29,14 @@ func Obj2Str(obj interface{}) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+func Str2Obj(s string, obj interface{}) error {
+	return json.Unmarshal([]byte(s), obj)
+}
+func Str2Uint64(s string) uint64 {
+	i, e := strconv.ParseUint(s, 10, 64)
+	if e != nil {
+		log.Error(e)
+	}
+	return i
 }

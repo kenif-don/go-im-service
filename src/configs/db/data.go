@@ -2,7 +2,9 @@ package db
 
 import (
 	"IM-Service/src/configs/conf"
+	l "IM-Service/src/configs/log"
 	"IM-Service/src/entity"
+	"context"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -15,6 +17,7 @@ import (
 var (
 	DefaultDB *DB
 	once      sync.Once
+	Ctx       context.Context
 )
 
 func initDB() {
@@ -32,11 +35,11 @@ func initDB() {
 		Logger: newLogger,
 	})
 	if err != nil {
-		panic(err)
+		l.Error(err)
 	}
-	err = db.AutoMigrate(&entity.User{})
+	err = db.AutoMigrate(&entity.User{}, &entity.FriendApply{}, &entity.Friend{})
 	if err != nil {
-		panic(err)
+		l.Error(err)
 	}
 
 	DefaultDB = &DB{
@@ -47,6 +50,7 @@ func initDB() {
 func NewDB() *DB {
 	once.Do(func() {
 		initDB()
+		Ctx = context.Background()
 	})
 	return DefaultDB
 }

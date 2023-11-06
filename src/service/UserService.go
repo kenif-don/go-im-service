@@ -7,15 +7,13 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
-	"context"
 	"gorm.io/gorm"
 )
 
 type IUserRepo interface {
 	Query(obj *entity.User) (*entity.User, error)
 	QueryAll(obj *entity.User) (*[]entity.User, error)
-	Update(obj *entity.User) error
-	Create(obj *entity.User) error
+	Save(obj *entity.User) error
 	Delete(obj *entity.User) error
 	BeginTx() *gorm.DB
 }
@@ -28,15 +26,36 @@ func NewUserServiceNoDB() *UserService {
 }
 func NewUserService() *UserService {
 	return &UserService{
-		repo: repository.NewUserRepo(context.Background()),
+		repo: repository.NewUserRepo(),
 	}
 }
 func QueryUser(id uint64, repo IUserRepo) (*entity.User, error) {
 	return repo.Query(&entity.User{Id: id})
 }
-func (_self *UserService) Create(obj *entity.User) error {
-	return _self.repo.Create(obj)
+func (_self *UserService) Save(obj *entity.User) error {
+	return _self.repo.Save(obj)
 }
+func (_self *UserService) Search(keyword string) (string, *utils.Error) {
+	if keyword == "" {
+		return "", nil
+	}
+	var data = make(map[string]string)
+	data["keyword"] = keyword
+	resultDTO, err := util.Post("/api/user/search", data)
+	if err != nil {
+		return "", err
+	}
+	return resultDTO.Data.(string), nil
+}
+
+//	func (_self *UserService) UpdatePassword(id uint64, password string) *utils.Error {
+//		user, err := QueryUser(id, _self.repo)
+//		if err != nil || user == nil {
+//			return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
+//		}
+//		user.Password = password
+//		return _self.Update(user)
+//	}
 func (_self *UserService) UpdateHeadImg(id uint64, headImg string) *utils.Error {
 	user, err := QueryUser(id, _self.repo)
 	if err != nil || user == nil {
@@ -74,28 +93,34 @@ func (_self *UserService) Update(obj *entity.User) *utils.Error {
 	if err := tx.Error; err != nil {
 		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
-	//发起请求修改后台用户信息
-	_, err := util.Post("/api/user/edit", obj)
-	if err != nil {
-		return log.WithError(err)
-	}
-	//修改数据库
-	e := _self.repo.Update(obj)
-	if e != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
-	}
-	//修改登录者
-	conf.PutLoginInfo(*obj)
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
 		}
 	}()
-	e = tx.Commit().Error
-	if e != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+	err := func() *utils.Error {
+		//发起请求修改后台用户信息
+		_, err := util.Post("/api/user/edit", obj)
+		if err != nil {
+			return log.WithError(err)
+		}
+		//修改数据库
+		e := _self.repo.Save(obj)
+		if e != nil {
+			return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		}
+		//修改登录者
+		conf.PutLoginInfo(*obj)
+		e = tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
 	}
-	return nil
+	return err
 }
 
 // UpdateLoginUserKeys 修改公私钥
@@ -113,28 +138,34 @@ func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Erro
 	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
-	//发起请求修改后台用户信息
-	_, err := util.Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
-	if err != nil {
-		return log.WithError(err)
-	}
-	//修改本地信息
-	e = _self.repo.Update(obj)
-	if e != nil {
-		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
-	}
-	//修改登录者
-	conf.PutLoginInfo(*obj)
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
 		}
 	}()
-	e = tx.Commit().Error
-	if e != nil {
-		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
+	err := func() *utils.Error {
+		//发起请求修改后台用户信息
+		_, err := util.Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
+		if err != nil {
+			return log.WithError(err)
+		}
+		//修改本地信息
+		e = _self.repo.Save(obj)
+		if e != nil {
+			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
+		}
+		//修改登录者
+		conf.PutLoginInfo(*obj)
+		e = tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
 	}
-	return nil
+	return err
 }
 
 // Register 用户注册
@@ -216,7 +247,7 @@ func (_self *UserService) LoginInfo() *utils.Error {
 		conf.PutLoginInfo(user)
 		return nil
 	}
-	e = _self.Create(&user)
+	e = _self.Save(&user)
 	if e != nil {
 		return log.WithError(utils.ERR_GET_USER_INFO)
 	}

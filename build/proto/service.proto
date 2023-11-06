@@ -12,6 +12,17 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+/** 搜索用户、群聊得到的请求参数 */
+message SearchReq{
+  string keyword = 1; // 搜索关键字
+}
+/** 好友请求参数 */
+message FriendApplyReq{
+  uint64 id = 1;//添加好友时是用户ID 同意或拒绝好友时是新朋友记录ID
+  string remark = 2;//备注 同意或拒绝时留空
+  int32 state = 3;//-1拒绝 2同意 操作时传，添加时留空
+}
+/** 修改用户信息的请求参数 */
 message UpdateUserReq{
   uint64 id = 1;//用户ID
   string data = 2;//可以是昵称、签名、邮箱、头像
