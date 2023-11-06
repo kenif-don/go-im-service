@@ -38,8 +38,23 @@ func QueryFriendApplyAll(repo IFriendApplyRepo) ([]entity.FriendApply, error) {
 	return repo.QueryAll(&entity.FriendApply{To: conf.GetLoginInfo().User.Id})
 }
 
-// UpdateOne 查询单个 然后同步到数据库
-func (_self *FriendApplyService) UpdateOne(from, to uint64) *utils.Error {
+// updateReject 删除好友时的初始化操作 就是把好友请求设置为拒绝
+func (_self *FriendApplyService) updateReject(from, to uint64) *utils.Error {
+	fa, e := QueryFriendApply(&entity.FriendApply{From: from, To: to}, _self.repo)
+	if e != nil {
+		return log.WithError(utils.ERR_OPERATION_FAIL)
+	}
+	fa.State = -1
+	fa.Remark = ""
+	e = _self.repo.Save(fa)
+	if e != nil {
+		return log.WithError(utils.ERR_OPERATION_FAIL)
+	}
+	return nil
+}
+
+// updateOne 查询单个 然后同步到数据库
+func (_self *FriendApplyService) updateOne(from, to uint64) *utils.Error {
 	var req = make(map[string]uint64)
 	req["from"] = from
 	req["to"] = to

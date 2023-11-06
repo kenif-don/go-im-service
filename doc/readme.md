@@ -159,12 +159,12 @@ message UpdateUserReq{
 ```text
 结果与获取登录者信息info返回一致
 ```
-## 七、 退出登录
+## 七、 退出登录 Logout
 ```text
 无参 code==200 代表退出成功
 ```
 
-## 八、 根据昵称搜索
+## 八、 根据昵称搜索 Search
 ```text
 原需求为： 搜索好友、非好友、所在群、非所在群  目前近保留非好友记录
 ```
@@ -179,7 +179,7 @@ message SearchReq{
 ```text
 结果为0-20个用户模型数组 未做分页
 ```
-## 九、 添加好友
+## 九、 添加好友 AddFriend
 ### 参数
 ```protobuf
 /** 好友请求参数 */
@@ -193,7 +193,7 @@ message FriendApplyReq{
 ```text
 无参 code==200 代表请求发送成功
 ```
-## 十、 获取"新朋友"列表
+## 十、 获取"新朋友"列表 SelectAllFriendApply
 ```text
 无参,默认获取登录者全部新朋友
 ```
@@ -209,7 +209,7 @@ type FriendApply struct {
 	FromUser *User `gorm:"-"` // 用户模型 发起人
 }
 ```
-### 十一、 同意或拒绝好友请求
+## 十一、 同意或拒绝好友请求 UpdateFriendApply
 ```protobuf
 message FriendApplyReq{
   uint64 id = 1;//添加好友时是用户ID 同意或拒绝好友时是新朋友记录ID
@@ -218,5 +218,62 @@ message FriendApplyReq{
 }
 ```
 ```text
-无参 code==200 代表操作成功
+通用返回结果 code==200 代表操作成功
+```
+
+## 十二、 获取通讯录列表 SelectAllFriend
+```text
+无参
+```
+### 结果
+```go
+Id    uint64 `gorm:"unique;<-:create" json:"id"`
+	Me    uint64 `json:"me"`
+	He    uint64 `json:"he"`
+	Name  string `json:"name"`
+	State int    `json:"state"`
+
+	HeUser *User `gorm:"-"` //用户模型
+```
+## 十三、好友详情页查询单个好友 SelectOneFriend
+### 参数
+```protobuf
+message FriendReq{
+  uint64 id = 1; //好友ID
+  string name = 2; //好友备注 查询/删除时留空，修改好友备注时传入
+}
+```
+### 结果
+```go
+Id    uint64 `gorm:"unique;<-:create" json:"id"`
+	Me    uint64 `json:"me"`
+	He    uint64 `json:"he"`
+	Name  string `json:"name"`
+	State int    `json:"state"`
+
+	HeUser *User `gorm:"-"` //用户模型
+```
+## 十四、修改好友备注 UpdateFriendName
+### 参数
+```protobuf
+message FriendReq{
+  uint64 id = 1; //好友ID
+  string name = 2; //好友备注 查询/删除时留空，修改好友备注时传入
+}
+```
+### 结果
+```text
+通用返回结果
+```
+## 十五、删除好友 DelFriend
+### 参数
+```protobuf
+message FriendReq{
+  uint64 id = 1; //好友ID
+  string name = 2; //好友备注 查询/删除时留空，修改好友备注时传入
+}
+```
+### 结果
+```text
+通用返回结果
 ```

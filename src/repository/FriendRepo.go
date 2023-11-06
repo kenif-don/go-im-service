@@ -24,13 +24,13 @@ func (_self *FriendRepo) Query(obj *entity.Friend) (*entity.Friend, error) {
 	}
 	return obj, nil
 }
-func (_self *FriendRepo) QueryAll(obj *entity.Friend) (*[]entity.Friend, error) {
+func (_self *FriendRepo) QueryAll(obj *entity.Friend) ([]entity.Friend, error) {
 	objs := &[]entity.Friend{}
 	tx := _self.Data.Db.Where(obj).Find(objs)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return objs, nil
+	return *objs, nil
 }
 func (_self *FriendRepo) Save(obj *entity.Friend) error {
 	tx := _self.Data.Db.Where(obj.Id).Save(obj)

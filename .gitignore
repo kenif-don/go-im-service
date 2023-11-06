@@ -1,0 +1,5 @@
+# 默认忽略的文件
+*.log
+*.json
+/build/build_android/*
+*.db
