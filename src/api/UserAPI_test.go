@@ -23,7 +23,7 @@ func init() {
 	log.Debugf("配置初始化成功！ %+v", result)
 }
 func TestRegister(t *testing.T) {
-	user := &api.RegisterReq{
+	user := &api.UserReq{
 		//Username: "test123",
 		//Password: "123456",
 		//Username: "666666",
@@ -38,7 +38,7 @@ func TestRegister(t *testing.T) {
 	log.Debugf("%+v", result)
 }
 func TestLogin(t *testing.T) {
-	user := &api.RegisterReq{
+	user := &api.UserReq{
 		//Username: "test123",
 		//Password: "123456",
 		Username: "666666",
