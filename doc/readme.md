@@ -57,7 +57,7 @@ message ConfigReq {
 ### 参数
 ```protobuf
 syntax = "proto3";
-message RegisterReq{
+message UserReq{
   string  username = 1;
   string  password = 2;
 }
@@ -70,7 +70,7 @@ message RegisterReq{
 ### 参数
 ```protobuf
 syntax = "proto3";
-message RegisterReq{
+message UserReq{
   string  username = 1;
   string  password = 2;
 }
