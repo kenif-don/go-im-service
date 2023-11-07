@@ -33,7 +33,7 @@ func (_self *ChatRepo) QueryAll(obj *entity.Chat) ([]entity.Chat, error) {
 	return *objs, nil
 }
 func (_self *ChatRepo) Save(obj *entity.Chat) error {
-	tx := _self.Data.Db.Where(obj.Id).Save(obj)
+	tx := _self.Data.Db.Where("type = ? and target_id = ? and user_id = ?", obj.Type, obj.TargetId, obj.UserId).Save(obj)
 	if tx.Error != nil {
 		return tx.Error
 	}

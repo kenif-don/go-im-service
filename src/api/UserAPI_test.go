@@ -6,7 +6,6 @@ import (
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
-	"time"
 )
 
 func init() {
@@ -22,7 +21,6 @@ func init() {
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("配置初始化成功！ %+v", result)
-	time.Sleep(time.Second * 2)
 }
 func TestRegister(t *testing.T) {
 	user := &api.RegisterReq{

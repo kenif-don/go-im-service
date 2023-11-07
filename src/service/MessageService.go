@@ -28,9 +28,10 @@ func (_self *MessageService) QueryLast(obj *entity.Message) (*entity.Message, er
 }
 func (_self *MessageService) UpdateReaded(protocol *model.Protocol, ext4 int) {
 	var message = &entity.Message{}
-	e := util.Map2Obj(protocol.Data, message)
+	e := util.Str2Obj(protocol.Data.(string), message)
 	if e != nil {
 		log.Error(e)
+		return
 	}
 	//修改消息发送状态
 	message.Ext4 = ext4
@@ -102,6 +103,11 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 1: // 接收到聊天消息
+		switch protocol.Type {
+		case model.ChannelOne2oneMsg, model.ChannelGroupMsg:
+			log.Debug("相对===================================8")
+			break
+		}
 		break
 	}
 	return nil

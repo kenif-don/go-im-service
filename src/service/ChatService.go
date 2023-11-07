@@ -70,6 +70,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 			chat = &entity.Chat{
 				Type:     tp,
 				TargetId: friend.Id,
+				UserId:   conf.GetLoginInfo().User.Id,
 				Name:     name,
 				HeadImg:  friend.HeUser.HeadImg,
 				UnReadNo: 0,
@@ -94,8 +95,10 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	if e != nil {
 		return nil, utils.ERR_QUERY_FAIL
 	}
-	chat.LastMsg = lastMsg.Data
-	chat.LastTime = lastMsg.Time
+	if lastMsg != nil {
+		chat.LastMsg = lastMsg.Data
+		chat.LastTime = lastMsg.Time
+	}
 	chat.Page = 1
 	chat.TotalPage = messageService.repo.CountPage(pageReq)
 	msgs, e := messageService.repo.Paging(pageReq, chat.Page)

@@ -5,12 +5,12 @@ github.com/aws/aws-sdk-go v1.47.4/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3Tju
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/don764372409/im-sdk v0.2.2 h1:pW2a5DUXRNB/FqJ96h0w1pjmPHpvba5ZzjLuPkZblqo=
-github.com/don764372409/im-sdk v0.2.2/go.mod h1:z5YddpOfkqZqspKNK8monklh/+o1A34hzf/U0xwpB2Y=
+github.com/don764372409/im-sdk v0.2.6 h1:v4epmt2DsmtcwrLurQNM2n9swQoZyjrw6HWjsVW5l3w=
+github.com/don764372409/im-sdk v0.2.6/go.mod h1:HdFPASyhMCEFNBCDr5epkZ5c3G6l3wB2ZkJkByYZAFk=
 github.com/go-netty/go-netty v1.6.4 h1:ZTGdOC0HFkd98Pq4CQG8YIfFXvWxzebVzetjtzn7rb0=
 github.com/go-netty/go-netty v1.6.4/go.mod h1:vSbL7RzFTO5bHXhxzZsAW0iStVz1qnenR90UVF6e1HA=
-github.com/go-netty/go-netty-transport v1.7.5 h1:WJMf1cZcD4m39FEaUN1N6kcUskU9aYczDx7S5Hxhid0=
-github.com/go-netty/go-netty-transport v1.7.5/go.mod h1:p0WDLHOTZ0DgrazomHLuk44bO44wlYAa4cdmuCQb39I=
+github.com/go-netty/go-netty-transport v1.7.6 h1:k6Qau0xQtfGE449YK2IXIgiWAEH4Irg3d/kmHdKz0To=
+github.com/go-netty/go-netty-transport v1.7.6/go.mod h1:p0WDLHOTZ0DgrazomHLuk44bO44wlYAa4cdmuCQb39I=
 github.com/gobwas/httphead v0.1.0 h1:exrUm0f4YX0L7EBwZHuCF4GDp8aJfVeBrlLQrs6NqWU=
 github.com/gobwas/httphead v0.1.0/go.mod h1:O/RXo79gxV8G+RqlR/otEwx4Q36zl9rqC5u12GKvMCM=
 github.com/gobwas/pool v0.2.1 h1:xfeeEhW7pwmX8nuLVlqbzVc7udMDrwetjEv+TZIz1og=
@@ -20,8 +20,6 @@ github.com/gobwas/ws v1.3.0/go.mod h1:hRKAFb8wOxFROYNsT1bqfWnhX+b5MFeJM9r2ZSwg/K
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
-github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
-github.com/google/uuid v1.4.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=

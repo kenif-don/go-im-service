@@ -32,7 +32,7 @@ func OpenChat(data []byte, listener MessageListener) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = result
+	resp.Body = result
 	res, _ := proto.Marshal(resp)
 	return res
 }
@@ -43,7 +43,10 @@ func SendMsg(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	msgService := service.NewMessageService()
-	msgService.SendMsg(req.Type, req.Target, req.No, req.Content)
+	err := msgService.SendMsg(req.Type, req.Target, req.No, req.Content)
+	if err != nil {
+		return SyncPutErr(utils.ERR_SEND_FAIL, resp)
+	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	res, _ := proto.Marshal(resp)

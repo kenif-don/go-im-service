@@ -37,7 +37,7 @@ func Search(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = users
+	resp.Body = users
 	res, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
@@ -61,7 +61,7 @@ func UpdateHeadImg(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = user
+	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
@@ -85,7 +85,7 @@ func UpdateEmail(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = user
+	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
@@ -109,7 +109,7 @@ func UpdateIntro(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = user
+	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
@@ -134,7 +134,7 @@ func UpdateNickname(data []byte) []byte {
 
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = user
+	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
@@ -152,7 +152,7 @@ func Info() []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = user
+	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
@@ -160,7 +160,7 @@ func Info() []byte {
 	return res
 }
 func Login(data []byte) []byte {
-	req := &api.RegisterReq{}
+	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
@@ -231,7 +231,7 @@ func Login(data []byte) []byte {
 }
 
 func Register(data []byte) []byte {
-	req := &api.RegisterReq{}
+	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)

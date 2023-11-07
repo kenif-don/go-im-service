@@ -44,7 +44,7 @@ func SelectOneFriend(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = result
+	resp.Body = result
 	res, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
@@ -64,7 +64,7 @@ func SelectAllFriend() []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = result
+	resp.Body = result
 	res, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)

@@ -19,7 +19,7 @@ func Upload(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Data = url
+	resp.Body = url
 	res, _ := proto.Marshal(resp)
 	return res
 }

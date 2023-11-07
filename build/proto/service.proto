@@ -46,7 +46,7 @@ message UploadReq{
   string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png
 }
 /** 注册 */
-message RegisterReq{
+message UserReq{
   string  username = 1;
   string  password = 2;
 }
@@ -76,5 +76,5 @@ message ConfigReq {
 message ResultDTOResp{
   uint32 code = 1;
   string msg = 2;
-  string data = 3;
+  string body = 3;
 }

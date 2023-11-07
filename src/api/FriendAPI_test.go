@@ -11,7 +11,6 @@ func TestDelFriend(t *testing.T) {
 
 }
 func TestSelectAllFriend(t *testing.T) {
-	TestLogin(t)
 	resp := SelectAllFriend()
 	result := &api.ResultDTOResp{}
 	err := proto.Unmarshal(resp, result)
