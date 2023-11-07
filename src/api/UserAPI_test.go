@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
-	"IM-Service/src/im"
 	"google.golang.org/protobuf/proto"
 	"testing"
 	"time"
@@ -23,15 +22,16 @@ func init() {
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("配置初始化成功！ %+v", result)
-	im.StartIM()
 	time.Sleep(time.Second * 2)
 }
 func TestRegister(t *testing.T) {
 	user := &api.RegisterReq{
 		//Username: "test123",
 		//Password: "123456",
-		Username: "666666",
-		Password: "666666",
+		//Username: "666666",
+		//Password: "666666",
+		Username: "66666666666666",
+		Password: "66666666666666",
 	}
 	req, _ := proto.Marshal(user)
 	resp := Register(req)

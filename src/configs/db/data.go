@@ -37,7 +37,7 @@ func initDB() {
 	if err != nil {
 		l.Error(err)
 	}
-	err = db.AutoMigrate(&entity.User{}, &entity.FriendApply{}, &entity.Friend{})
+	err = db.AutoMigrate(&entity.User{}, &entity.FriendApply{}, &entity.Friend{}, &entity.Chat{})
 	if err != nil {
 		l.Error(err)
 	}

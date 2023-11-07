@@ -12,6 +12,16 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message SendResp{
+  string no = 1;//消息ID
+
+}
+message ChatReq{
+  string type = 1; // 聊天类型 friend, group
+  uint64 target = 2; // 聊天目标 好友ID或群ID
+  string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
+  string content = 4; // 聊天内容 仅发生消息时传
+}
 /** 好友详情页根据ID获取好友数据 */
 message FriendReq{
   uint64 id = 1; //好友ID

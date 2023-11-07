@@ -4,6 +4,7 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/im"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -23,5 +24,6 @@ func InitConfig(data []byte) []byte {
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	res, _ := proto.Marshal(resp)
+	im.StartIM()
 	return res
 }

@@ -4,6 +4,7 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"encoding/json"
+	"im-sdk/client"
 	"os"
 	"sync"
 )
@@ -114,7 +115,9 @@ type Config struct {
 	Pk        string
 	Aws       *Aws
 	Key       string // 与服务器交互的key
+	Client    *client.WSClient
 	Connected bool   //长连接是否链接成功
+	ChatId    uint64 //当前打开的聊天ID
 }
 type Aws struct {
 	Id       string
