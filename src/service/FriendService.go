@@ -35,6 +35,7 @@ func QueryFriendAll(repo IFriendRepo) ([]entity.Friend, error) {
 	}
 	return repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
 }
+
 func (_self *FriendService) updateOne(he, me uint64) *utils.Error {
 	var req = make(map[string]uint64)
 	req["he"] = he
@@ -101,6 +102,21 @@ func (_self *FriendService) Del(id uint64) *utils.Error {
 		tx.Rollback()
 	}
 	return err
+}
+func (_self *FriendService) QueryFriend2(he uint64) (*entity.Friend, *utils.Error) {
+	friend, e := _self.repo.Query(&entity.Friend{He: he, Me: conf.GetLoginInfo().User.Id})
+	if e != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	if friend != nil {
+		userService := NewUserService()
+		user, e := QueryUser(friend.He, userService.repo)
+		if e != nil || user == nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		friend.HeUser = user
+	}
+	return friend, nil
 }
 func (_self *FriendService) SelectOne(id uint64) (*entity.Friend, *utils.Error) {
 	friend, e := QueryFriend(id, _self.repo)

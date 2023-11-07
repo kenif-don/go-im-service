@@ -231,7 +231,7 @@ func (_self *UserService) LoginInfo() *utils.Error {
 	}
 	//缓存用户信息
 	var user entity.User
-	e := util.Map2Obj(resultDTO.Data, &user)
+	e := util.Obj2Obj(resultDTO.Data, &user)
 	if e != nil {
 		return log.WithError(utils.ERR_GET_USER_INFO)
 	}

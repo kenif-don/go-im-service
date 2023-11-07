@@ -3,9 +3,11 @@ package service
 import (
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"gorm.io/gorm"
+	"sort"
 	"sync"
 )
 
@@ -19,7 +21,16 @@ type MessageListener interface {
 	OnReceive(data []byte)
 	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
 	OnSendReceive(data []byte)
+	//OnDoChats 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
+	OnDoChats(data []byte)
 }
+
+func SetListener(listener MessageListener) {
+	once.Do(func() {
+		Listener = listener
+	})
+}
+
 type IChatRepo interface {
 	Query(obj *entity.Chat) (*entity.Chat, error)
 	QueryAll(obj *entity.Chat) ([]entity.Chat, error)
@@ -31,16 +42,10 @@ type ChatService struct {
 	repo IChatRepo
 }
 
-func NewChatService(listener MessageListener) *ChatService {
-	once.Do(func() {
-		Listener = listener
-	})
+func NewChatService() *ChatService {
 	return &ChatService{
 		repo: repository.NewChatRepo(),
 	}
-}
-func QueryChatOne(id uint64, repo IChatRepo) (*entity.Chat, error) {
-	return repo.Query(&entity.Chat{Id: id})
 }
 func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
@@ -51,15 +56,15 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
 	chat, e := QueryChat(tp, target, _self.repo)
 	if e != nil {
-		return nil, utils.ERR_QUERY_FAIL
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	if chat == nil {
 		//根据类型查询数据
 		switch tp {
 		case "friend":
-			friend, err := NewFriendService().SelectOne(target)
+			friend, err := NewFriendService().QueryFriend2(target)
 			if err != nil || friend == nil {
-				return nil, utils.ERR_QUERY_FAIL
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
 			var name string
 			if friend.Name != "" {
@@ -69,7 +74,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 			}
 			chat = &entity.Chat{
 				Type:     tp,
-				TargetId: friend.Id,
+				TargetId: target,
 				UserId:   conf.GetLoginInfo().User.Id,
 				Name:     name,
 				HeadImg:  friend.HeUser.HeadImg,
@@ -77,36 +82,78 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 			}
 			e := _self.repo.Save(chat)
 			if e != nil {
-				return nil, utils.ERR_QUERY_FAIL
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
 			break
 		case "group":
 			break
 		}
 	}
-	//组装最后一条消息和最新15条消息
+	err := _self.coverMsgs(chat)
+	if err != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	err = _self.coverLastMsg(chat)
+	if err != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	//记录当前聊天ID
+	conf.Conf.ChatId = chat.TargetId
+	return chat, nil
+}
+
+func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
+	chats, err := _self.repo.QueryAll(&entity.Chat{
+		UserId: conf.GetLoginInfo().User.Id,
+	})
+	if err != nil {
+		return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	//组装所有消息和最后一条消息
+	for i := range chats {
+		err := _self.coverLastMsg(&chats[i])
+		if err != nil {
+			return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+	}
+	//排序 根据最后的消息时间倒序
+	sort.Slice(chats, func(i, j int) bool {
+		return chats[i].LastTime < chats[j].LastTime
+	})
+	return &chats, nil
+}
+func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
+	//组装最后一条消息
 	messageService := NewMessageService()
 	pageReq := &entity.Message{
-		Type:     tp,
-		TargetId: target,
+		Type:     chat.Type,
+		TargetId: chat.TargetId,
 		UserId:   conf.GetLoginInfo().User.Id,
 	}
 	lastMsg, e := messageService.QueryLast(pageReq)
 	if e != nil {
-		return nil, utils.ERR_QUERY_FAIL
+		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	if lastMsg != nil {
 		chat.LastMsg = lastMsg.Data
 		chat.LastTime = lastMsg.Time
 	}
+	return nil
+}
+func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
+	//最新15条消息
+	messageService := NewMessageService()
+	pageReq := &entity.Message{
+		Type:     chat.Type,
+		TargetId: chat.TargetId,
+		UserId:   conf.GetLoginInfo().User.Id,
+	}
 	chat.Page = 1
 	chat.TotalPage = messageService.repo.CountPage(pageReq)
 	msgs, e := messageService.repo.Paging(pageReq, chat.Page)
 	if e != nil {
-		return nil, utils.ERR_QUERY_FAIL
+		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	chat.Msgs = msgs
-	//记录当前聊天ID
-	conf.Conf.ChatId = chat.Id
-	return chat, nil
+	return nil
 }

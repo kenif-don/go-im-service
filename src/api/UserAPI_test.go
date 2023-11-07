@@ -17,7 +17,7 @@ func init() {
 		WsHost:     "ws://ggeejj9f.beesnat.com:13191",
 	}
 	req, _ := proto.Marshal(config)
-	resp := InitConfig(req)
+	resp := InitConfig(req, nil)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debugf("配置初始化成功！ %+v", result)

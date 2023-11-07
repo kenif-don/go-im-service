@@ -8,20 +8,33 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type MessageListener interface {
-	//OnReceive 当前聊天接收到消息
-	OnReceive(data []byte)
-	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
-	OnSendReceive(data []byte)
+func GetChats() []byte {
+	resp := &api.ResultDTOResp{}
+	chatService := service.NewChatService()
+	chats, err := chatService.GetChats()
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	result, e := util.Obj2Str(chats)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = result
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPEN_FAIL, resp)
+	}
+	return res
 }
-
-func OpenChat(data []byte, listener MessageListener) []byte {
+func OpenChat(data []byte) []byte {
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	chatService := service.NewChatService(listener)
+	chatService := service.NewChatService()
 	chats, err := chatService.OpenChat(req.Type, req.Target)
 	if err != nil {
 		return SyncPutErr(err, resp)
@@ -33,7 +46,10 @@ func OpenChat(data []byte, listener MessageListener) []byte {
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = result
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPEN_FAIL, resp)
+	}
 	return res
 }
 func SendMsg(data []byte) []byte {
@@ -49,6 +65,9 @@ func SendMsg(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_SEND_FAIL, resp)
+	}
 	return res
 }

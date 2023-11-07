@@ -16,7 +16,7 @@ func IndexOfString(target string, arr []string) int {
 	}
 	return -1
 }
-func Map2Obj(m interface{}, obj interface{}) error {
+func Obj2Obj(m interface{}, obj interface{}) error {
 	data, err := json.Marshal(m)
 	if err != nil {
 		return err

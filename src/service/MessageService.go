@@ -1,6 +1,7 @@
 package service
 
 import (
+	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/db"
 	utils "IM-Service/src/configs/err"
@@ -8,6 +9,7 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
+	"google.golang.org/protobuf/proto"
 	"im-sdk/handler"
 	"im-sdk/model"
 	"strconv"
@@ -26,7 +28,7 @@ func NewMessageService() *MessageService {
 func (_self *MessageService) QueryLast(obj *entity.Message) (*entity.Message, error) {
 	return _self.repo.QueryLast(obj)
 }
-func (_self *MessageService) UpdateReaded(protocol *model.Protocol, ext4 int) {
+func (_self *MessageService) UpdateReaded(protocol *model.Protocol, send int) {
 	var message = &entity.Message{}
 	e := util.Str2Obj(protocol.Data.(string), message)
 	if e != nil {
@@ -34,10 +36,22 @@ func (_self *MessageService) UpdateReaded(protocol *model.Protocol, ext4 int) {
 		return
 	}
 	//修改消息发送状态
-	message.Ext4 = ext4
+	message.Send = send
 	e = _self.repo.Save(message)
 	if e != nil {
 		log.Error(e)
+	}
+	//回调
+	if Listener != nil {
+		resp := &api.SendResp{
+			No:   message.No,
+			Send: int32(send),
+		}
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			log.Error(e)
+		}
+		Listener.OnSendReceive(res)
 	}
 }
 
@@ -103,10 +117,69 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 1: // 接收到聊天消息
-		switch protocol.Type {
-		case model.ChannelOne2oneMsg, model.ChannelGroupMsg:
-			log.Debug("相对===================================8")
-			break
+		//如果是别人发给自己的 就存起来 如果是自己发的 再发送时已经进行了存储
+		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
+			messageService := NewMessageService()
+			var message = &entity.Message{}
+			e := util.Str2Obj(protocol.Data.(string), message)
+			if e != nil {
+				return log.WithError(e)
+			}
+			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
+				//修改为已读状态
+				message.Read = 2
+				if Listener != nil {
+					resp := &api.MessageData{}
+					e = util.Obj2Obj(message, resp)
+					if e != nil {
+						return log.WithError(e)
+					}
+					res, e := proto.Marshal(resp)
+					if e != nil {
+						return log.WithError(e)
+					}
+					Listener.OnReceive(res)
+				}
+			}
+			e = messageService.repo.Save(message)
+			if e != nil {
+				return log.WithError(e)
+			}
+
+			//判断是否存在聊天
+			chat, e := QueryChat(message.Type, message.TargetId, repository.NewChatRepo())
+			if e != nil {
+				return log.WithError(e)
+			}
+			if chat == nil {
+				chat = &entity.Chat{
+					Type:     message.Type,
+					TargetId: message.TargetId,
+					UserId:   conf.GetLoginInfo().User.Id,
+					UnReadNo: 1,
+				}
+				e = repository.NewChatRepo().Save(chat)
+				if e != nil {
+					return log.WithError(e)
+				}
+			}
+			chatService := NewChatService()
+			chats, err := chatService.GetChats()
+			if err != nil {
+				return log.WithError(err)
+			}
+			if Listener != nil {
+				resp := &api.ChatData{}
+				e = util.Obj2Obj(chats, resp)
+				if e != nil {
+					return log.WithError(e)
+				}
+				res, e := proto.Marshal(resp)
+				if e != nil {
+					return log.WithError(e)
+				}
+				Listener.OnDoChats(res)
+			}
 		}
 		break
 	}
@@ -123,7 +196,7 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no, content strin
 	}
 	//发送消息
 	handler.GetClientHandler().GetMessageManager().Send(protocol)
-	//报错消息到数据库
+	//保存消息到数据库
 	e := _self.repo.Save(message)
 	if e != nil {
 		return log.WithError(utils.ERR_SEND_FAIL)
@@ -142,11 +215,7 @@ func (_self *MessageService) coverProtocol(message *entity.Message) (*model.Prot
 	}
 	protocol.From = message.From
 	//从好友中拿he
-	friend, e := QueryFriend(message.TargetId, repository.NewFriendRepo())
-	if e != nil || friend == nil {
-		return nil, log.WithError(utils.ERR_SEND_FAIL_BY_NOT_TARGET)
-	}
-	protocol.To = strconv.FormatUint(friend.He, 10)
+	protocol.To = strconv.FormatUint(message.TargetId, 10)
 	content, e := util.Obj2Str(message)
 	if e != nil {
 		return nil, log.WithError(utils.ERR_SEND_FAIL)
@@ -166,7 +235,7 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
 	message.Data = content
 	message.Time = uint64(time.Now().Unix())
-	message.Ext4 = 1 // 发送中
-	message.Ext5 = 2 // 自己发的 肯定是已读
+	message.Send = 1 // 发送中
+	message.Read = 2 // 自己发的 肯定是已读
 	return message
 }

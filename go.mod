@@ -15,7 +15,7 @@ require (
 	im-sdk v0.0.0-00010101000000-000000000000
 )
 
-replace im-sdk => github.com/don764372409/im-sdk v0.2.6
+replace im-sdk => github.com/don764372409/im-sdk v0.2.7
 
 require (
 	github.com/go-netty/go-netty v1.6.4 // indirect

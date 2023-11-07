@@ -6,16 +6,13 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type EventListener interface {
-	On(data []byte)
-}
-
-// PutErr 异步导出
-func PutErr(err *utils.Error, resp *api.ResultDTOResp, callback EventListener) {
-	resp.Code = uint32(api.ResultDTOCode_ERROR)
-	resp.Msg = err.Msg
-	result, _ := proto.Marshal(resp)
-	callback.On(result)
+type MessageListener interface {
+	//OnReceive 当前聊天接收到消息
+	OnReceive(data []byte)
+	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
+	OnSendReceive(data []byte)
+	//OnDoChats 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
+	OnDoChats(data []byte)
 }
 
 // SyncPutErr 同步导出

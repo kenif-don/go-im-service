@@ -11,10 +11,10 @@ import (
 func TestOpenChat(t *testing.T) {
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 103,
+		Target: 2,
 	}
 	req, _ := proto.Marshal(oldReq)
-	resp := OpenChat(req, nil)
+	resp := OpenChat(req)
 	result := &api.ResultDTOResp{}
 	err := proto.Unmarshal(resp, result)
 	if err != nil {
@@ -23,9 +23,10 @@ func TestOpenChat(t *testing.T) {
 }
 func TestSendMsg(t *testing.T) {
 	TestLogin(t)
+	TestOpenChat(t)
 	oldReq := &api.ChatReq{
 		Type:    "friend",
-		Target:  103,
+		Target:  2,
 		No:      "2",
 		Content: "hello",
 	}
@@ -37,4 +38,15 @@ func TestSendMsg(t *testing.T) {
 		log.Error(err)
 	}
 	time.Sleep(time.Hour * 2)
+}
+func TestGetChats(t *testing.T) {
+	TestLogin(t)
+	TestOpenChat(t)
+	resp := GetChats()
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Debug(result)
 }

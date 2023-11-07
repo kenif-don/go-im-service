@@ -5,10 +5,11 @@ import (
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/im"
+	"IM-Service/src/service"
 	"google.golang.org/protobuf/proto"
 )
 
-func InitConfig(data []byte) []byte {
+func InitConfig(data []byte, listener MessageListener) []byte {
 	req := &api.ConfigReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -24,6 +25,7 @@ func InitConfig(data []byte) []byte {
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	res, _ := proto.Marshal(resp)
+	service.SetListener(listener)
 	im.StartIM()
 	return res
 }

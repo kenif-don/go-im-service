@@ -22,9 +22,17 @@ enum ResultDTOCode {
 ### 参数
 ```text
 请求参数没有默认值，请务必全部传
+除了下列请求参数外,还需传一个全局单列的监听器对象,对象需实现下述接口
+type MessageListener interface {
+	//OnReceive 当前聊天接收到消息
+	OnReceive(data []byte)
+	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
+	OnSendReceive(data []byte)
+	//OnDoChats 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
+	OnDoChats(data []byte)
+}
 ```
 ```protobuf
-// 模型
 syntax = "proto3";
 message ConfigReq {
   string baseDir = 1; //配置根目录
@@ -276,4 +284,58 @@ message FriendReq{
 ### 结果
 ```text
 通用返回结果
+```
+## 十六、打开聊天 OpenChat
+```text
+参数除下述
+```
+### 参数
+```protobuf
+message ChatReq{
+  string type = 1; // 聊天类型 friend, group
+  uint64 target = 2; // 聊天目标 用户ID或群ID
+  string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
+  string content = 4; // 聊天内容 仅发生消息时传
+}
+```
+### 结果
+```go
+type Chat struct {
+	Id        uint64    `gorm:"unique;<-:create" json:"id"`
+	Type      string    `json:"type"`               // 聊天类型 friend, group
+	TargetId  uint64    `json:"targetId"`           // 聊天目标 用户ID或群ID
+	UserId    uint64    `json:"userId"`             // 当前聊天所有者 用户ID
+	Name      string    `json:"name"`               // 聊天名称
+	HeadImg   string    `json:"headImg"`            // 聊天头像
+	UnReadNo  int       `json:"unRead"`             // 未读消息数量
+	LastMsg   string    `gorm:"-" json:"msg"`       // 最后一条聊天
+	LastTime  uint64    `gorm:"-" json:"time"`      // 最后一条聊天时间
+	Msgs      []Message `gorm:"-" json:"msgs"`      // 分页消息
+	Page      int       `gorm:"-" json:"page"`      // 当前页码
+	TotalPage int       `gorm:"-" json:"totalPage"` // 总页码
+}
+```
+## 十七、发送消息SendMsg
+### 参数
+```protobuf
+/** 客户端发送消息状态回调 */
+message ChatReq{
+  string type = 1; // 聊天类型 friend, group
+  uint64 target = 2; // 聊天目标 用户ID或群ID
+  string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
+  string content = 4; // 聊天内容 仅发生消息时传
+}
+```
+### 结果
+```text
+通用返回结果
+```
+## 十八、首页获取聊天列表 GetChats
+### 参数
+```text
+无参
+```
+### 结果
+```text
+参考打开聊天返回值，此结果是数组 打开聊天返回的结果是单个对象字符串
 ```

@@ -3,7 +3,7 @@ package entity
 type Chat struct {
 	Id        uint64    `gorm:"unique;<-:create" json:"id"`
 	Type      string    `json:"type"`               // 聊天类型 friend, group
-	TargetId  uint64    `json:"targetId"`           // 聊天目标 好友ID或群ID
+	TargetId  uint64    `json:"targetId"`           // 聊天目标 用户ID或群ID
 	UserId    uint64    `json:"userId"`             // 当前聊天所有者 用户ID
 	Name      string    `json:"name"`               // 聊天名称
 	HeadImg   string    `json:"headImg"`            // 聊天头像
