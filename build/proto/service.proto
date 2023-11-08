@@ -36,8 +36,8 @@ message MessageData{
   string From = 5;//消息发送者
   string Data = 6;//消息内容 MessageData的json字符串
   uint64 Time = 7;//消息发送时间
-  int32 Read = 8;                      //是否已阅读 1-未读 2-已读
-  int32 Send = 9;                      //发送状态 1-发送中 2-发送成功 -1-发送失败
+  int32 Read = 8;//是否已阅读 1-未读 2-已读
+  int32 Send = 9;//发送状态 1-发送中 2-发送成功 -1-发送失败
   string Ext1 = 10;
   string Ext2 = 11;
   string Ext3 = 12;

@@ -30,6 +30,8 @@ var (
 	ERR_SEND_FAIL_BY_NOT_TARGET = NewError(1020, "send fail by not target", "发送失败，目标用户不存在")
 	ERR_SEND_FAIL               = NewError(1021, "send fail", "发送失败")
 	ERR_OPEN_FAIL               = NewError(1022, "open fail", "打开失败")
+	ERR_ENCRYPT_FAIL            = NewError(1023, "encrypt fail", "加密失败")
+	ERR_DECRYPT_FAIL            = NewError(1024, "decrypt fail", "解密失败")
 )
 
 type Error struct {

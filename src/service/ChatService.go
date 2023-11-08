@@ -6,6 +6,7 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
+	"IM-Service/src/util"
 	"gorm.io/gorm"
 	"sort"
 	"sync"
@@ -14,6 +15,7 @@ import (
 var (
 	once     sync.Once
 	Listener MessageListener
+	Keys     map[string]string // 加密缓存 对方用户id为key，秘钥为value
 )
 
 type MessageListener interface {
@@ -28,6 +30,7 @@ type MessageListener interface {
 func SetListener(listener MessageListener) {
 	once.Do(func() {
 		Listener = listener
+		Keys = make(map[string]string)
 	})
 }
 
@@ -134,8 +137,15 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 	if e != nil {
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
+	log.Debugf("最后一条消息:%v", lastMsg)
 	if lastMsg != nil {
-		chat.LastMsg = lastMsg.Data
+		//解密
+		data, err := Decrypt(chat.TargetId, chat.Type, lastMsg.Data)
+		if err != nil {
+			chat.LastMsg = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
+		} else {
+			chat.LastMsg = data
+		}
 		chat.LastTime = lastMsg.Time
 	}
 	return nil
@@ -153,6 +163,15 @@ func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
 	msgs, e := messageService.repo.Paging(pageReq, chat.Page)
 	if e != nil {
 		return log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	//循环解密
+	for i := 0; i < len(msgs); i++ {
+		data, err := Decrypt(chat.TargetId, chat.Type, msgs[i].Data)
+		if err != nil {
+			msgs[i].Data = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
+		} else {
+			msgs[i].Data = data
+		}
 	}
 	chat.Msgs = msgs
 	return nil

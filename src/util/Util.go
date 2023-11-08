@@ -1,6 +1,7 @@
 package util
 
 import (
+	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"encoding/json"
 	"sort"
@@ -39,4 +40,10 @@ func Str2Uint64(s string) uint64 {
 		log.Error(e)
 	}
 	return i
+}
+func Uint642Str(i uint64) string {
+	return strconv.FormatUint(i, 10)
+}
+func GetErrMsg(err *utils.Error) string {
+	return err.MsgZh
 }

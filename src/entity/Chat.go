@@ -8,7 +8,7 @@ type Chat struct {
 	Name      string    `json:"name"`               // 聊天名称
 	HeadImg   string    `json:"headImg"`            // 聊天头像
 	UnReadNo  int       `json:"unRead"`             // 未读消息数量
-	LastMsg   string    `gorm:"-" json:"msg"`       // 最后一条聊天
+	LastMsg   string    `gorm:"-" json:"lastMsg"`   // 最后一条聊天
 	LastTime  uint64    `gorm:"-" json:"time"`      // 最后一条聊天时间
 	Msgs      []Message `gorm:"-" json:"msgs"`      // 分页消息
 	Page      int       `gorm:"-" json:"page"`      // 当前页码

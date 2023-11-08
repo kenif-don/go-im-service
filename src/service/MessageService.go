@@ -116,6 +116,9 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 		break
+	case 301: // 被好友删除
+		err := NewFriendService().DelLocal(&entity.Friend{He: util.Str2Uint64(protocol.From), Me: util.Str2Uint64(protocol.To)})
+		return log.WithError(err)
 	case 1: // 接收到聊天消息
 		//如果是别人发给自己的 就存起来 如果是自己发的 再发送时已经进行了存储
 		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
@@ -128,6 +131,12 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
 				//修改为已读状态
 				message.Read = 2
+				//解密
+				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data)
+				if err != nil {
+					return log.WithError(err)
+				}
+				message.Data = data
 				if Listener != nil {
 					resp := &api.MessageData{}
 					e = util.Obj2Obj(message, resp)
@@ -188,7 +197,10 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 
 func (_self *MessageService) SendMsg(tp string, target uint64, no, content string) *utils.Error {
 	//组装本地消息
-	message := _self.coverMessage(tp, target, no, content)
+	message, err := _self.coverMessage(tp, target, no, content)
+	if err != nil {
+		return log.WithError(err)
+	}
 	//组装长连接protocol
 	protocol, err := _self.coverProtocol(message)
 	if err != nil {
@@ -226,16 +238,75 @@ func (_self *MessageService) coverProtocol(message *entity.Message) (*model.Prot
 	protocol.No = message.No
 	return protocol, nil
 }
-func (_self *MessageService) coverMessage(tp string, target uint64, no, content string) *entity.Message {
+func (_self *MessageService) coverMessage(tp string, target uint64, no, content string) (*entity.Message, *utils.Error) {
 	message := &entity.Message{}
 	message.No = no
 	message.Type = tp
 	message.TargetId = target
 	message.UserId = conf.GetLoginInfo().User.Id
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
-	message.Data = content
+	//加密
+	data, err := Encrypt(message.TargetId, tp, content)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
+	message.Data = data
 	message.Time = uint64(time.Now().Unix())
 	message.Send = 1 // 发送中
 	message.Read = 2 // 自己发的 肯定是已读
-	return message
+	return message, nil
+}
+
+// Encrypt 聊天内容加密
+func Encrypt(he uint64, tp, content string) (string, *utils.Error) {
+	key := tp + "_" + util.Uint642Str(he)
+	switch tp {
+	case "friend":
+		if Keys[key] == "" {
+			user, e := QueryUser(he, repository.NewUserRepo())
+			if e != nil {
+				return "", log.WithError(e)
+			}
+			if user == nil {
+				return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
+			}
+			secret := util.SharedAESKey(user.PublicKey, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
+			Keys[key] = secret
+		}
+		break
+	case "group":
+		break
+	}
+	data, e := util.EncryptAes(content, Keys[key])
+	if e != nil {
+		return "", log.WithError(e)
+	}
+	return data, nil
+}
+
+// Decrypt 聊天内容解密
+func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
+	key := tp + "_" + util.Uint642Str(he)
+	switch tp {
+	case "friend":
+		if Keys[key] == "" {
+			user, e := QueryUser(he, repository.NewUserRepo())
+			if e != nil {
+				return "", log.WithError(e)
+			}
+			if user == nil {
+				return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+			}
+			secret := util.SharedAESKey(user.PublicKey, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
+			Keys[key] = secret
+		}
+		break
+	case "group":
+		break
+	}
+	data, e := util.DecryptAes(content, Keys[key])
+	if e != nil {
+		return "", log.WithError(e)
+	}
+	return data, nil
 }

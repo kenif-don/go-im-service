@@ -63,6 +63,10 @@ func (_self *FriendService) Del(id uint64) *utils.Error {
 	if err != nil {
 		return log.WithError(err)
 	}
+	err = _self.DelLocal(&entity.Friend{Id: id})
+	return err
+}
+func (_self *FriendService) DelLocal(friend *entity.Friend) *utils.Error {
 	tx := _self.repo.BeginTx()
 	if err := tx.Error; err != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
@@ -72,8 +76,8 @@ func (_self *FriendService) Del(id uint64) *utils.Error {
 			tx.Rollback()
 		}
 	}()
-	err = func() *utils.Error {
-		friend, e := QueryFriend(id, _self.repo)
+	err := func() *utils.Error {
+		friend, e := _self.repo.Query(friend)
 		if e != nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}

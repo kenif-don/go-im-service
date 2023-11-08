@@ -3,6 +3,7 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -18,7 +19,7 @@ type MessageListener interface {
 // SyncPutErr 同步导出
 func SyncPutErr(err *utils.Error, resp *api.ResultDTOResp) []byte {
 	resp.Code = uint32(api.ResultDTOCode_ERROR)
-	resp.Msg = err.MsgZh
+	resp.Msg = util.GetErrMsg(err)
 	result, _ := proto.Marshal(resp)
 	return result
 }
