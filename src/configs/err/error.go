@@ -32,6 +32,7 @@ var (
 	ERR_OPEN_FAIL               = NewError(1022, "open fail", "打开失败")
 	ERR_ENCRYPT_FAIL            = NewError(1023, "encrypt fail", "加密失败")
 	ERR_DECRYPT_FAIL            = NewError(1024, "decrypt fail", "解密失败")
+	ERR_DEL_FAIL                = NewError(1025, "del fail", "删除失败")
 )
 
 type Error struct {

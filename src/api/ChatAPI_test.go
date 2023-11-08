@@ -5,6 +5,7 @@ import (
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
+	"time"
 )
 
 func TestOpenChat(t *testing.T) {
@@ -37,7 +38,7 @@ func TestSendMsg(t *testing.T) {
 	if err != nil {
 		log.Error(err)
 	}
-
+	time.Sleep(time.Hour)
 }
 func TestGetChats(t *testing.T) {
 	TestLogin(t)

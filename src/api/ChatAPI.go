@@ -8,6 +8,44 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func DelLocalChat(data []byte) []byte {
+	req := &api.ChatReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	chatService := service.NewChatService()
+	err := chatService.DelLocalChat(req.Type, req.Target)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_DEL_FAIL, resp)
+	}
+	return res
+}
+func DelChat(data []byte) []byte {
+	req := &api.ChatReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	chatService := service.NewChatService()
+	err := chatService.DelChat(req.Type, req.Target)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_DEL_FAIL, resp)
+	}
+	return res
+}
 func GetChats() []byte {
 	resp := &api.ResultDTOResp{}
 	chatService := service.NewChatService()

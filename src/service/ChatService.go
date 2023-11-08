@@ -1,14 +1,20 @@
 package service
 
 import (
+	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
+	"im-sdk/handler"
+	"im-sdk/model"
 	"sort"
+	"strconv"
 	"sync"
 )
 
@@ -174,5 +180,88 @@ func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
 		}
 	}
 	chat.Msgs = msgs
+	return nil
+}
+
+// DelLocalChat 删除本地聊天记录
+func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
+	tx := _self.repo.BeginTx()
+	if err := tx.Error; err != nil {
+		return log.WithError(utils.ERR_DEL_FAIL)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		// 删除聊天
+		var chat entity.Chat
+		chat.Type = tp
+		chat.TargetId = target
+		chat.UserId = conf.GetLoginInfo().User.Id
+		e := _self.repo.Delete(&chat)
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		// 删除聊天记录
+		var message entity.Message
+		message.Type = tp
+		message.TargetId = target
+		message.UserId = conf.GetLoginInfo().User.Id
+		e = NewMessageService().repo.Delete(&message)
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		//调用事件通知
+		err := NewChatService().ChatsNotify()
+		if err != nil {
+			return log.WithError(err)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
+	}
+	return nil
+}
+
+// DelChat 删除双方聊天记录
+func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
+	//发送删除请求
+	protocol := &model.Protocol{
+		Type: 999,
+		From: strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
+		To:   strconv.FormatUint(target, 10),
+		Ack:  100,
+		Data: tp, //将聊天类型传递过去
+		No:   uuid.New().String(),
+	}
+	handler.GetClientHandler().GetMessageManager().Send(protocol)
+	err := _self.DelLocalChat(tp, target)
+	if err != nil {
+		return log.WithError(err)
+	}
+	return nil
+}
+
+// ChatsNotify 通知客户端更新聊天列表
+func (_self *ChatService) ChatsNotify() *utils.Error {
+	chats, err := _self.GetChats()
+	if err != nil {
+		return log.WithError(err)
+	}
+	if Listener != nil {
+		resp := &api.ChatData{}
+		e := util.Obj2Obj(chats, resp)
+		if e != nil {
+			return log.WithError(e)
+		}
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			return log.WithError(e)
+		}
+		Listener.OnDoChats(res)
+	}
 	return nil
 }

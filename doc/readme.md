@@ -323,7 +323,7 @@ message ChatReq{
   string type = 1; // 聊天类型 friend, group
   uint64 target = 2; // 聊天目标 用户ID或群ID
   string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
-  string content = 4; // 聊天内容 仅发生消息时传
+  string content = 4; // 聊天内容 仅发送消息时传
 }
 ```
 ### 结果
@@ -338,4 +338,28 @@ message ChatReq{
 ### 结果
 ```text
 参考打开聊天返回值，此结果是数组 打开聊天返回的结果是单个对象字符串
+```
+## 十九、删除自己的好友聊天记录 DelLocalChat
+### 参数
+```protobuf
+message ChatReq{
+  string type = 1; // 聊天类型 friend, group
+  uint64 target = 2; // 聊天目标 用户ID或群ID
+}
+```
+### 结果
+```text
+通用返回,同时会触发OnDoChats异步通知
+```
+## 二十、删除双方聊天记录 DelChat
+### 参数
+```protobuf
+message ChatReq{
+  string type = 1; // 聊天类型 friend, group
+  uint64 target = 2; // 聊天目标 用户ID或群ID
+}
+```
+### 结果
+```text
+通用返回,同时会触发OnDoChats异步通知
 ```

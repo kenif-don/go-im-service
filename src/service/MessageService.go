@@ -119,6 +119,12 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 	case 301: // 被好友删除
 		err := NewFriendService().DelLocal(&entity.Friend{He: util.Str2Uint64(protocol.From), Me: util.Str2Uint64(protocol.To)})
 		return log.WithError(err)
+	case 999: //删除聊天和记录
+		err := NewChatService().DelChat(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
 	case 1: // 接收到聊天消息
 		//如果是别人发给自己的 就存起来 如果是自己发的 再发送时已经进行了存储
 		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
@@ -172,22 +178,9 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 					return log.WithError(e)
 				}
 			}
-			chatService := NewChatService()
-			chats, err := chatService.GetChats()
+			err := NewChatService().ChatsNotify()
 			if err != nil {
 				return log.WithError(err)
-			}
-			if Listener != nil {
-				resp := &api.ChatData{}
-				e = util.Obj2Obj(chats, resp)
-				if e != nil {
-					return log.WithError(e)
-				}
-				res, e := proto.Marshal(resp)
-				if e != nil {
-					return log.WithError(e)
-				}
-				Listener.OnDoChats(res)
 			}
 		}
 		break
