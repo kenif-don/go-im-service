@@ -286,9 +286,6 @@ message FriendReq{
 通用返回结果
 ```
 ## 十六、打开聊天 OpenChat
-```text
-参数除下述
-```
 ### 参数
 ```protobuf
 message ChatReq{
