@@ -118,6 +118,7 @@ type Config struct {
 	Client    *client.WSClient
 	Connected bool   //长连接是否链接成功
 	ChatId    uint64 //当前打开的聊天ID
+	LoginIM   bool   //是否已经登录IM
 }
 type Aws struct {
 	Id       string

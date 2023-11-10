@@ -68,7 +68,7 @@ func (_self *MessageRepo) Paging(obj *entity.Message, page int) ([]entity.Messag
 	objs := &[]entity.Message{}
 	tx := _self.Data.Db.Where(obj).Order("time desc").Offset(int(uint64(page-1) * 15)).Limit(15).Find(objs)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return []entity.Message{}, nil
 	}
 	if tx.Error != nil {
 		return nil, tx.Error

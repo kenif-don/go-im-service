@@ -8,6 +8,31 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func IsFriend(data []byte) []byte {
+	req := &api.FriendReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	friendService := service.NewFriendService()
+	friend, err := friendService.QueryFriend2(req.Id)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	if friend != nil {
+		resp.Body = "1"
+	} else {
+		resp.Body = "0"
+	}
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
+
 func DelFriend(data []byte) []byte {
 	req := &api.FriendApplyReq{}
 	resp := &api.ResultDTOResp{}

@@ -4,6 +4,7 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/configs/log"
 	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
@@ -15,7 +16,10 @@ import (
 
 func Logout() []byte {
 	resp := &api.ResultDTOResp{}
-	conf.ClearLoginInfo()
+	err := logout()
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
@@ -24,6 +28,7 @@ func Logout() []byte {
 	}
 	return res
 }
+
 func Search(data []byte) []byte {
 	req := &api.SearchReq{}
 	resp := &api.ResultDTOResp{}
@@ -140,7 +145,6 @@ func UpdateNickname(data []byte) []byte {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
 	}
 	return res
-
 }
 
 // Info 获取登录者信息
@@ -165,6 +169,8 @@ func Login(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
+	log.Debugf("登录请求参数:%+v", req)
+	log.Debugf("缓存中的用户:%+v", conf.GetLoginInfo())
 	//用户没有传账号密码 直接通过缓存登录
 	if req.Username == "" && conf.GetLoginInfo().Token != "" {
 		//判断是否需要输入二级密码
@@ -174,13 +180,16 @@ func Login(data []byte) []byte {
 		} else {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		}
+		//登录IM
+		err := loginIM()
+		if err != nil {
+			return SyncPutErr(err, resp)
+		}
 		resp.Msg = "success"
 		res, e := proto.Marshal(resp)
 		if e != nil {
 			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
 		}
-		//登录IM
-		loginIM()
 		return res
 	}
 	// 需要登录
@@ -222,11 +231,16 @@ func Login(data []byte) []byte {
 		conf.UpdateInputPwd2(-1)
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	}
-	resp.Msg = "success"
 	//登录IM
-	loginIM()
-	res, _ := proto.Marshal(resp)
-
+	err = loginIM()
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+	}
 	return res
 }
 
@@ -242,17 +256,38 @@ func Register(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+	}
 	return res
 }
 
 // loginIM 如果已经存在登录者 直接登录 否则走完整登录流程 然后再登录IM
-func loginIM() {
+func loginIM() *utils.Error {
+	if conf.Conf.LoginIM {
+		return nil
+	}
+	conf.Conf.LoginIM = true
 	//获取登录者 组装登录IM请求参数
 	loginInfo := &model.LoginInfo{
 		Id:     strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
 		Device: conf.Base.DeviceType,
 		Token:  conf.GetLoginInfo().Token,
 	}
-	handler.GetClientHandler().GetMessageManager().SendLogin(loginInfo)
+	mgr := handler.GetClientHandler().GetMessageManager()
+	if mgr == nil {
+		return log.WithError(utils.ERR_NET_FAIL)
+	}
+	mgr.SendLogin(loginInfo)
+	return nil
+}
+func logout() *utils.Error {
+	conf.ClearLoginInfo()
+	mgr := handler.GetClientHandler().GetMessageManager()
+	if mgr == nil {
+		return log.WithError(utils.ERR_NET_FAIL)
+	}
+	mgr.SendLogout()
+	return nil
 }

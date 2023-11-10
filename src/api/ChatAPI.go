@@ -2,12 +2,30 @@ package api
 
 import (
 	api "IM-Service/build/generated/service/v1"
+	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
+func GetConnectState() []byte {
+	resp := &api.ResultDTOResp{}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	if conf.Conf.Connected {
+		resp.Body = "1"
+	} else {
+		resp.Body = "0"
+	}
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}
+
+// DelLocalChat 删除本地聊天记录
 func DelLocalChat(data []byte) []byte {
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}
@@ -27,6 +45,8 @@ func DelLocalChat(data []byte) []byte {
 	}
 	return res
 }
+
+// DelChat 删除双方聊天记录
 func DelChat(data []byte) []byte {
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}

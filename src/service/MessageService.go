@@ -232,6 +232,9 @@ func (_self *MessageService) coverProtocol(message *entity.Message) (*model.Prot
 	return protocol, nil
 }
 func (_self *MessageService) coverMessage(tp string, target uint64, no, content string) (*entity.Message, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return nil, log.WithError(utils.ERR_NOT_LOGIN)
+	}
 	message := &entity.Message{}
 	message.No = no
 	message.Type = tp
@@ -279,6 +282,12 @@ func Encrypt(he uint64, tp, content string) (string, *utils.Error) {
 
 // Decrypt 聊天内容解密
 func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return "", log.WithError(utils.ERR_NOT_LOGIN)
+	}
+	if content == "" {
+		return "", nil
+	}
 	key := tp + "_" + util.Uint642Str(he)
 	switch tp {
 	case "friend":

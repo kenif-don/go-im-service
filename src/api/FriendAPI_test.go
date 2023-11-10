@@ -7,6 +7,15 @@ import (
 	"testing"
 )
 
+func TestIsFriend(t *testing.T) {
+	resp := IsFriend(nil)
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Debug(result)
+}
 func TestDelFriend(t *testing.T) {
 
 }
@@ -21,7 +30,6 @@ func TestSelectAllFriend(t *testing.T) {
 	log.Debug(result)
 }
 func TestSelectOneFriend(t *testing.T) {
-	TestLogin(t)
 	oldReq := &api.FriendReq{
 		Id: 103,
 	}

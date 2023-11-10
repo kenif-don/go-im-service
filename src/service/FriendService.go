@@ -108,6 +108,9 @@ func (_self *FriendService) DelLocal(friend *entity.Friend) *utils.Error {
 	return err
 }
 func (_self *FriendService) QueryFriend2(he uint64) (*entity.Friend, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return nil, log.WithError(utils.ERR_NOT_LOGIN)
+	}
 	friend, e := _self.repo.Query(&entity.Friend{He: he, Me: conf.GetLoginInfo().User.Id})
 	if e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)

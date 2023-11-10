@@ -58,7 +58,7 @@ func NewChatService() *ChatService {
 }
 func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
-		return nil, nil
+		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
 	return repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
 }
@@ -157,6 +157,9 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 	return nil
 }
 func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NOT_LOGIN)
+	}
 	//最新15条消息
 	messageService := NewMessageService()
 	pageReq := &entity.Message{
@@ -185,6 +188,9 @@ func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
 
 // DelLocalChat 删除本地聊天记录
 func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NOT_LOGIN)
+	}
 	tx := _self.repo.BeginTx()
 	if err := tx.Error; err != nil {
 		return log.WithError(utils.ERR_DEL_FAIL)
@@ -228,6 +234,9 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 
 // DelChat 删除双方聊天记录
 func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NOT_LOGIN)
+	}
 	//发送删除请求
 	protocol := &model.Protocol{
 		Type: 999,
