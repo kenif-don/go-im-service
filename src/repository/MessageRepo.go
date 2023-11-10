@@ -66,11 +66,16 @@ func (_self *MessageRepo) Paging(obj *entity.Message, page int) ([]entity.Messag
 		page = 1
 	}
 	objs := &[]entity.Message{}
-	tx := _self.Data.Db.Where(obj).Order("time desc").Offset(int(uint64(page-1) * 15)).Limit(15).Find(objs)
+	var tx *gorm.DB
+	if obj.Time > 0 {
+		tx = _self.Data.Db.Where("type=?", "target_id=?", "user_id=?", "time < ?", obj).Order("time desc").Offset(int(uint64(page-1) * 15)).Limit(15).Find(objs)
+	} else {
+		tx = _self.Data.Db.Where(obj).Order("time desc").Offset(int(uint64(page-1) * 15)).Limit(15).Find(objs)
+	}
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return []entity.Message{}, nil
 	}
-	if tx.Error != nil {
+	if tx == nil || tx.Error != nil {
 		return nil, tx.Error
 	}
 	Reverse(objs)

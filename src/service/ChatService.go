@@ -169,18 +169,9 @@ func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
 	}
 	chat.Page = 1
 	chat.TotalPage = messageService.repo.CountPage(pageReq)
-	msgs, e := messageService.repo.Paging(pageReq, chat.Page)
+	msgs, e := messageService.Paging(chat.Type, chat.TargetId, 0, chat.Page)
 	if e != nil {
 		return log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	//循环解密
-	for i := 0; i < len(msgs); i++ {
-		data, err := Decrypt(chat.TargetId, chat.Type, msgs[i].Data)
-		if err != nil {
-			msgs[i].Data = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
-		} else {
-			msgs[i].Data = data
-		}
 	}
 	chat.Msgs = msgs
 	return nil

@@ -129,3 +129,29 @@ func SendMsg(data []byte) []byte {
 	}
 	return res
 }
+
+// GetMsgs 分页获取消息
+func GetMsgs(data []byte) []byte {
+	req := &api.MsgPageDTO{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	messageService := service.NewMessageService()
+	msgs, err := messageService.Paging(req.Type, req.Target, req.Time, int(req.Page))
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	result, e := util.Obj2Str(msgs)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = result
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}

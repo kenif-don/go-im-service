@@ -25,6 +25,33 @@ func NewMessageService() *MessageService {
 		repo: repository.NewMessageRepo(),
 	}
 }
+
+// Paging 消息分页
+func (_self *MessageService) Paging(tp string, target, time uint64, page int) ([]entity.Message, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return []entity.Message{}, log.WithError(utils.ERR_NOT_LOGIN)
+	}
+	pageReq := &entity.Message{
+		Type:     tp,
+		TargetId: target,
+		UserId:   conf.GetLoginInfo().User.Id,
+		Time:     time,
+	}
+	msgs, e := _self.repo.Paging(pageReq, page)
+	if e != nil {
+		return []entity.Message{}, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	//循环解密
+	for i := 0; i < len(msgs); i++ {
+		data, err := Decrypt(target, tp, msgs[i].Data)
+		if err != nil {
+			msgs[i].Data = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
+		} else {
+			msgs[i].Data = data
+		}
+	}
+	return msgs, nil
+}
 func (_self *MessageService) QueryLast(obj *entity.Message) (*entity.Message, error) {
 	return _self.repo.QueryLast(obj)
 }
