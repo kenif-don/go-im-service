@@ -190,13 +190,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				chat = &entity.Chat{
-					Type:     message.Type,
-					TargetId: message.TargetId,
-					UserId:   conf.GetLoginInfo().User.Id,
-					UnReadNo: 1,
-				}
-				e = repository.NewChatRepo().Save(chat)
+				chat, e = NewChatService().CoverChat(message.Type, message.TargetId)
 				if e != nil {
 					return log.WithError(e)
 				}

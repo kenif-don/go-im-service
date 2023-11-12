@@ -71,25 +71,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 		//根据类型查询数据
 		switch tp {
 		case "friend":
-			friend, err := NewFriendService().QueryFriend2(target)
-			if err != nil || friend == nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			var name string
-			if friend.Name != "" {
-				name = friend.Name
-			} else {
-				name = friend.HeUser.Nickname
-			}
-			chat = &entity.Chat{
-				Type:     tp,
-				TargetId: target,
-				UserId:   conf.GetLoginInfo().User.Id,
-				Name:     name,
-				HeadImg:  friend.HeUser.HeadImg,
-				UnReadNo: 0,
-			}
-			e := _self.repo.Save(chat)
+			chat, e = _self.CoverChat(tp, target)
 			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
@@ -106,7 +88,31 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	conf.Conf.ChatId = chat.TargetId
 	return chat, nil
 }
-
+func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
+	friend, err := NewFriendService().QueryFriend2(target)
+	if err != nil || friend == nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	var name string
+	if friend.Name != "" {
+		name = friend.Name
+	} else {
+		name = friend.HeUser.Nickname
+	}
+	chat := &entity.Chat{
+		Type:     tp,
+		TargetId: target,
+		UserId:   conf.GetLoginInfo().User.Id,
+		Name:     name,
+		HeadImg:  friend.HeUser.HeadImg,
+		UnReadNo: 0,
+	}
+	e := _self.repo.Save(chat)
+	if e != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	return chat, nil
+}
 func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
 	chats, err := _self.repo.QueryAll(&entity.Chat{
 		UserId: conf.GetLoginInfo().User.Id,
