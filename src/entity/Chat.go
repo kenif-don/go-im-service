@@ -10,5 +10,5 @@ type Chat struct {
 	UnReadNo int    `json:"unRead"`                      // 未读消息数量
 	Top      int    `json:"top"`                         // 是否置顶 1:置顶 0:不置顶
 	LastMsg  string `gorm:"-" json:"lastMsg"`            // 最后一条聊天
-	LastTime uint64 `gorm:"-" json:"time"`               // 最后一条聊天时间
+	LastTime uint64 `gorm:"-" json:"lastTime"`           // 最后一条聊天时间
 }
