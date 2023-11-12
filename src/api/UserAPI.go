@@ -150,6 +150,15 @@ func UpdateNickname(data []byte) []byte {
 // Info 获取登录者信息
 func Info() []byte {
 	resp := &api.ResultDTOResp{}
+	if conf.GetLoginInfo() == nil || conf.GetLoginInfo().User == nil {
+		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+		resp.Msg = "success"
+		res, err := proto.Marshal(resp)
+		if err != nil {
+			return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		}
+		return res
+	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
 		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)

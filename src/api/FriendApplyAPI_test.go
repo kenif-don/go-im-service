@@ -9,7 +9,7 @@ import (
 )
 
 func TestAddFriend(t *testing.T) {
-
+	TestLogin(t)
 	oldReq := &api.FriendApplyReq{
 		Id:     1,
 		Remark: "加我",
