@@ -360,3 +360,5 @@ message ChatReq{
 ```text
 通用返回,同时会触发OnDoChats异步通知
 ```
+
+## 二十、 SelectFriendApplyNotOperated 查询未操作的好友请求

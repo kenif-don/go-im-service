@@ -136,6 +136,9 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		if err != nil {
 			return log.WithError(err)
 		}
+		if Listener != nil {
+			Listener.OnFriendApply()
+		}
 		break
 	case 102: //当to同意好友申请后，更新好友数据
 		_, err := NewFriendService().updateOne(util.Str2Uint64(protocol.From), util.Str2Uint64(protocol.To))

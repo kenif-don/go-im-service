@@ -24,9 +24,18 @@ func (_self *FriendApplyRepo) Query(obj *entity.FriendApply) (*entity.FriendAppl
 	}
 	return obj, nil
 }
+func (_self *FriendApplyRepo) QueryCount(obj *entity.FriendApply) (int, error) {
+	var count int64
+	tx := _self.Data.Db.Where(obj).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+	return int(count), nil
+
+}
 func (_self *FriendApplyRepo) QueryAll(obj *entity.FriendApply) ([]entity.FriendApply, error) {
 	objs := &[]entity.FriendApply{}
-	tx := _self.Data.Db.Where(obj).Find(objs)
+	tx := _self.Data.Db.Where(obj).Order("state asc").Find(objs)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

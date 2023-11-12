@@ -30,6 +30,26 @@ func UpdateFriendApply(data []byte) []byte {
 	}
 	return res
 }
+func SelectFriendApplyNotOperated() []byte {
+	resp := &api.ResultDTOResp{}
+	friendApplyService := service.NewFriendApplyService()
+	fas, err := friendApplyService.SelectFriendApplyNotOperated()
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	result, e := util.Obj2Str(fas)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = result
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}
 func SelectAllFriendApply() []byte {
 	resp := &api.ResultDTOResp{}
 	friendApplyService := service.NewFriendApplyService()

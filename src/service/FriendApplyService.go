@@ -13,6 +13,7 @@ import (
 type IFriendApplyRepo interface {
 	Query(obj *entity.FriendApply) (*entity.FriendApply, error)
 	QueryAll(obj *entity.FriendApply) ([]entity.FriendApply, error)
+	QueryCount(obj *entity.FriendApply) (int, error)
 	Save(obj *entity.FriendApply) error
 	Delete(obj *entity.FriendApply) error
 	BeginTx() *gorm.DB
@@ -206,4 +207,15 @@ func (_self *FriendApplyService) Add(to uint64, remark string) *utils.Error {
 		return log.WithError(err)
 	}
 	return nil
+}
+
+func (_self *FriendApplyService) SelectFriendApplyNotOperated() (int, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return 0, nil
+	}
+	count, e := _self.repo.QueryCount(&entity.FriendApply{To: conf.GetLoginInfo().User.Id, State: 1})
+	if e != nil {
+		return 0, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	return count, nil
 }

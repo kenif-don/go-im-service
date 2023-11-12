@@ -31,6 +31,8 @@ type MessageListener interface {
 	OnSendReceive(data []byte)
 	//OnDoChats 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
 	OnDoChats(data []byte)
+	//OnFriendApply 好友申请 仅代表有新的好友申请 但是无参
+	OnFriendApply()
 }
 
 func SetListener(listener MessageListener) {
