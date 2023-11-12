@@ -7,5 +7,5 @@ type FriendApply struct {
 	Remark string `json:"remark"`
 	State  int    `json:"state"`
 
-	FromUser *User `gorm:"-"`
+	FromUser *User `gorm:"-" json:"fromUser"`
 }

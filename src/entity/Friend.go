@@ -7,5 +7,5 @@ type Friend struct {
 	Name  string `json:"name"`
 	State int    `json:"state"`
 
-	HeUser *User `gorm:"-"`
+	HeUser *User `gorm:"-" json:"heUser"`
 }
