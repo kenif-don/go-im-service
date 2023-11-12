@@ -1,6 +1,7 @@
 package util
 
 import (
+	utils "IM-Service/src/configs/err"
 	"crypto/aes"
 	"crypto/md5"
 	"crypto/rand"
@@ -91,7 +92,7 @@ func SharedAESKey(publicKey, privateKey, prime string) string {
 	}
 	return aesKey
 }
-func EncryptAes(src, key string) string {
+func EncryptAes(src, key string) (string, *utils.Error) {
 	origData := []byte(src)
 	cipher, _ := aes.NewCipher([]byte(key))
 	length := (len(origData) + aes.BlockSize) / aes.BlockSize
@@ -104,17 +105,22 @@ func EncryptAes(src, key string) string {
 	encrypted := make([]byte, len(plain))
 	// 分组分块加密
 	for bs, be := 0, cipher.BlockSize(); bs <= len(origData); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
+		if bs > be {
+			return "", utils.ERR_ENCRYPT_FAIL
+		}
 		cipher.Encrypt(encrypted[bs:be], plain[bs:be])
 	}
-
-	return base64.StdEncoding.EncodeToString(encrypted)
+	return base64.StdEncoding.EncodeToString(encrypted), nil
 }
-func DecryptAes(data, key string) string {
+func DecryptAes(data, key string) (string, error) {
 	encrypted, _ := base64.StdEncoding.DecodeString(data)
 	cipher, _ := aes.NewCipher([]byte(key))
 	decrypted := make([]byte, len(encrypted))
 	//
 	for bs, be := 0, cipher.BlockSize(); bs < len(encrypted); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
+		if bs > be {
+			return "", utils.ERR_ENCRYPT_FAIL
+		}
 		cipher.Decrypt(decrypted[bs:be], encrypted[bs:be])
 	}
 
@@ -122,6 +128,8 @@ func DecryptAes(data, key string) string {
 	if len(decrypted) > 0 {
 		trim = len(decrypted) - int(decrypted[len(decrypted)-1])
 	}
-
-	return string(decrypted[:trim])
+	if trim < 0 || trim > len(decrypted) {
+		return "", utils.ERR_ENCRYPT_FAIL
+	}
+	return string(decrypted[:trim]), nil
 }

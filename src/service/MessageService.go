@@ -291,7 +291,10 @@ func Encrypt(he uint64, tp, content string) (string, *utils.Error) {
 	case "group":
 		break
 	}
-	data := util.EncryptAes(content, Keys[key])
+	data, e := util.EncryptAes(content, Keys[key])
+	if e != nil {
+		return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
+	}
 	return data, nil
 }
 
@@ -321,6 +324,9 @@ func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
 	case "group":
 		break
 	}
-	data := util.DecryptAes(content, Keys[key])
+	data, e := util.DecryptAes(content, Keys[key])
+	if e != nil {
+		return "解密失败", nil
+	}
 	return data, nil
 }

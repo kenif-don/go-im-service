@@ -64,7 +64,10 @@ func handlerResult(req *http.Request, resultDTO *dto.ResultDTO) (interface{}, er
 		return nil, nil
 	}
 	if IndexOfString(req.URL.Path, conf.Conf.ExUris) == -1 {
-		data := DecryptAes(resultDTO.Data.(string), conf.Conf.Key)
+		data, e := DecryptAes(resultDTO.Data.(string), conf.Conf.Key)
+		if e != nil {
+			return nil, e
+		}
 		return data, nil
 	}
 	return resultDTO.Data, nil
@@ -88,7 +91,10 @@ func addContent(req *http.Request, data []byte) error {
 	}
 	//参数加密 服务器公钥+自己的私钥 协商出来共享秘钥加密参数
 	conf.Conf.Key = SharedAESKey(conf.Conf.Pk, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
-	newData := EncryptAes(string(data), conf.Conf.Key)
+	newData, e := EncryptAes(string(data), conf.Conf.Key)
+	if e != nil {
+		return log.WithError(e)
+	}
 	//将字符串赋值给请求对象body
 	req.Body = io.NopCloser(bytes.NewBuffer([]byte(newData)))
 	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))

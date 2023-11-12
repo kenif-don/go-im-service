@@ -39,10 +39,10 @@ func TestRegister(t *testing.T) {
 }
 func TestLogin(t *testing.T) {
 	user := &api.UserReq{
-		Username: "1338076457770",
-		Password: "a12345678",
-		//Username: "test123",
-		//Password: "123456",
+		//Username: "1338076457770",
+		//Password: "a12345678",
+		Username: "test123",
+		Password: "123456",
 		//Username: "123456",
 		//Password: "123456",
 	}
