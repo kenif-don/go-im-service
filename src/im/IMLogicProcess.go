@@ -75,8 +75,10 @@ func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 func (_self *LogicProcess) LoginOk(protocol *model.Protocol) {
 	conf.Conf.LoginIM = true
 	log.Debugf("登录成功！:%v", protocol)
+	//获取一次通讯录
+	_, e := service.NewFriendService().SelectAll()
 	//获取离线消息
-	e := service.NewMessageService().GetOfflineMessage()
+	e = service.NewMessageService().GetOfflineMessage()
 	if e != nil {
 		log.Error(e)
 	}

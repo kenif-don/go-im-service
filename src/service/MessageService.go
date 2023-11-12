@@ -195,7 +195,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 					return log.WithError(e)
 				}
 			}
-			//组装最后一条消息
+			// 通知聊天列表更新
 			err := NewChatService().ChatNotify(chat)
 			if err != nil {
 				return log.WithError(err)

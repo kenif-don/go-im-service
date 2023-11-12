@@ -35,7 +35,7 @@ func TestSendMsg(t *testing.T) {
 	oldReq := &api.ChatReq{
 		Type:    "friend",
 		Target:  7,
-		No:      "3",
+		No:      util.Uint642Str(uint64(time.Now().UnixMilli())),
 		Content: content,
 	}
 	req, _ := proto.Marshal(oldReq)
