@@ -190,7 +190,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				chat, e = NewChatService().CoverChat(message.Type, message.UserId)
+				chat, e = NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
 				if e != nil {
 					return log.WithError(e)
 				}
@@ -291,10 +291,7 @@ func Encrypt(he uint64, tp, content string) (string, *utils.Error) {
 	case "group":
 		break
 	}
-	data, e := util.EncryptAes(content, Keys[key])
-	if e != nil {
-		return "", log.WithError(e)
-	}
+	data := util.EncryptAes(content, Keys[key])
 	return data, nil
 }
 
@@ -324,9 +321,6 @@ func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
 	case "group":
 		break
 	}
-	data, e := util.DecryptAes(content, Keys[key])
-	if e != nil {
-		return "", log.WithError(e)
-	}
+	data := util.DecryptAes(content, Keys[key])
 	return data, nil
 }

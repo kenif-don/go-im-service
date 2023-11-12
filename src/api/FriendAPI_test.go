@@ -27,7 +27,6 @@ func TestSelectAllFriend(t *testing.T) {
 	if err != nil {
 		log.Error(err)
 	}
-
 	log.Debug(result)
 }
 func TestSelectOneFriend(t *testing.T) {

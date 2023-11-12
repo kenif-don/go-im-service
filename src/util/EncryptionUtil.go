@@ -1,14 +1,11 @@
 package util
 
 import (
-	"bytes"
 	"crypto/aes"
-	"crypto/cipher"
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 	"math/big"
 	"strconv"
 	"strings"
@@ -94,121 +91,37 @@ func SharedAESKey(publicKey, privateKey, prime string) string {
 	}
 	return aesKey
 }
-func Base64URLDecode(data string) ([]byte, error) {
-	var missing = (4 - len(data)%4) % 4
-	data += strings.Repeat("=", missing)
-	res, err := base64.URLEncoding.DecodeString(data)
-	fmt.Println("  decodebase64urlsafe is :", string(res), err)
-	return base64.URLEncoding.DecodeString(data)
-}
-
-func Base64UrlSafeEncode(source []byte) string {
-	// Base64 Url Safe is the same as Base64 but does not contain '/' and '+' (replaced by '_' and '-') and trailing '=' are removed.
-	bytearr := base64.StdEncoding.EncodeToString(source)
-	safeurl := strings.Replace(string(bytearr), "/", "_", -1)
-	safeurl = strings.Replace(safeurl, "+", "-", -1)
-	safeurl = strings.Replace(safeurl, "=", "", -1)
-	return safeurl
-}
-
-func DecryptAes(data, key string) (string, error) {
-	crypted, err := base64.StdEncoding.DecodeString(data)
-	if err != nil {
-		return "", err
+func EncryptAes(src, key string) string {
+	origData := []byte(src)
+	cipher, _ := aes.NewCipher([]byte(key))
+	length := (len(origData) + aes.BlockSize) / aes.BlockSize
+	plain := make([]byte, length*aes.BlockSize)
+	copy(plain, origData)
+	pad := byte(len(plain) - len(origData))
+	for i := len(origData); i < len(plain); i++ {
+		plain[i] = pad
 	}
-	//crypted := []byte(data)
-	block, err := aes.NewCipher([]byte(key))
-	if err != nil {
-		return "", err
+	encrypted := make([]byte, len(plain))
+	// 分组分块加密
+	for bs, be := 0, cipher.BlockSize(); bs <= len(origData); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
+		cipher.Encrypt(encrypted[bs:be], plain[bs:be])
 	}
-	blockMode := NewECBDecrypter(block)
-	origData := make([]byte, len(crypted))
-	blockMode.CryptBlocks(origData, crypted)
-	origData = PKCS5UnPadding(origData)
-	return string(origData), nil
-}
 
-func EncryptAes(src, key string) (string, error) {
-	block, err := aes.NewCipher([]byte(key))
-	if err != nil {
-		return "", err
-	}
-	if src == "" {
-		return "", nil
-	}
-	ecb := NewECBEncrypter(block)
-	content := []byte(src)
-	content = PKCS5Padding(content, block.BlockSize())
-	crypted := make([]byte, len(content))
-	ecb.CryptBlocks(crypted, content)
-	return base64.StdEncoding.EncodeToString(crypted), nil
+	return base64.StdEncoding.EncodeToString(encrypted)
 }
-
-func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
-	padding := blockSize - len(ciphertext)%blockSize
-	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
-	return append(ciphertext, padtext...)
-}
-
-func PKCS5UnPadding(origData []byte) []byte {
-	length := len(origData)
-	// 去掉最后一个字节 unpadding 次
-	unpadding := int(origData[length-1])
-	return origData[:(length - unpadding)]
-}
-
-type ecb struct {
-	b         cipher.Block
-	blockSize int
-}
-
-func newECB(b cipher.Block) *ecb {
-	return &ecb{
-		b:         b,
-		blockSize: b.BlockSize(),
+func DecryptAes(data, key string) string {
+	encrypted, _ := base64.StdEncoding.DecodeString(data)
+	cipher, _ := aes.NewCipher([]byte(key))
+	decrypted := make([]byte, len(encrypted))
+	//
+	for bs, be := 0, cipher.BlockSize(); bs < len(encrypted); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
+		cipher.Decrypt(decrypted[bs:be], encrypted[bs:be])
 	}
-}
 
-type ecbEncrypter ecb
+	trim := 0
+	if len(decrypted) > 0 {
+		trim = len(decrypted) - int(decrypted[len(decrypted)-1])
+	}
 
-// NewECBEncrypter returns a BlockMode which encrypts in electronic code book
-// mode, using the given Block.
-func NewECBEncrypter(b cipher.Block) cipher.BlockMode {
-	return (*ecbEncrypter)(newECB(b))
-}
-func (x *ecbEncrypter) BlockSize() int { return x.blockSize }
-func (x *ecbEncrypter) CryptBlocks(dst, src []byte) {
-	if len(src)%x.blockSize != 0 {
-		panic("crypto/cipher: input not full blocks")
-	}
-	if len(dst) < len(src) {
-		panic("crypto/cipher: output smaller than input")
-	}
-	for len(src) > 0 {
-		x.b.Encrypt(dst, src[:x.blockSize])
-		src = src[x.blockSize:]
-		dst = dst[x.blockSize:]
-	}
-}
-
-type ecbDecrypter ecb
-
-// NewECBDecrypter returns a BlockMode which decrypts in electronic code book
-// mode, using the given Block.
-func NewECBDecrypter(b cipher.Block) cipher.BlockMode {
-	return (*ecbDecrypter)(newECB(b))
-}
-func (x *ecbDecrypter) BlockSize() int { return x.blockSize }
-func (x *ecbDecrypter) CryptBlocks(dst, src []byte) {
-	if len(src)%x.blockSize != 0 {
-		panic("crypto/cipher: input not full blocks")
-	}
-	if len(dst) < len(src) {
-		panic("crypto/cipher: output smaller than input")
-	}
-	for len(src) > 0 {
-		x.b.Decrypt(dst, src[:x.blockSize])
-		src = src[x.blockSize:]
-		dst = dst[x.blockSize:]
-	}
+	return string(decrypted[:trim])
 }

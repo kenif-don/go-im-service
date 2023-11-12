@@ -13,7 +13,7 @@ import (
 func TestOpenChat(t *testing.T) {
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 7,
+		Target: 2,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := OpenChat(req)
@@ -34,7 +34,7 @@ func TestSendMsg(t *testing.T) {
 	content, _ := util.Obj2Str(contentObj)
 	oldReq := &api.ChatReq{
 		Type:    "friend",
-		Target:  7,
+		Target:  2,
 		No:      util.Uint642Str(uint64(time.Now().UnixMilli())),
 		Content: content,
 	}
