@@ -36,13 +36,13 @@ func QueryFriendAll(repo IFriendRepo) ([]entity.Friend, error) {
 	return repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
 }
 
-func (_self *FriendService) updateOne(he, me uint64) *utils.Error {
+func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Error) {
 	var req = make(map[string]uint64)
 	req["he"] = he
 	req["me"] = me
 	resultDTO, err := util.Post("/api/friend/selectOne", req)
 	if err != nil {
-		return log.WithError(err)
+		return nil, log.WithError(err)
 	}
 	var fa entity.Friend
 	_ = util.Str2Obj(resultDTO.Data.(string), &fa)
@@ -50,10 +50,19 @@ func (_self *FriendService) updateOne(he, me uint64) *utils.Error {
 		//保存到数据库
 		e := _self.repo.Save(&fa)
 		if e != nil {
-			return log.WithError(utils.ERR_OPERATION_FAIL)
+			return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+		if fa.HeUser == nil {
+			return nil, nil
+		}
+		//再保存好友用户
+		userService := NewUserService()
+		e = userService.Save(fa.HeUser)
+		if e != nil {
+			return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 		}
 	}
-	return nil
+	return &fa, nil
 }
 func (_self *FriendService) Del(id uint64) *utils.Error {
 	//先通过服务器删除
@@ -133,8 +142,15 @@ func (_self *FriendService) SelectOne(id uint64) (*entity.Friend, *utils.Error) 
 	if friend != nil {
 		userService := NewUserService()
 		user, e := QueryUser(friend.He, userService.repo)
-		if e != nil || user == nil {
+		if e != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		if user == nil {
+			f, err := _self.updateOne(friend.He, friend.Me)
+			if err != nil {
+				return nil, log.WithError(err)
+			}
+			user = f.HeUser
 		}
 		friend.HeUser = user
 	}
@@ -150,8 +166,15 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 		for i := 0; i < len(friends); i++ {
 			userService := NewUserService()
 			user, e := QueryUser(friends[i].He, userService.repo)
-			if e != nil || user == nil {
+			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+			if user == nil {
+				f, err := _self.updateOne(friends[i].He, friends[i].Me)
+				if err != nil {
+					return nil, log.WithError(err)
+				}
+				user = f.HeUser
 			}
 			friends[i].HeUser = user
 			if friends[i].Name == "" {
