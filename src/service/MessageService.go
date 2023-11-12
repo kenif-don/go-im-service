@@ -259,6 +259,11 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	message.TargetId = target
 	message.UserId = conf.GetLoginInfo().User.Id
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
+	//更新一次秘钥
+	err := NewUserService().UpdateTargetPublicKey(target)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
 	//加密
 	data, err := Encrypt(message.TargetId, tp, content)
 	if err != nil {
@@ -326,7 +331,14 @@ func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
 	}
 	data, e := util.DecryptAes(content, Keys[key])
 	if e != nil {
-		return "解密失败", nil
+		msg := &entity.MessageData{
+			Type:    1,
+			Content: "解密失败",
+		}
+		data, e = util.Obj2Str(msg)
+		if e != nil {
+			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+		}
 	}
 	return data, nil
 }

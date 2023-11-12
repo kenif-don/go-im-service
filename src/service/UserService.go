@@ -56,6 +56,22 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 //		user.Password = password
 //		return _self.Update(user)
 //	}
+func (_self *UserService) UpdateTargetPublicKey(id uint64) *utils.Error {
+	user, err := QueryUser(id, _self.repo)
+	if err != nil || user == nil {
+		return log.WithError(utils.ERR_HEADIMG_UPDATE_FAIL)
+	}
+	resultDTO, e2 := util.Post("/api/user/GetTargetPublicKey", map[string]interface{}{"id": id})
+	if e2 != nil {
+		return log.WithError(utils.ERR_SEND_FAIL)
+	}
+	user.PublicKey = resultDTO.Data.(string)
+	e := _self.repo.Save(user)
+	if e != nil {
+		return log.WithError(utils.ERR_SEND_FAIL)
+	}
+	return nil
+}
 func (_self *UserService) UpdateHeadImg(id uint64, headImg string) *utils.Error {
 	user, err := QueryUser(id, _self.repo)
 	if err != nil || user == nil {

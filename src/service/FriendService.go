@@ -232,7 +232,6 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 	if err != nil {
 		tx.Rollback()
 	}
-	log.Debug(123)
 	return r, err
 }
 func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
