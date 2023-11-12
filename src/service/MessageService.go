@@ -185,12 +185,12 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			}
 
 			//判断是否存在聊天
-			chat, e := QueryChat(message.Type, message.TargetId, repository.NewChatRepo())
+			chat, e := QueryChat(message.Type, message.UserId, repository.NewChatRepo())
 			if e != nil {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				chat, e = NewChatService().CoverChat(message.Type, message.TargetId)
+				chat, e = NewChatService().CoverChat(message.Type, message.UserId)
 				if e != nil {
 					return log.WithError(e)
 				}
