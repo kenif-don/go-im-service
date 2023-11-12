@@ -49,7 +49,6 @@ func TestSendMsg(t *testing.T) {
 }
 func TestGetChats(t *testing.T) {
 	TestLogin(t)
-	TestOpenChat(t)
 	resp := GetChats()
 	result := &api.ResultDTOResp{}
 	err := proto.Unmarshal(resp, result)
@@ -57,4 +56,5 @@ func TestGetChats(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result)
+	time.Sleep(time.Hour)
 }
