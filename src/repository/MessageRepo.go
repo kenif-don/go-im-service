@@ -2,7 +2,6 @@ package repository
 
 import (
 	"IM-Service/src/configs/db"
-	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"errors"
 	"gorm.io/gorm"
@@ -57,20 +56,13 @@ func (_self *MessageRepo) QueryLast(obj *entity.Message) (*entity.Message, error
 	}
 	return obj, nil
 }
-func (_self *MessageRepo) Paging(obj *entity.Message, page int) ([]entity.Message, error) {
-	totalPage := _self.CountPage(obj)
-	if page > totalPage {
-		page = totalPage
-	}
-	if page < 1 {
-		page = 1
-	}
+func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) {
 	objs := &[]entity.Message{}
 	var tx *gorm.DB
 	if obj.Time > 0 {
-		tx = _self.Data.Db.Where("type=?", "target_id=?", "user_id=?", "time < ?", obj).Order("time desc").Offset(int(uint64(page-1) * 15)).Limit(15).Find(objs)
+		tx = _self.Data.Db.Where("type=?", "target_id=?", "user_id=?", "time < ?", obj).Order("time desc").Limit(15).Find(objs)
 	} else {
-		tx = _self.Data.Db.Where(obj).Order("time desc").Offset(int(uint64(page-1) * 15)).Limit(15).Find(objs)
+		tx = _self.Data.Db.Where(obj).Order("time desc").Limit(15).Find(objs)
 	}
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return []entity.Message{}, nil
@@ -102,16 +94,4 @@ func (_self *MessageRepo) Count(obj *entity.Message) (int64, error) {
 		return 0, tx.Error
 	}
 	return tx.RowsAffected, nil
-}
-func (_self *MessageRepo) CountPage(obj *entity.Message) int {
-	//得到尾页
-	count, e := _self.Count(obj)
-	if e != nil {
-		log.Error(e)
-		return 0
-	}
-	if count%15 == 0 {
-		return int(count / 15)
-	}
-	return int(count/15) + 1
 }

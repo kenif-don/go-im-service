@@ -362,3 +362,13 @@ message ChatReq{
 ```
 
 ## 二十、 SelectFriendApplyNotOperated 查询未操作的好友请求
+## 二十一、 分页获取消息列表 GetMsgs
+### 参数
+```protobuf
+message MsgPageDTO{
+  string type = 1;//聊天类型 friend、group
+  uint64 target = 2;//聊天目标 用户ID或群ID
+  int32 page = 3;//分页页码
+  uint64 time = 4;//消息发送时间 查询此时间之前的消息
+}
+```

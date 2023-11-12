@@ -1,7 +1,6 @@
 package service
 
 import (
-	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
@@ -9,7 +8,6 @@ import (
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
 	"github.com/google/uuid"
-	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 	"im-sdk/handler"
 	"im-sdk/model"
@@ -26,11 +24,11 @@ var (
 
 type MessageListener interface {
 	//OnReceive 当前聊天接收到消息
-	OnReceive(data []byte)
+	OnReceive(data string)
 	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
 	OnSendReceive(data []byte)
-	//OnDoChats 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
-	OnDoChats(data []byte)
+	//OnDoChat 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
+	OnDoChat(data string)
 	//OnFriendApply 好友申请 仅代表有新的好友申请 但是无参
 	OnFriendApply()
 }
@@ -100,11 +98,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 			break
 		}
 	}
-	err := _self.coverMsgs(chat)
-	if err != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	err = _self.coverLastMsg(chat)
+	err := _self.coverLastMsg(chat)
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
@@ -158,26 +152,6 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 	}
 	return nil
 }
-func (_self *ChatService) coverMsgs(chat *entity.Chat) *utils.Error {
-	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
-		return log.WithError(utils.ERR_NOT_LOGIN)
-	}
-	//最新15条消息
-	messageService := NewMessageService()
-	pageReq := &entity.Message{
-		Type:     chat.Type,
-		TargetId: chat.TargetId,
-		UserId:   conf.GetLoginInfo().User.Id,
-	}
-	chat.Page = 1
-	chat.TotalPage = messageService.repo.CountPage(pageReq)
-	msgs, e := messageService.Paging(chat.Type, chat.TargetId, 0, chat.Page)
-	if e != nil {
-		return log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	chat.Msgs = msgs
-	return nil
-}
 
 // DelLocalChat 删除本地聊天记录
 func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
@@ -212,11 +186,6 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		//调用事件通知
-		err := NewChatService().ChatsNotify()
-		if err != nil {
-			return log.WithError(err)
-		}
 		return nil
 	}()
 	if err != nil {
@@ -247,23 +216,18 @@ func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
 	return nil
 }
 
-// ChatsNotify 通知客户端更新聊天列表
-func (_self *ChatService) ChatsNotify() *utils.Error {
-	chats, err := _self.GetChats()
+// ChatNotify 通知客户端更新聊天列表
+func (_self *ChatService) ChatNotify(chat *entity.Chat) *utils.Error {
+	err := _self.coverLastMsg(chat)
 	if err != nil {
 		return log.WithError(err)
 	}
 	if Listener != nil {
-		resp := &api.ChatData{}
-		e := util.Obj2Obj(chats, resp)
+		res, e := util.Obj2Str(chat)
 		if e != nil {
 			return log.WithError(e)
 		}
-		res, e := proto.Marshal(resp)
-		if e != nil {
-			return log.WithError(e)
-		}
-		Listener.OnDoChats(res)
+		Listener.OnDoChat(res)
 	}
 	return nil
 }

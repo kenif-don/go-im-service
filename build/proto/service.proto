@@ -15,41 +15,9 @@ enum ResultDTOCode {
 message MsgPageDTO{
   string type = 1;//聊天类型 friend、group
   uint64 target = 2;//聊天目标 用户ID或群ID
-  int32 page = 3;//分页页码
   uint64 time = 4;//消息发送时间 查询此时间之前的消息
 }
-/** 首页聊天列表回调 */
-message ChatData{
-  uint64 Id = 1;
-  string Type = 2;
-  uint64 TargetId = 3;
-  uint64 UserId = 4;
-  string Name = 5;
-  string HeadImg = 6;
-  uint32 UnReadNo = 7;
-  string LastMsg = 8;
-  uint64 LastTime = 9;
-  uint32 Page = 10;
-  uint32 TotalPage = 11;
-  repeated MessageData Msgs = 12;
-}
-/** 当前聊天收到消息回调 */
-message MessageData{
-  string No = 1;//消息唯一编号
-  string Type = 2;//聊天类型 friend、group
-  uint64 TargetId = 3; //聊天目标 用户ID或群ID
-  uint64 UserId = 4;//当前聊天所有者
-  string From = 5;//消息发送者
-  string Data = 6;//消息内容 MessageData的json字符串
-  uint64 Time = 7;//消息发送时间
-  int32 Read = 8;//是否已阅读 1-未读 2-已读
-  int32 Send = 9;//发送状态 1-发送中 2-发送成功 -1-发送失败
-  string Ext1 = 10;
-  string Ext2 = 11;
-  string Ext3 = 12;
-  string Ext4 = 13;//发送状态 1-发送中 2-发送成功 -1-发送失败
-  string Ext5 = 14;//是否已阅读 1-未读 2-已读
-}
+
 /** 客户端发送消息状态回调 */
 message SendResp{
   string no = 1;//消息ID

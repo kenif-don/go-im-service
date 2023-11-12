@@ -9,11 +9,11 @@ import (
 
 type MessageListener interface {
 	//OnReceive 当前聊天接收到消息
-	OnReceive(data []byte)
+	OnReceive(data string)
 	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
 	OnSendReceive(data []byte)
-	//OnDoChats 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
-	OnDoChats(data []byte)
+	//OnDoChat 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
+	OnDoChat(data string)
 	//OnFriendApply 好友申请
 	OnFriendApply()
 }

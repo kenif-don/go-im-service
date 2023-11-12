@@ -27,7 +27,7 @@ func NewMessageService() *MessageService {
 }
 
 // Paging 消息分页
-func (_self *MessageService) Paging(tp string, target, time uint64, page int) ([]entity.Message, *utils.Error) {
+func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Message, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return []entity.Message{}, log.WithError(utils.ERR_NOT_LOGIN)
 	}
@@ -37,7 +37,7 @@ func (_self *MessageService) Paging(tp string, target, time uint64, page int) ([
 		UserId:   conf.GetLoginInfo().User.Id,
 		Time:     time,
 	}
-	msgs, e := _self.repo.Paging(pageReq, page)
+	msgs, e := _self.repo.Paging(pageReq)
 	if e != nil {
 		return []entity.Message{}, log.WithError(utils.ERR_QUERY_FAIL)
 	}
@@ -165,8 +165,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
-				//修改为已读状态
-				message.Read = 2
 				//解密
 				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data)
 				if err != nil {
@@ -174,12 +172,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				}
 				message.Data = data
 				if Listener != nil {
-					resp := &api.MessageData{}
-					e = util.Obj2Obj(message, resp)
-					if e != nil {
-						return log.WithError(e)
-					}
-					res, e := proto.Marshal(resp)
+					res, e := util.Obj2Str(message)
 					if e != nil {
 						return log.WithError(e)
 					}
@@ -208,7 +201,8 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 					return log.WithError(e)
 				}
 			}
-			err := NewChatService().ChatsNotify()
+			//组装最后一条消息
+			err := NewChatService().ChatNotify(chat)
 			if err != nil {
 				return log.WithError(err)
 			}
