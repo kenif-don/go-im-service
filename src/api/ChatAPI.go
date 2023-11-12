@@ -138,7 +138,7 @@ func GetMsgs(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	messageService := service.NewMessageService()
-	msgs, err := messageService.Paging(req.Type, req.Target, req.Time, int(req.Page))
+	msgs, err := messageService.Paging(req.Type, req.Target, req.Time)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
