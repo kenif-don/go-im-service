@@ -53,8 +53,8 @@ func (_self *LogicProcess) Connected() {
 func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 	messageService := service.NewMessageService()
 	messageService.UpdateReaded(protocol, 2)
-	if service.Listener != nil {
-		service.Listener.OnSendReceive([]byte("123"))
+	if service.Listener != nil && (protocol.Type == 1 || protocol.Type == 8) {
+		service.Listener.OnSendReceive(protocol.Data.(string))
 	}
 }
 
