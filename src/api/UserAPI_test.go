@@ -59,16 +59,7 @@ func TestInfo(t *testing.T) {
 	proto.Unmarshal(resp, result)
 	log.Debug(result)
 }
-func TestUpload(t *testing.T) {
-	uploadReq := &api.UploadReq{
-		Path: "C:\\Users\\Administrator\\Desktop\\result.png",
-	}
-	req, _ := proto.Marshal(uploadReq)
-	resp := Upload(req)
-	result := &api.ResultDTOResp{}
-	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
-}
+
 func TestUpdateNickname(t *testing.T) {
 	updateReq := &api.UpdateUserReq{
 		Id:   conf.GetLoginInfo().User.Id,

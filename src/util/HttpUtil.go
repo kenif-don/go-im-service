@@ -105,7 +105,7 @@ func UploadData(data []byte, filename string) (string, *utils.Error) {
 		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
 		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
 		Region:           aws.String(conf.Conf.Aws.Region),
-		S3ForcePathStyle: aws.Bool(false),
+		S3ForcePathStyle: aws.Bool(true),
 	})
 	if err != nil {
 		log.Debug(err)
@@ -127,16 +127,7 @@ func UploadData(data []byte, filename string) (string, *utils.Error) {
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
 	// 获取预览URL
-	req, _ := uploader.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(conf.Conf.Aws.Bucket),
-		Key:    aws.String(filename),
-	})
-	url, err := req.Presign(99 * 12 * 30 * 24 * time.Hour) // 设置URL的有效期限 1年
-	if err != nil {
-		log.Error(err)
-		return "", log.WithError(utils.ERR_UPLOAD_FILE)
-	}
-	return url, nil
+	return "https://" + conf.Conf.Aws.Endpoint + "/" + conf.Conf.Aws.Bucket + "/" + filename, nil
 }
 func Upload(filename string) (string, *utils.Error) {
 	data, err := os.ReadFile(filename)

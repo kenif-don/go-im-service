@@ -58,18 +58,18 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 //		return _self.Update(user)
 //	}
 func (_self *UserService) UpdateUser(id uint64) *utils.Error {
-	user, err := QueryUser(id, _self.repo)
-	if err != nil || user == nil {
-		return log.WithError(utils.ERR_HEADIMG_UPDATE_FAIL)
+	resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
+	if err != nil {
+		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
-	resultDTO, e2 := Post("/api/user/selectOne", map[string]interface{}{"id": id})
-	if e2 != nil {
-		return log.WithError(utils.ERR_SEND_FAIL)
-	}
-	user.PublicKey = resultDTO.Data.(string)
-	e := _self.repo.Save(user)
+	var user = &entity.User{}
+	e := util.Obj2Obj(resultDTO.Data, user)
 	if e != nil {
-		return log.WithError(utils.ERR_SEND_FAIL)
+		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+	}
+	e = _self.repo.Save(user)
+	if e != nil {
+		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
 	return nil
 }

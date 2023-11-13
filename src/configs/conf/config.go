@@ -57,7 +57,7 @@ func InitConfig(baseConfig *BaseConfig) {
 			Aws: &Aws{
 				Id:       "WHZGIHUSERKPOCCITVOPDJPM",
 				Secret:   "haYlDZAdsSN4zckmX64W0zKSDg7IWxdH1lOkxm9N",
-				Endpoint: "https://world.sgs3.layerstackobjects.com",
+				Endpoint: "sgs3.layerstackobjects.com",
 				Region:   "Singapore",
 				Bucket:   "world",
 			},
