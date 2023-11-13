@@ -14,6 +14,30 @@ import (
 	"strconv"
 )
 
+func SelectOneUser(data []byte) []byte {
+	req := &api.UserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	user, err := service.QueryUser(req.Id, repository.NewUserRepo())
+	if err != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	result, err := util.Obj2Str(user)
+	if err != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = result
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+
+}
 func Logout() []byte {
 	resp := &api.ResultDTOResp{}
 	err := service.NewUserService().Logout()
