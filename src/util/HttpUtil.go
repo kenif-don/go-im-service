@@ -120,6 +120,7 @@ func UploadData(data []byte, filename string) (string, *utils.Error) {
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
 		Key:    aws.String(filename),
 		Body:   bytes.NewReader(data),
+		ACL:    aws.String("public-read"),
 	})
 	if err != nil {
 		log.Error(err)

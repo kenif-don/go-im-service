@@ -87,7 +87,7 @@ func (_self *FriendApplyService) SelectAll() ([]entity.FriendApply, *utils.Error
 		for i, v := range sysFriendApplys {
 			//先查询 是否存在 存在就不添加了
 			userService := NewUserService()
-			user, e := QueryUser(v.To, userService.repo)
+			user, e := QueryUser(v.From, userService.repo)
 			if e != nil || user == nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
