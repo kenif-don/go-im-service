@@ -100,19 +100,13 @@ func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))
 	return nil
 }
-
-func Upload(filename string) (string, *utils.Error) {
+func UploadData(data []byte, filename string) (string, *utils.Error) {
 	sess, err := session.NewSession(&aws.Config{
 		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
 		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
 		Region:           aws.String(conf.Conf.Aws.Region),
 		S3ForcePathStyle: aws.Bool(true),
 	})
-	if err != nil {
-		log.Debug(err)
-		return "", log.WithError(utils.ERR_UPLOAD_FILE)
-	}
-	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
@@ -142,4 +136,12 @@ func Upload(filename string) (string, *utils.Error) {
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
 	return url, nil
+}
+func Upload(filename string) (string, *utils.Error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		log.Debug(err)
+		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+	}
+	return UploadData(data, filename)
 }

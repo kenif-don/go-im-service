@@ -29,7 +29,7 @@ func TestSendMsg(t *testing.T) {
 	TestOpenChat(t)
 	contentObj := &entity.MessageData{
 		Type:    1,
-		Content: "hello",
+		Content: "123444",
 	}
 	content, _ := util.Obj2Str(contentObj)
 	oldReq := &api.ChatReq{
