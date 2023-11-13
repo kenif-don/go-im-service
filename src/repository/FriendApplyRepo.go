@@ -26,7 +26,7 @@ func (_self *FriendApplyRepo) Query(obj *entity.FriendApply) (*entity.FriendAppl
 }
 func (_self *FriendApplyRepo) QueryCount(obj *entity.FriendApply) (int, error) {
 	var count int64
-	tx := _self.Data.Db.Where(obj).Count(&count)
+	tx := _self.Data.Db.Model(&obj).Where(obj).Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
