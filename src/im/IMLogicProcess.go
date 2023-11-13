@@ -3,6 +3,8 @@ package im
 import (
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
+	"IM-Service/src/entity"
+	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"im-sdk/client"
@@ -60,7 +62,33 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 			log.Error(e)
 			return
 		}
+		//消息状态通知
 		service.Listener.OnSendReceive(res)
+		var message = &entity.Message{}
+		e = util.Str2Obj(protocol.Data.(string), message)
+		if e != nil {
+			log.Error(e)
+			return
+		}
+		//判断是否存在聊天--这里是自己发的 所以聊天的目标是消息的目标
+		chat, e := service.QueryChat(message.Type, message.TargetId, repository.NewChatRepo())
+		if e != nil {
+			log.Error(e)
+			return
+		}
+		if chat == nil {
+			chat, e = service.NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
+			if e != nil {
+				log.Error(e)
+				return
+			}
+		}
+		// 通知聊天列表更新
+		err := service.NewChatService().ChatNotify(chat)
+		if err != nil {
+			log.Error(err)
+			return
+		}
 	}
 }
 
