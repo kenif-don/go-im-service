@@ -59,6 +59,7 @@ func (_self *FriendApplyService) updateOne(from, to uint64) *utils.Error {
 	var req = make(map[string]uint64)
 	req["from"] = from
 	req["to"] = to
+	//拉取请求
 	resultDTO, err := Post("/api/friend-apply/selectOne", req)
 	if err != nil {
 		return log.WithError(err)

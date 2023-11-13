@@ -149,9 +149,13 @@ func (_self *LogicProcess) Exception(msg string) {
 		conf.Conf.Connected = false
 		log.Debug("服务器断开连接,进行重连")
 		go func() {
-			err := conf.Conf.Client.Reconnect()
-			if err != nil {
+			for {
+				err := conf.Conf.Client.Reconnect()
+				if err == nil {
+					return
+				}
 				log.Error(err)
+				time.Sleep(5 * time.Second)
 			}
 		}()
 	}

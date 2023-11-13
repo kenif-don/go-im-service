@@ -23,5 +23,8 @@ func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 		}
 		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
 	}
+	if resultDTO.Code == 500 {
+		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
+	}
 	return resultDTO, nil
 }
