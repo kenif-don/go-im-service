@@ -70,7 +70,7 @@ func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) 
 	} else {
 		tx = _self.Data.Db.
 			Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId).
-			Where("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.TargetId).
+			Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.TargetId).
 			Order("time desc").Limit(15).Find(objs)
 	}
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
