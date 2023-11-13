@@ -63,7 +63,7 @@ func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
 		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
 	var user = &entity.User{}
-	e := util.Obj2Obj(resultDTO.Data, user)
+	e := util.Str2Obj(resultDTO.Data.(string), user)
 	if e != nil {
 		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}

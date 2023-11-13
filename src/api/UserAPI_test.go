@@ -19,7 +19,11 @@ func init() {
 	req, _ := proto.Marshal(config)
 	resp := InitConfig(req, nil)
 	result := &api.ResultDTOResp{}
-	proto.Unmarshal(resp, result)
+	e := proto.Unmarshal(resp, result)
+	if e != nil {
+		log.Error(e)
+		return
+	}
 	log.Debugf("配置初始化成功！ %+v", result)
 }
 func TestRegister(t *testing.T) {
