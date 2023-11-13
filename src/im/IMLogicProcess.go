@@ -4,6 +4,7 @@ import (
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/service"
+	"IM-Service/src/util"
 	"im-sdk/client"
 	"im-sdk/handler"
 	"im-sdk/model"
@@ -54,7 +55,12 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 	messageService := service.NewMessageService()
 	messageService.UpdateReaded(protocol, 2)
 	if service.Listener != nil && (protocol.Type == 1 || protocol.Type == 8) {
-		service.Listener.OnSendReceive(protocol.Data.(string))
+		res, e := util.Obj2Str(map[string]interface{}{"no": protocol.No, "send": 2})
+		if e != nil {
+			log.Error(e)
+			return
+		}
+		service.Listener.OnSendReceive(res)
 	}
 }
 
