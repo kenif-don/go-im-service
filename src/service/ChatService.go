@@ -112,6 +112,7 @@ func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *ut
 	}
 	e := _self.repo.Save(chat)
 	if e != nil {
+		log.Error("Save fail ,targetId = " + strconv.FormatUint(target, 10))
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	return chat, nil

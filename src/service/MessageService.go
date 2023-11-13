@@ -176,6 +176,8 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			}
 			if chat == nil {
 				chat, e = NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
+				log.Debug("封装Chat", chat)
+				log.Debug("封装Chat", e)
 				if e != nil {
 					return log.WithError(e)
 				}
