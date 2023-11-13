@@ -16,7 +16,7 @@ import (
 
 func Logout() []byte {
 	resp := &api.ResultDTOResp{}
-	err := logout()
+	err := service.NewUserService().Logout()
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -289,14 +289,5 @@ func loginIM() *utils.Error {
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogin(loginInfo)
-	return nil
-}
-func logout() *utils.Error {
-	conf.ClearLoginInfo()
-	mgr := handler.GetClientHandler().GetMessageManager()
-	if mgr == nil {
-		return log.WithError(utils.ERR_NET_FAIL)
-	}
-	mgr.SendLogout()
 	return nil
 }

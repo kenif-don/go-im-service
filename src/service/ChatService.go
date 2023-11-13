@@ -93,6 +93,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
 	friend, err := NewFriendService().QueryFriend2(target)
 	if err != nil || friend == nil {
+		log.Error("QueryFriend2 fail ,targetId = " + strconv.FormatUint(target, 10))
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	var name string

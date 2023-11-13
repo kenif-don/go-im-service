@@ -8,6 +8,7 @@ import (
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
 	"gorm.io/gorm"
+	"im-sdk/handler"
 )
 
 type IUserRepo interface {
@@ -237,6 +238,15 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 	conf.UpdateInputPwd2(1)
 	//获取用户信息
 	return _self.LoginInfo()
+}
+func (_self *UserService) Logout() *utils.Error {
+	conf.ClearLoginInfo()
+	mgr := handler.GetClientHandler().GetMessageManager()
+	if mgr == nil {
+		return log.WithError(utils.ERR_NET_FAIL)
+	}
+	mgr.SendLogout()
+	return nil
 }
 
 // LoginInfo 获取用户信息

@@ -14,6 +14,11 @@ func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 	}
 	if resultDTO.Code == 401 {
 		if Listener != nil {
+			//退出登录
+			err := NewUserService().Logout()
+			if err != nil {
+				return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
+			}
 			Listener.OnLogin()
 		}
 		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
