@@ -51,6 +51,7 @@ message UpdateUserReq{
 }
 message UploadReq{
   string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png
+  bytes data = 2; // 文件二进制数据
 }
 /** 注册 */
 message UserReq{

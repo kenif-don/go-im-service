@@ -23,3 +23,19 @@ func Upload(data []byte) []byte {
 	res, _ := proto.Marshal(resp)
 	return res
 }
+func UploadData(data []byte) []byte {
+	req := &api.UploadReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	url, err := util.UploadData(req.Data, req.Path)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = url
+	res, _ := proto.Marshal(resp)
+	return res
+}
