@@ -130,7 +130,7 @@ func UploadData(data []byte, filename string) (string, *utils.Error) {
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
 		Key:    aws.String(filename),
 	})
-	url, err := req.Presign(99 * 12 * 30 * 24 * time.Hour) // 设置URL的有效期限，这里设置为24小时
+	url, err := req.Presign(99 * 12 * 30 * 24 * time.Hour) // 设置URL的有效期限 1年
 	if err != nil {
 		log.Error(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
