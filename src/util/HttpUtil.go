@@ -105,7 +105,7 @@ func UploadData(data []byte, filename string) (string, *utils.Error) {
 		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
 		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
 		Region:           aws.String(conf.Conf.Aws.Region),
-		S3ForcePathStyle: aws.Bool(true),
+		S3ForcePathStyle: aws.Bool(false),
 	})
 	if err != nil {
 		log.Debug(err)

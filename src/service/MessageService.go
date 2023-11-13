@@ -245,7 +245,7 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	message.UserId = conf.GetLoginInfo().User.Id
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
 	//更新一次秘钥
-	err := NewUserService().UpdateTargetPublicKey(target)
+	err := NewUserService().UpdateUser(target)
 	if err != nil {
 		return nil, log.WithError(err)
 	}

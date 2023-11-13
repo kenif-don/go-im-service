@@ -485,7 +485,7 @@ type FriendApplyReq struct {
 
 	Id     uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`        //添加好友时是用户ID 同意或拒绝好友时是新朋友记录ID
 	Remark string `protobuf:"bytes,2,opt,name=remark,proto3" json:"remark,omitempty"` //备注 同意或拒绝时留空
-	State  int32  `protobuf:"varint,3,opt,name=state,proto3" json:"state,omitempty"`  //-1拒绝 2同意 操作时传，添加时留空
+	State  int32  `protobuf:"varint,3,opt,name=state,proto3" json:"state,omitempty"`  //1-申请中 -1拒绝 2同意 操作时传，添加时留空
 }
 
 func (x *FriendApplyReq) Reset() {

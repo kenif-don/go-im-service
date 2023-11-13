@@ -57,12 +57,12 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 //		user.Password = password
 //		return _self.Update(user)
 //	}
-func (_self *UserService) UpdateTargetPublicKey(id uint64) *utils.Error {
+func (_self *UserService) UpdateUser(id uint64) *utils.Error {
 	user, err := QueryUser(id, _self.repo)
 	if err != nil || user == nil {
 		return log.WithError(utils.ERR_HEADIMG_UPDATE_FAIL)
 	}
-	resultDTO, e2 := Post("/api/user/GetTargetPublicKey", map[string]interface{}{"id": id})
+	resultDTO, e2 := Post("/api/user/selectOne", map[string]interface{}{"id": id})
 	if e2 != nil {
 		return log.WithError(utils.ERR_SEND_FAIL)
 	}

@@ -72,6 +72,11 @@ func (_self *FriendApplyService) updateOne(from, to uint64) *utils.Error {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}
 	}
+	//再去更新用户信息
+	err = NewUserService().UpdateUser(from)
+	if err != nil {
+		return log.WithError(utils.ERR_OPERATION_FAIL)
+	}
 	return nil
 }
 
@@ -124,7 +129,7 @@ func (_self *FriendApplyService) SelectAll() ([]entity.FriendApply, *utils.Error
 			//先查询 是否存在 存在就不添加了
 			//保存对应的用户信息
 			userService := NewUserService()
-			sysUser, e := QueryUser(v.To, userService.repo)
+			sysUser, e := QueryUser(v.From, userService.repo)
 			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
