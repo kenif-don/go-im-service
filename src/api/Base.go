@@ -16,6 +16,8 @@ type MessageListener interface {
 	OnDoChat(data string)
 	//OnFriendApply 好友申请
 	OnFriendApply()
+	//OnLogin 登录失效通知
+	OnLogin()
 }
 
 // SyncPutErr 同步导出

@@ -40,7 +40,7 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 	var req = make(map[string]uint64)
 	req["he"] = he
 	req["me"] = me
-	resultDTO, err := util.Post("/api/friend/selectOne", req)
+	resultDTO, err := Post("/api/friend/selectOne", req)
 	if err != nil {
 		return nil, log.WithError(err)
 	}
@@ -68,7 +68,7 @@ func (_self *FriendService) Del(id uint64) *utils.Error {
 	//先通过服务器删除
 	req := make(map[string]uint64)
 	req["id"] = id
-	_, err := util.Post("/api/friend/selectOne", req)
+	_, err := Post("/api/friend/selectOne", req)
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -183,7 +183,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 		}
 	}
 	//没用查到 就从后台查一次
-	resultDTO, err := util.Post("/api/friend/selectAll", nil)
+	resultDTO, err := Post("/api/friend/selectAll", nil)
 	if err != nil {
 		return nil, log.WithError(err)
 	}
@@ -241,7 +241,7 @@ func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
 	}
 	friend.Name = name
 	//服务器修改
-	_, err := util.Post("/api/friend/edit", friend)
+	_, err := Post("/api/friend/edit", friend)
 	if err != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}

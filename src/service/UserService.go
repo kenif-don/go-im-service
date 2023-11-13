@@ -41,7 +41,7 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 	}
 	var data = make(map[string]string)
 	data["keyword"] = keyword
-	resultDTO, err := util.Post("/api/user/search", data)
+	resultDTO, err := Post("/api/user/search", data)
 	if err != nil {
 		return "", err
 	}
@@ -61,7 +61,7 @@ func (_self *UserService) UpdateTargetPublicKey(id uint64) *utils.Error {
 	if err != nil || user == nil {
 		return log.WithError(utils.ERR_HEADIMG_UPDATE_FAIL)
 	}
-	resultDTO, e2 := util.Post("/api/user/GetTargetPublicKey", map[string]interface{}{"id": id})
+	resultDTO, e2 := Post("/api/user/GetTargetPublicKey", map[string]interface{}{"id": id})
 	if e2 != nil {
 		return log.WithError(utils.ERR_SEND_FAIL)
 	}
@@ -116,7 +116,7 @@ func (_self *UserService) Update(obj *entity.User) *utils.Error {
 	}()
 	err := func() *utils.Error {
 		//发起请求修改后台用户信息
-		_, err := util.Post("/api/user/edit", obj)
+		_, err := Post("/api/user/edit", obj)
 		if err != nil {
 			return log.WithError(err)
 		}
@@ -161,7 +161,7 @@ func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Erro
 	}()
 	err := func() *utils.Error {
 		//发起请求修改后台用户信息
-		_, err := util.Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
+		_, err := Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
 		if err != nil {
 			return log.WithError(err)
 		}
@@ -202,7 +202,7 @@ func (_self *UserService) Register(username, password string) *utils.Error {
 		Username: username,
 		Password: password,
 	}
-	_, err := util.Post("/api/user/register", params)
+	_, err := Post("/api/user/register", params)
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -227,7 +227,7 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 		Username: username,
 		Password: password,
 	}
-	resultDTO, err := util.Post("/api/user/login", params)
+	resultDTO, err := Post("/api/user/login", params)
 	if err != nil || resultDTO == nil || resultDTO.Data == nil {
 		return log.WithError(err)
 	}
@@ -241,7 +241,7 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 
 // LoginInfo 获取用户信息
 func (_self *UserService) LoginInfo() *utils.Error {
-	resultDTO, err := util.Post("/api/user/info", nil)
+	resultDTO, err := Post("/api/user/info", nil)
 	if err != nil || resultDTO == nil || resultDTO.Data == nil {
 		return log.WithError(err)
 	}

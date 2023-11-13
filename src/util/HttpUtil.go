@@ -50,7 +50,7 @@ func Post(url string, body interface{}) (*dto.ResultDTO, *utils.Error) {
 		return nil, log.WithError(err)
 	}
 	if resultDTO.Code != 200 {
-		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
+		return &resultDTO, nil
 	}
 	d, e := handlerResult(req, &resultDTO)
 	if e != nil {

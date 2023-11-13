@@ -84,7 +84,7 @@ func (_self *MessageService) UpdateReaded(protocol *model.Protocol, send int) {
 
 // GetOfflineMessage 获取离线消息
 func (_self *MessageService) GetOfflineMessage() *utils.Error {
-	resultDTO, err := util.Post("/api/offline-bill/selectAll", nil)
+	resultDTO, err := Post("/api/offline-bill/selectAll", nil)
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -121,7 +121,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		}
 		var req = make(map[string]interface{})
 		req["ids"] = ids
-		_, err = util.Post("/api/offline-bill/dels", req)
+		_, err = Post("/api/offline-bill/dels", req)
 		if err != nil {
 			return log.WithError(err)
 		}

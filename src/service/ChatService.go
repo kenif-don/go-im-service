@@ -31,6 +31,8 @@ type MessageListener interface {
 	OnDoChat(data string)
 	//OnFriendApply 好友申请 仅代表有新的好友申请 但是无参
 	OnFriendApply()
+	//OnLogin 登录失效通知
+	OnLogin()
 }
 
 func SetListener(listener MessageListener) {
