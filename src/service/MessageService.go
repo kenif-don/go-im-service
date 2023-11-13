@@ -150,6 +150,10 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			if e != nil {
 				return log.WithError(e)
 			}
+			e = messageService.repo.Save(message)
+			if e != nil {
+				return log.WithError(e)
+			}
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
 				//解密
 				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data)
@@ -165,11 +169,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 					Listener.OnReceive(res)
 				}
 			}
-			e = messageService.repo.Save(message)
-			if e != nil {
-				return log.WithError(e)
-			}
-
 			//判断是否存在聊天
 			chat, e := QueryChat(message.Type, message.UserId, repository.NewChatRepo())
 			if e != nil {
