@@ -57,21 +57,21 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 //		user.Password = password
 //		return _self.Update(user)
 //	}
-func (_self *UserService) UpdateUser(id uint64) *utils.Error {
+func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
 	resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
 	if err != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
 	var user = &entity.User{}
 	e := util.Obj2Obj(resultDTO.Data, user)
 	if e != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
 	e = _self.repo.Save(user)
 	if e != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
-	return nil
+	return user, nil
 }
 func (_self *UserService) UpdateHeadImg(id uint64, headImg string) *utils.Error {
 	user, err := QueryUser(id, _self.repo)

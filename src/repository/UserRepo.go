@@ -15,7 +15,7 @@ func NewUserRepo() *UserRepo {
 	return &UserRepo{Transaction: db.NewTransaction()}
 }
 func (_self *UserRepo) Query(obj *entity.User) (*entity.User, error) {
-	tx := _self.Data.Db.Where(obj).First(obj)
+	tx := _self.Data.Db.Model(&obj).Where(obj).First(obj)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
