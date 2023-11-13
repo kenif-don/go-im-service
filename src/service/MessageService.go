@@ -1,7 +1,6 @@
 package service
 
 import (
-	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/db"
 	utils "IM-Service/src/configs/err"
@@ -9,7 +8,6 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
-	"google.golang.org/protobuf/proto"
 	"im-sdk/handler"
 	"im-sdk/model"
 	"strconv"
@@ -67,18 +65,6 @@ func (_self *MessageService) UpdateReaded(protocol *model.Protocol, send int) {
 	e = _self.repo.Save(message)
 	if e != nil {
 		log.Error(e)
-	}
-	//回调
-	if Listener != nil {
-		resp := &api.SendResp{
-			No:   message.No,
-			Send: int32(send),
-		}
-		res, e := proto.Marshal(resp)
-		if e != nil {
-			log.Error(e)
-		}
-		Listener.OnSendReceive(res)
 	}
 }
 
