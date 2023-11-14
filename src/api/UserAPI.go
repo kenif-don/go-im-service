@@ -274,12 +274,10 @@ func Login(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	log.Debugf("登录请求参数:%+v", req)
-	log.Debugf("缓存中的用户:%+v", conf.GetLoginInfo())
 	//用户没有传账号密码 直接通过缓存登录
 	if req.Username == "" && conf.GetLoginInfo().Token != "" {
 		//判断是否需要输入二级密码
-		if conf.GetLoginInfo().InputPwd2 == 2 {
+		if conf.GetLoginInfo().InputPwd2 == 1 {
 			//需要输入二级密码
 			resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
 		} else {
@@ -330,7 +328,7 @@ func Login(data []byte) []byte {
 		//存在2级密码 跳转到输入二级密码页面
 		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
 		//需要输入二级密码
-		conf.UpdateInputPwd2(2)
+		conf.UpdateInputPwd2(1)
 	} else {
 		//不需要输入二级密码
 		conf.UpdateInputPwd2(-1)
@@ -341,6 +339,24 @@ func Login(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+	}
+	return res
+}
+func LoginPwd(data []byte) []byte {
+	req := &api.UserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewUserService().LoginPwd2(req.Password)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
 	if e != nil {

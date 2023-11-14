@@ -180,7 +180,7 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		return log.WithError(utils.ERR_NOT_LOGIN)
 	}
 	tx := _self.repo.BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_DEL_FAIL)
 	}
 	defer func() {
@@ -207,12 +207,21 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		// 删除聊天
+		e = _self.repo.Delete(&chat)
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		e = tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
 		return nil
 	}()
 	if err != nil {
 		tx.Rollback()
 	}
-	return nil
+	return err
 }
 
 // DelChat 删除双方聊天记录
@@ -236,6 +245,18 @@ func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
 	err = _self.DelLocalChat(tp, target)
 	if err != nil {
 		return log.WithError(err)
+	}
+	return nil
+}
+
+// DelAllChat 删除制定用户所有聊天
+func (_self *ChatService) DelAllChat(userId uint64) *utils.Error {
+	chat := &entity.Chat{
+		UserId: userId,
+	}
+	e := _self.repo.Delete(chat)
+	if e != nil {
+		return log.WithError(utils.ERR_DEL_FAIL)
 	}
 	return nil
 }

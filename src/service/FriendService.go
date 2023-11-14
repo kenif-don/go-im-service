@@ -77,7 +77,7 @@ func (_self *FriendService) Del(id uint64) *utils.Error {
 }
 func (_self *FriendService) DelLocal(friend *entity.Friend) *utils.Error {
 	tx := _self.repo.BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
 	defer func() {
@@ -194,7 +194,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 		return []entity.Friend{}, nil
 	}
 	tx := _self.repo.BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	defer func() {

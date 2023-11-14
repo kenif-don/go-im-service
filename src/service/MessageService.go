@@ -22,6 +22,16 @@ func NewMessageService() *MessageService {
 		repo: repository.NewMessageRepo(),
 	}
 }
+func (_self *MessageService) DelAllMessage(userId uint64) *utils.Error {
+	message := &entity.Message{
+		UserId: userId,
+	}
+	e := _self.repo.Delete(message)
+	if e != nil {
+		return log.WithError(utils.ERR_DEL_FAIL)
+	}
+	return nil
+}
 
 // Paging 消息分页
 func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Message, *utils.Error) {
@@ -79,7 +89,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	tx := db.NewTransaction().BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	defer func() {
@@ -110,8 +120,15 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		if err != nil {
 			return log.WithError(err)
 		}
+		e = tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
 		return nil
 	}()
+	if err != nil {
+		tx.Rollback()
+	}
 	return err
 }
 func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {

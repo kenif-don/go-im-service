@@ -28,10 +28,8 @@ var (
 type LoginInfoMode struct {
 	Token string
 	User  *entity.User
-	// 1- 不知道是否需要输入 2-需要输入 -1-不需要输入
+	// 1- 需要输入 2-已正确输入 -1-不需要输入
 	InputPwd2 int
-	// 1- 还未输入或者输错了 2-输入正确
-	EnteredPwd2 int
 }
 type BaseConfig struct {
 	BaseDir    string

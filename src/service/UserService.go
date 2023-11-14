@@ -2,6 +2,7 @@ package service
 
 import (
 	"IM-Service/src/configs/conf"
+	"IM-Service/src/configs/db"
 	"IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
@@ -135,7 +136,7 @@ func (_self *UserService) UpdateNickname(id uint64, nickname string) *utils.Erro
 }
 func (_self *UserService) Update(obj *entity.User) *utils.Error {
 	tx := _self.repo.BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
 	defer func() {
@@ -254,6 +255,46 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 	conf.UpdateInputPwd2(1)
 	//获取用户信息
 	return _self.LoginInfo()
+}
+func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
+	if len(pwd2) < 6 || len(pwd2) > 20 {
+		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
+	}
+	//远程服务器确认密码是否正确
+	resultDTO, err := Post("/api/user/loginPwd2", map[string]string{"password2": pwd2})
+	if err != nil {
+		return log.WithError(err)
+	}
+	//如果自毁 删聊天记录、删聊天
+	if resultDTO.Data.(string) == "burst" {
+		tx := db.NewTransaction().BeginTx()
+		if e := tx.Error; e != nil {
+			return log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		defer func() {
+			if r := recover(); r != nil {
+				tx.Rollback()
+			}
+		}()
+		err = func() *utils.Error {
+			err = NewChatService().DelAllChat(conf.GetLoginInfo().User.Id)
+			if err != nil {
+				return log.WithError(err)
+			}
+			err = NewMessageService().DelAllMessage(conf.GetLoginInfo().User.Id)
+			if err != nil {
+				return log.WithError(err)
+			}
+			return nil
+		}()
+		if err != nil {
+			tx.Rollback()
+		}
+		return log.WithError(err)
+	}
+	//没有错误 标记已经输入2级密码
+	conf.UpdateInputPwd2(2)
+	return nil
 }
 func (_self *UserService) Logout() *utils.Error {
 	conf.ClearLoginInfo()

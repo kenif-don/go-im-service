@@ -118,7 +118,7 @@ func (_self *FriendApplyService) SelectAll() ([]entity.FriendApply, *utils.Error
 		return []entity.FriendApply{}, nil
 	}
 	tx := _self.repo.BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	defer func() {
@@ -166,7 +166,7 @@ func (_self *FriendApplyService) Update(id uint64, state int) *utils.Error {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
 	tx := _self.repo.BeginTx()
-	if err := tx.Error; err != nil {
+	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
 	defer func() {

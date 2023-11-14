@@ -1,6 +1,7 @@
 package service
 
 import (
+	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/dto"
@@ -10,6 +11,10 @@ import (
 )
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
+	if conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Id > 0 &&
+		conf.GetLoginInfo().InputPwd2 == 1 {
+		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
+	}
 	resultDTO, e := util.Post(url, req)
 	if e != nil {
 		return nil, log.WithError(e)

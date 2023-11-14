@@ -34,6 +34,7 @@ var (
 	ERR_NET_FAIL                = NewError(1026, "net fail", "网络异常")
 	ERR_NICKNAME_VALIDATE_FAIL  = NewError(1027, "nickname length is error", "昵称为1-10位")
 	ERR_INTRO_VALIDATE_FAIL     = NewError(1028, "intro length is error", "简介为1-30位")
+	ERR_NOT_PWD2_FAIL           = NewError(1029, "please input security password", "请输入二级密码")
 )
 
 type Error struct {
