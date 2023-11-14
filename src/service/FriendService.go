@@ -26,8 +26,8 @@ func NewFriendService() *FriendService {
 		repo: repository.NewFriendRepo(),
 	}
 }
-func QueryFriend(id uint64, repo IFriendRepo) (*entity.Friend, error) {
-	return repo.Query(&entity.Friend{Id: id})
+func QueryFriend(obj *entity.Friend, repo IFriendRepo) (*entity.Friend, error) {
+	return repo.Query(obj)
 }
 func QueryFriendAll(repo IFriendRepo) ([]entity.Friend, error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
@@ -134,8 +134,8 @@ func (_self *FriendService) QueryFriend2(he uint64) (*entity.Friend, *utils.Erro
 	}
 	return friend, nil
 }
-func (_self *FriendService) SelectOne(id uint64) (*entity.Friend, *utils.Error) {
-	friend, e := QueryFriend(id, _self.repo)
+func (_self *FriendService) SelectOne(he uint64) (*entity.Friend, *utils.Error) {
+	friend, e := QueryFriend(&entity.Friend{He: he, Me: conf.GetLoginInfo().User.Id}, _self.repo)
 	if e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
@@ -236,7 +236,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 	return r, err
 }
 func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
-	friend, e := QueryFriend(id, _self.repo)
+	friend, e := QueryFriend(&entity.Friend{Id: id}, _self.repo)
 	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}

@@ -54,7 +54,7 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *utils.Error {
 	resultDTO, err := Post("/api/user/editPwd", map[string]interface{}{"type": tp, "pwd": pwd, "oldPwd": oldPwd, "newPwd": newPwd})
 	if err != nil {
-		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
+		return log.WithError(err)
 	}
 	user := &entity.User{}
 	e := util.Str2Obj(resultDTO.Data.(string), user)
