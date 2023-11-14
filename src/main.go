@@ -1,18 +1,11 @@
 package main
 
-import (
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/entity"
-	"fmt"
-)
+import "IM-Service/src/util"
 
 func main() {
-	var chat *entity.Chat
-	var e error
-	chat, e = test()
-	fmt.Println(e)
-	fmt.Println(chat)
-}
-func test() (*entity.Chat, *utils.Error) {
-	return &entity.Chat{}, nil
+	data, e := util.DecryptAes("PJY6TCp6H8ThtRN/vYtW4Er5AEibcqE/lYBIjP2DqhU=", "ccc1307504b8dd0c41a2cdf8743685c9")
+	if e != nil {
+		println(e)
+	}
+	println(data)
 }

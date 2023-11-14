@@ -247,7 +247,7 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	message.TargetId = target
 	message.UserId = conf.GetLoginInfo().User.Id
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
-	//更新一次秘钥
+	//更新一次好友信息 TODO 在APP环境中,这里同步操作属于多余,应该在打开聊天时对好友信息进行同步
 	_, err := NewUserService().UpdateUser(target)
 	if err != nil {
 		return nil, log.WithError(err)

@@ -87,6 +87,11 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	}
 	//记录当前聊天ID
 	conf.Conf.ChatId = chat.TargetId
+	//更新一次好友信息
+	_, err = NewUserService().UpdateUser(target)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
 	return chat, nil
 }
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
