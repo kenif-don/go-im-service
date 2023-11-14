@@ -50,11 +50,11 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 }
 
 // UpdatePassword 修改密码 修改后需要推送重新登录通知
-func (_self *UserService) UpdatePassword(tp int, oldPwd, newPwd string) *utils.Error {
+func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *utils.Error {
 	if len(oldPwd) < 6 || len(oldPwd) > 20 || len(newPwd) < 6 || len(newPwd) > 20 {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
-	resultDTO, err := Post("/api/user/editPwd", map[string]interface{}{"type": tp, "oldPwd": oldPwd, "newPwd": newPwd})
+	resultDTO, err := Post("/api/user/editPwd", map[string]interface{}{"type": tp, "pwd": pwd, "oldPwd": oldPwd, "newPwd": newPwd})
 	if err != nil {
 		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}

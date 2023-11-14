@@ -80,7 +80,7 @@ func UpdateBurstPwd(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdatePassword(3, req.OldPwd, req.NewPwd)
+	e := userService.UpdatePassword(3, req.Pwd, req.OldPwd, req.NewPwd)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}
@@ -104,7 +104,7 @@ func UpdatePwd2(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdatePassword(2, req.OldPwd, req.NewPwd)
+	e := userService.UpdatePassword(2, req.Pwd, req.OldPwd, req.NewPwd)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}
@@ -128,7 +128,7 @@ func UpdatePwd(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdatePassword(1, req.OldPwd, req.NewPwd)
+	e := userService.UpdatePassword(1, req.Pwd, req.OldPwd, req.NewPwd)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}

@@ -44,8 +44,9 @@ message UpdateUserReq{
   string data = 1;//可以是昵称、签名、邮箱、头像
 }
 message UpdatePwdReq{
-  string oldPwd = 1;//久密码
-  string newPwd = 2;//新密码
+  string pwd = 1;
+  string oldPwd = 2;//旧密码
+  string newPwd = 3;//新密码
 }
 message UploadReq{
   string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png
