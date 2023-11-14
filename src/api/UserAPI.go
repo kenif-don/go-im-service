@@ -346,7 +346,7 @@ func Login(data []byte) []byte {
 	}
 	return res
 }
-func LoginPwd(data []byte) []byte {
+func LoginPwd2(data []byte) []byte {
 	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
