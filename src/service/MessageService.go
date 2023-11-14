@@ -178,7 +178,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				log.Debug("封装Chat", chat)
 				log.Debug("封装Chat", e)
 				if e2 != nil {
-					return log.WithError(e)
+					return log.WithError(e2)
 				}
 			}
 			// 通知聊天列表更新

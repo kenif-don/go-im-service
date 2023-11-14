@@ -161,6 +161,7 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 		}
 		chat.LastTime = lastMsg.Time
 	}
+	log.Debugf("组装最后一条消息完成：%+v", chat)
 	return nil
 }
 
