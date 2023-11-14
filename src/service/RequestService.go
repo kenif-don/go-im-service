@@ -11,7 +11,8 @@ import (
 )
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
-	if conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Id > 0 &&
+	//排除输入2级密码的URL
+	if url != "/api/user/loginPwd2" && conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Id > 0 &&
 		conf.GetLoginInfo().InputPwd2 == 1 {
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
