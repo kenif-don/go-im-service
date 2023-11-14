@@ -49,14 +49,26 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 	return resultDTO.Data.(string), nil
 }
 
-//	func (_self *UserService) UpdatePassword(id uint64, password string) *utils.Error {
-//		user, err := QueryUser(id, _self.repo)
-//		if err != nil || user == nil {
-//			return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
-//		}
-//		user.Password = password
-//		return _self.Update(user)
-//	}
+// UpdatePassword 修改密码 修改后需要推送重新登录通知
+func (_self *UserService) UpdatePassword(tp int, oldPwd, newPwd string) *utils.Error {
+	if len(oldPwd) < 6 || len(oldPwd) > 20 || len(newPwd) < 6 || len(newPwd) > 20 {
+		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
+	}
+	resultDTO, err := Post("/api/user/editPwd", map[string]interface{}{"type": tp, "oldPwd": oldPwd, "newPwd": newPwd})
+	if err != nil {
+		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+	}
+	user := &entity.User{}
+	e := util.Str2Obj(resultDTO.Data.(string), user)
+	if e != nil {
+		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+	}
+	e = _self.repo.Save(user)
+	if e != nil {
+		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
+	}
+	return nil
+}
 func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
 	resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
 	if err != nil {
@@ -90,6 +102,9 @@ func (_self *UserService) UpdateEmail(id uint64, email string) *utils.Error {
 	return _self.Update(user)
 }
 func (_self *UserService) UpdateIntro(id uint64, intro string) *utils.Error {
+	if len(intro) < 1 || len(intro) > 10 {
+		return log.WithError(utils.ERR_INTRO_VALIDATE_FAIL)
+	}
 	user, err := QueryUser(id, _self.repo)
 	if err != nil || user == nil {
 		return log.WithError(utils.ERR_INTRO_UPDATE_FAIL)
@@ -98,6 +113,9 @@ func (_self *UserService) UpdateIntro(id uint64, intro string) *utils.Error {
 	return _self.Update(user)
 }
 func (_self *UserService) UpdateNickname(id uint64, nickname string) *utils.Error {
+	if len(nickname) < 1 || len(nickname) > 10 {
+		return log.WithError(utils.ERR_NICKNAME_VALIDATE_FAIL)
+	}
 	user, err := QueryUser(id, _self.repo)
 	if err != nil || user == nil {
 		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
@@ -187,17 +205,11 @@ func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Erro
 
 // Register 用户注册
 func (_self *UserService) Register(username, password string) *utils.Error {
-	if username == "" {
-		return log.WithError(utils.ERR_USER_REGISTER_USERNAME_NULL)
-	}
-	if password == "" {
-		return log.WithError(utils.ERR_USER_REGISTER_PASSWORD_NULL)
-	}
 	if len(username) < 6 || len(username) > 20 {
-		return log.WithError(utils.ERR_USER_REGISTER_USERNAME_LENGTH)
+		return log.WithError(utils.ERR_USER_USERNAME_LENGTH)
 	}
 	if len(password) < 6 || len(password) > 20 {
-		return log.WithError(utils.ERR_USER_REGISTER_PASSWORD_LENGTH)
+		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
 	params := &entity.RegisterUser{
 		Username: username,
@@ -211,17 +223,11 @@ func (_self *UserService) Register(username, password string) *utils.Error {
 }
 
 func (_self *UserService) Login(username, password string) *utils.Error {
-	if username == "" {
-		return log.WithError(utils.ERR_USER_REGISTER_USERNAME_NULL)
-	}
-	if password == "" {
-		return log.WithError(utils.ERR_USER_REGISTER_PASSWORD_NULL)
-	}
 	if len(username) < 6 || len(username) > 20 {
-		return log.WithError(utils.ERR_USER_REGISTER_USERNAME_LENGTH)
+		return log.WithError(utils.ERR_USER_USERNAME_LENGTH)
 	}
 	if len(password) < 6 || len(password) > 20 {
-		return log.WithError(utils.ERR_USER_REGISTER_PASSWORD_LENGTH)
+		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
 
 	params := &entity.RegisterUser{

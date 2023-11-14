@@ -41,8 +41,11 @@ message FriendApplyReq{
 }
 /** 修改用户信息的请求参数 */
 message UpdateUserReq{
-  uint64 id = 1;//用户ID
-  string data = 2;//可以是昵称、签名、邮箱、头像
+  string data = 1;//可以是昵称、签名、邮箱、头像
+}
+message UpdatePwdReq{
+  string oldPwd = 1;//久密码
+  string newPwd = 2;//新密码
 }
 message UploadReq{
   string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png

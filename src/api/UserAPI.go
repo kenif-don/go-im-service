@@ -73,6 +73,78 @@ func Search(data []byte) []byte {
 	}
 	return res
 }
+func UpdateBurstPwd(data []byte) []byte {
+	req := &api.UpdatePwdReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdatePassword(3, req.OldPwd, req.NewPwd)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
+func UpdatePwd2(data []byte) []byte {
+	req := &api.UpdatePwdReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdatePassword(2, req.OldPwd, req.NewPwd)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
+func UpdatePwd(data []byte) []byte {
+	req := &api.UpdatePwdReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	userService := service.NewUserService()
+	e := userService.UpdatePassword(1, req.OldPwd, req.NewPwd)
+	if e != nil {
+		return SyncPutErr(e, resp)
+	}
+	user, err := util.Obj2Str(conf.GetLoginInfo().User)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = user
+	res, err := proto.Marshal(resp)
+	if err != nil {
+		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+	}
+	return res
+}
 func UpdateHeadImg(data []byte) []byte {
 	req := &api.UpdateUserReq{}
 	resp := &api.ResultDTOResp{}
@@ -80,7 +152,7 @@ func UpdateHeadImg(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdateHeadImg(req.Id, req.Data)
+	e := userService.UpdateHeadImg(conf.GetLoginInfo().User.Id, req.Data)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}
@@ -104,7 +176,7 @@ func UpdateEmail(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdateEmail(req.Id, req.Data)
+	e := userService.UpdateEmail(conf.GetLoginInfo().User.Id, req.Data)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}
@@ -128,7 +200,7 @@ func UpdateIntro(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdateIntro(req.Id, req.Data)
+	e := userService.UpdateIntro(conf.GetLoginInfo().User.Id, req.Data)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}
@@ -152,7 +224,7 @@ func UpdateNickname(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
-	e := userService.UpdateNickname(req.Id, req.Data)
+	e := userService.UpdateNickname(conf.GetLoginInfo().User.Id, req.Data)
 	if e != nil {
 		return SyncPutErr(e, resp)
 	}
