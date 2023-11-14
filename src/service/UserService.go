@@ -266,7 +266,7 @@ func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
 		return log.WithError(err)
 	}
 	//如果自毁 删聊天记录、删聊天
-	if resultDTO.Data.(string) == "burst" {
+	if resultDTO.Data != nil && resultDTO.Data.(string) == "burst" {
 		tx := db.NewTransaction().BeginTx()
 		if e := tx.Error; e != nil {
 			return log.WithError(utils.ERR_QUERY_FAIL)
