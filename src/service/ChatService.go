@@ -92,6 +92,13 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	if err != nil {
 		return nil, log.WithError(err)
 	}
+	//如果是PC的话 需要通知客户端更新聊天列表
+	if conf.Base.DeviceType == conf.PC {
+		err = _self.ChatNotify(chat)
+		if err != nil {
+			return nil, log.WithError(err)
+		}
+	}
 	return chat, nil
 }
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
@@ -140,7 +147,7 @@ func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
 	}
 	//排序 根据最后的消息时间倒序
 	sort.Slice(chats, func(i, j int) bool {
-		return chats[i].LastTime < chats[j].LastTime
+		return chats[j].LastTime < chats[i].LastTime
 	})
 	return &chats, nil
 }

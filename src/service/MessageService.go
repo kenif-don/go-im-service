@@ -117,13 +117,13 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 	switch protocol.Type {
 	case 101: //让to拉去from的好友申请信息，没有就存起来 有就修改
-		err := NewFriendApplyService().updateOne(util.Str2Uint64(protocol.From), util.Str2Uint64(protocol.To))
+		friendAppluService := NewFriendApplyService()
+		err := friendAppluService.updateOne(util.Str2Uint64(protocol.From), util.Str2Uint64(protocol.To))
 		if err != nil {
 			return log.WithError(err)
 		}
-		if Listener != nil {
-			Listener.OnFriendApply()
-		}
+		//发送通知
+		friendAppluService.FriendApplyNotify()
 		break
 	case 102: //当to同意好友申请后，更新好友数据
 		_, err := NewFriendService().updateOne(util.Str2Uint64(protocol.From), util.Str2Uint64(protocol.To))

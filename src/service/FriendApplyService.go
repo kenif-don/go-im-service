@@ -201,6 +201,10 @@ func (_self *FriendApplyService) Update(id uint64, state int) *utils.Error {
 	if err != nil {
 		tx.Rollback()
 	}
+	//如果时PC 通通知客户端
+	if conf.Base.DeviceType == conf.PC {
+		_self.FriendApplyNotify()
+	}
 	return err
 }
 
@@ -231,4 +235,11 @@ func (_self *FriendApplyService) SelectFriendApplyNotOperated() (int, *utils.Err
 		return 0, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	return count, nil
+}
+
+// FriendApplyNotify 通知客户端拉取好友请求数
+func (_self *FriendApplyService) FriendApplyNotify() {
+	if Listener != nil {
+		Listener.OnFriendApply()
+	}
 }

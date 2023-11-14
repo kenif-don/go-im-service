@@ -9,6 +9,12 @@ import (
 	"sync"
 )
 
+const (
+	PC      = "PC"
+	Android = "Android"
+	IOS     = "IOS"
+)
+
 var (
 	DbPath = "im.db"
 )

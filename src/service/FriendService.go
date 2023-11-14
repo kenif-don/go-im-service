@@ -181,8 +181,9 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 				friends[i].Name = user.Nickname
 			}
 		}
+		return friends, nil
 	}
-	//没用查到 就从后台查一次
+	//没查到 就从后台查一次
 	resultDTO, err := Post("/api/friend/selectAll", nil)
 	if err != nil {
 		return nil, log.WithError(err)
