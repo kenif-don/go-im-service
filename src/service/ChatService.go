@@ -118,6 +118,9 @@ func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *ut
 	return chat, nil
 }
 func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return nil, log.WithError(utils.ERR_NOT_LOGIN)
+	}
 	chats, err := _self.repo.QueryAll(&entity.Chat{
 		UserId: conf.GetLoginInfo().User.Id,
 	})
