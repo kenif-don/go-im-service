@@ -9,7 +9,6 @@ import (
 	"IM-Service/src/util"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"im-sdk/handler"
 	"im-sdk/model"
 	"sort"
 	"strconv"
@@ -220,8 +219,11 @@ func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
 		Data: tp, //将聊天类型传递过去
 		No:   uuid.New().String(),
 	}
-	handler.GetClientHandler().GetMessageManager().Send(protocol)
-	err := _self.DelLocalChat(tp, target)
+	err := Send(protocol)
+	if err != nil {
+		return log.WithError(err)
+	}
+	err = _self.DelLocalChat(tp, target)
 	if err != nil {
 		return log.WithError(err)
 	}

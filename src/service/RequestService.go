@@ -5,6 +5,8 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/dto"
 	"IM-Service/src/util"
+	"im-sdk/handler"
+	"im-sdk/model"
 )
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
@@ -30,4 +32,12 @@ func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
 	}
 	return resultDTO, nil
+}
+func Send(protocol *model.Protocol) *utils.Error {
+	mgr := handler.GetClientHandler().GetMessageManager()
+	if mgr == nil {
+		return utils.ERR_SEND_FAIL
+	}
+	mgr.Send(protocol)
+	return nil
 }

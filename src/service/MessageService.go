@@ -8,7 +8,6 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
-	"im-sdk/handler"
 	"im-sdk/model"
 	"strconv"
 	"time"
@@ -205,7 +204,10 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no, content strin
 		return log.WithError(err)
 	}
 	//发送消息
-	handler.GetClientHandler().GetMessageManager().Send(protocol)
+	err = Send(protocol)
+	if err != nil {
+		return log.WithError(err)
+	}
 	//保存消息到数据库
 	e := _self.repo.Save(message)
 	if e != nil {
