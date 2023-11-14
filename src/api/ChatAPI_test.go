@@ -29,7 +29,7 @@ func TestSendMsg(t *testing.T) {
 	TestOpenChat(t)
 	contentObj := &entity.MessageData{
 		Type:    1,
-		Content: "测试测试",
+		Content: "Jint",
 	}
 	content, _ := util.Obj2Str(contentObj)
 	oldReq := &api.ChatReq{
@@ -56,5 +56,22 @@ func TestGetChats(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result)
+	time.Sleep(time.Hour)
+}
+
+func TestGetMsgs(t *testing.T) {
+	TestLogin(t)
+	oldReq := &api.ChatReq{
+		Type:   "friend",
+		Target: 1,
+	}
+	req, _ := proto.Marshal(oldReq)
+	resp := GetMsgs(req)
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Debug(result.Body)
 	time.Sleep(time.Hour)
 }
