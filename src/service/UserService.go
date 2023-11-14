@@ -53,13 +53,19 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *utils.Error {
 	resultDTO, err := Post("/api/user/editPwd", map[string]interface{}{"type": tp, "pwd": pwd, "oldPwd": oldPwd, "newPwd": newPwd})
 	if err != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
 	user := &entity.User{}
 	e := util.Str2Obj(resultDTO.Data.(string), user)
 	if e != nil {
-		return log.WithError(utils.ERR_USER_UPDATE_FAIL)
+		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
+	//查找到数据库中存的私钥--设置到服务器返回的对象中
+	sysUser, e := QueryUser(conf.GetLoginInfo().User.Id, _self.repo)
+	if e != nil || user == nil {
+		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
+	}
+	user.PrivateKey = sysUser.PrivateKey
 	e = _self.repo.Save(user)
 	if e != nil {
 		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
