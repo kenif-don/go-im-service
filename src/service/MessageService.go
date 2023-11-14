@@ -174,12 +174,11 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				chat, e2 := NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
-				log.Debug("封装Chat", chat)
-				log.Debug("封装Chat", e)
-				if e2 != nil {
-					return log.WithError(e2)
+				c, err := NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
+				if err != nil {
+					return log.WithError(err)
 				}
+				chat = c
 			}
 			// 通知聊天列表更新
 			err := NewChatService().ChatNotify(chat)
