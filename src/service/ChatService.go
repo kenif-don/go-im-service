@@ -104,7 +104,6 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
 	friend, err := NewFriendService().QueryFriend2(target)
 	if err != nil || friend == nil {
-		log.Error("QueryFriend2 fail ,targetId = " + strconv.FormatUint(target, 10))
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	var name string
@@ -123,7 +122,6 @@ func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *ut
 	}
 	e := _self.repo.Save(chat)
 	if e != nil {
-		log.Error("Save fail ,targetId = " + strconv.FormatUint(target, 10))
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	return chat, nil
@@ -173,7 +171,6 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 		}
 		chat.LastTime = lastMsg.Time
 	}
-	log.Debugf("组装最后一条消息完成：%+v", chat)
 	return nil
 }
 

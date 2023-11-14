@@ -67,6 +67,13 @@ func (_self *UserService) UpdatePassword(tp int, oldPwd, newPwd string) *utils.E
 	if e != nil {
 		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
+	if tp == 1 {
+		// 重新登录
+		err = _self.Logout()
+		if err != nil {
+			return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
+		}
+	}
 	return nil
 }
 func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
@@ -252,6 +259,10 @@ func (_self *UserService) Logout() *utils.Error {
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogout()
+	//通知前往登录页面
+	if Listener != nil {
+		Listener.OnLogin()
+	}
 	return nil
 }
 

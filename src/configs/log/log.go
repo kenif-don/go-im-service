@@ -133,6 +133,7 @@ func WithError(err error, message ...string) *utils.Error {
 	if logger == nil {
 		defaultLog()
 	}
+	Error(err)
 	logger.WithFields(logrus.Fields{}).Errorln(u, message)
 	if !u.IsHasStack {
 		if len(message) == 0 {
@@ -148,6 +149,5 @@ func WithError(err error, message ...string) *utils.Error {
 		}
 		u = tmpErr
 	}
-
 	return u
 }

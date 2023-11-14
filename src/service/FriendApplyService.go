@@ -231,7 +231,6 @@ func (_self *FriendApplyService) SelectFriendApplyNotOperated() (int, *utils.Err
 	}
 	count, e := _self.repo.QueryCount(&entity.FriendApply{To: conf.GetLoginInfo().User.Id, State: 1})
 	if e != nil {
-		log.Error(e)
 		return 0, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	return count, nil

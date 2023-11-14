@@ -2,7 +2,6 @@ package api
 
 import (
 	api "IM-Service/build/generated/service/v1"
-	"IM-Service/src/configs/conf"
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
@@ -13,8 +12,8 @@ func init() {
 		BaseDir:    "..",
 		LogSwitch:  api.ConfigReq_CONSOLE_FILE,
 		DeviceType: api.ConfigReq_Android,
-		ApiHost:    "http://hp9kwse9.beesnat.com",
-		WsHost:     "ws://ggeejj9f.beesnat.com:13191",
+		ApiHost:    "http://43.228.124.134:8886",
+		WsHost:     "ws://43.228.124.134:8003",
 	}
 	req, _ := proto.Marshal(config)
 	resp := InitConfig(req, nil)
@@ -64,7 +63,6 @@ func TestInfo(t *testing.T) {
 
 func TestUpdateNickname(t *testing.T) {
 	updateReq := &api.UpdateUserReq{
-		Id:   conf.GetLoginInfo().User.Id,
 		Data: "冷风",
 	}
 	req, _ := proto.Marshal(updateReq)
@@ -75,7 +73,6 @@ func TestUpdateNickname(t *testing.T) {
 }
 func TestUpdateIntro(t *testing.T) {
 	updateReq := &api.UpdateUserReq{
-		Id:   conf.GetLoginInfo().User.Id,
 		Data: "冷霜自拌无情雨，孤叶何须罪秋风",
 	}
 	req, _ := proto.Marshal(updateReq)
@@ -86,7 +83,6 @@ func TestUpdateIntro(t *testing.T) {
 }
 func TestUpdateEmail(t *testing.T) {
 	updateReq := &api.UpdateUserReq{
-		Id:   conf.GetLoginInfo().User.Id,
 		Data: "123@qq.com",
 	}
 	req, _ := proto.Marshal(updateReq)
@@ -97,7 +93,6 @@ func TestUpdateEmail(t *testing.T) {
 }
 func TestUpdateHeadImg(t *testing.T) {
 	updateReq := &api.UpdateUserReq{
-		Id:   conf.GetLoginInfo().User.Id,
 		Data: "https://123.png",
 	}
 	req, _ := proto.Marshal(updateReq)
