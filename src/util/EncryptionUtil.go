@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 var dealKeys = []int{
@@ -130,6 +131,9 @@ func DecryptAes(data, key string) (string, error) {
 	}
 	if trim < 0 || trim > len(decrypted) {
 		return "", utils.ERR_ENCRYPT_FAIL
+	}
+	if !utf8.Valid(decrypted[:trim]) {
+		return "", utils.ERR_DECRYPT_FAIL
 	}
 	return string(decrypted[:trim]), nil
 }
