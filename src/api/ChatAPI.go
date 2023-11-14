@@ -132,7 +132,7 @@ func SendMsg(data []byte) []byte {
 
 // GetMsgs 分页获取消息
 func GetMsgs(data []byte) []byte {
-	req := &api.MsgPageDTO{}
+	req := &api.MsgPageReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)

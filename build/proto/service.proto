@@ -12,7 +12,7 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
-message MsgPageDTO{
+message MsgPageReq{
   string type = 1;//聊天类型 friend、group
   uint64 target = 2;//聊天目标 用户ID或群ID
   uint64 time = 4;//消息发送时间 查询此时间之前的消息

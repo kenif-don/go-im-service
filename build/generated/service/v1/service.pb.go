@@ -183,7 +183,7 @@ func (ConfigReq_DeviceType) EnumDescriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{8, 1}
 }
 
-type MsgPageDTO struct {
+type MsgPageReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -193,8 +193,8 @@ type MsgPageDTO struct {
 	Time   uint64 `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`     //消息发送时间 查询此时间之前的消息
 }
 
-func (x *MsgPageDTO) Reset() {
-	*x = MsgPageDTO{}
+func (x *MsgPageReq) Reset() {
+	*x = MsgPageReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -202,13 +202,13 @@ func (x *MsgPageDTO) Reset() {
 	}
 }
 
-func (x *MsgPageDTO) String() string {
+func (x *MsgPageReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MsgPageDTO) ProtoMessage() {}
+func (*MsgPageReq) ProtoMessage() {}
 
-func (x *MsgPageDTO) ProtoReflect() protoreflect.Message {
+func (x *MsgPageReq) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -220,26 +220,26 @@ func (x *MsgPageDTO) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MsgPageDTO.ProtoReflect.Descriptor instead.
-func (*MsgPageDTO) Descriptor() ([]byte, []int) {
+// Deprecated: Use MsgPageReq.ProtoReflect.Descriptor instead.
+func (*MsgPageReq) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *MsgPageDTO) GetType() string {
+func (x *MsgPageReq) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *MsgPageDTO) GetTarget() uint64 {
+func (x *MsgPageReq) GetTarget() uint64 {
 	if x != nil {
 		return x.Target
 	}
 	return 0
 }
 
-func (x *MsgPageDTO) GetTime() uint64 {
+func (x *MsgPageReq) GetTime() uint64 {
 	if x != nil {
 		return x.Time
 	}
@@ -806,7 +806,7 @@ var File_service_proto protoreflect.FileDescriptor
 
 var file_service_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
-	0x4c, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x67, 0x65, 0x44, 0x54, 0x4f, 0x12, 0x12, 0x0a,
+	0x4c, 0x0a, 0x0a, 0x4d, 0x73, 0x67, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a,
 	0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70,
 	0x65, 0x12, 0x16, 0x0a, 0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x04, 0x52, 0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x69, 0x6d,
@@ -896,7 +896,7 @@ var file_service_proto_goTypes = []interface{}{
 	(ResultDTOCode)(0),        // 0: ResultDTOCode
 	(ConfigReq_LogSwitch)(0),  // 1: ConfigReq.LogSwitch
 	(ConfigReq_DeviceType)(0), // 2: ConfigReq.DeviceType
-	(*MsgPageDTO)(nil),        // 3: MsgPageDTO
+	(*MsgPageReq)(nil),        // 3: MsgPageReq
 	(*ChatReq)(nil),           // 4: ChatReq
 	(*FriendReq)(nil),         // 5: FriendReq
 	(*SearchReq)(nil),         // 6: SearchReq
@@ -924,7 +924,7 @@ func file_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgPageDTO); i {
+			switch v := v.(*MsgPageReq); i {
 			case 0:
 				return &v.state
 			case 1:
