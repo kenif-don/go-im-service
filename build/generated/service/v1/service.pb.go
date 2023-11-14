@@ -125,7 +125,7 @@ func (x ConfigReq_LogSwitch) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConfigReq_LogSwitch.Descriptor instead.
 func (ConfigReq_LogSwitch) EnumDescriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{9, 0}
+	return file_service_proto_rawDescGZIP(), []int{8, 0}
 }
 
 type ConfigReq_DeviceType int32
@@ -180,7 +180,7 @@ func (x ConfigReq_DeviceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConfigReq_DeviceType.Descriptor instead.
 func (ConfigReq_DeviceType) EnumDescriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{9, 1}
+	return file_service_proto_rawDescGZIP(), []int{8, 1}
 }
 
 type MsgPageDTO struct {
@@ -246,62 +246,6 @@ func (x *MsgPageDTO) GetTime() uint64 {
 	return 0
 }
 
-// * 客户端发送消息状态回调
-type SendResp struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	No   string `protobuf:"bytes,1,opt,name=no,proto3" json:"no,omitempty"`      //消息ID
-	Send int32  `protobuf:"varint,2,opt,name=send,proto3" json:"send,omitempty"` //发送状态 1-发送中 2-发送成功 -1-发送失败
-}
-
-func (x *SendResp) Reset() {
-	*x = SendResp{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *SendResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SendResp) ProtoMessage() {}
-
-func (x *SendResp) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SendResp.ProtoReflect.Descriptor instead.
-func (*SendResp) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *SendResp) GetNo() string {
-	if x != nil {
-		return x.No
-	}
-	return ""
-}
-
-func (x *SendResp) GetSend() int32 {
-	if x != nil {
-		return x.Send
-	}
-	return 0
-}
-
 type ChatReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -316,7 +260,7 @@ type ChatReq struct {
 func (x *ChatReq) Reset() {
 	*x = ChatReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[2]
+		mi := &file_service_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -329,7 +273,7 @@ func (x *ChatReq) String() string {
 func (*ChatReq) ProtoMessage() {}
 
 func (x *ChatReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[2]
+	mi := &file_service_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -342,7 +286,7 @@ func (x *ChatReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatReq.ProtoReflect.Descriptor instead.
 func (*ChatReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{2}
+	return file_service_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ChatReq) GetType() string {
@@ -386,7 +330,7 @@ type FriendReq struct {
 func (x *FriendReq) Reset() {
 	*x = FriendReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[3]
+		mi := &file_service_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -399,7 +343,7 @@ func (x *FriendReq) String() string {
 func (*FriendReq) ProtoMessage() {}
 
 func (x *FriendReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[3]
+	mi := &file_service_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -412,7 +356,7 @@ func (x *FriendReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FriendReq.ProtoReflect.Descriptor instead.
 func (*FriendReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{3}
+	return file_service_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *FriendReq) GetId() uint64 {
@@ -441,7 +385,7 @@ type SearchReq struct {
 func (x *SearchReq) Reset() {
 	*x = SearchReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[4]
+		mi := &file_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -454,7 +398,7 @@ func (x *SearchReq) String() string {
 func (*SearchReq) ProtoMessage() {}
 
 func (x *SearchReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[4]
+	mi := &file_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -467,7 +411,7 @@ func (x *SearchReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchReq.ProtoReflect.Descriptor instead.
 func (*SearchReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{4}
+	return file_service_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SearchReq) GetKeyword() string {
@@ -491,7 +435,7 @@ type FriendApplyReq struct {
 func (x *FriendApplyReq) Reset() {
 	*x = FriendApplyReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[5]
+		mi := &file_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -504,7 +448,7 @@ func (x *FriendApplyReq) String() string {
 func (*FriendApplyReq) ProtoMessage() {}
 
 func (x *FriendApplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[5]
+	mi := &file_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -517,7 +461,7 @@ func (x *FriendApplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FriendApplyReq.ProtoReflect.Descriptor instead.
 func (*FriendApplyReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{5}
+	return file_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *FriendApplyReq) GetId() uint64 {
@@ -554,7 +498,7 @@ type UpdateUserReq struct {
 func (x *UpdateUserReq) Reset() {
 	*x = UpdateUserReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[6]
+		mi := &file_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -567,7 +511,7 @@ func (x *UpdateUserReq) String() string {
 func (*UpdateUserReq) ProtoMessage() {}
 
 func (x *UpdateUserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[6]
+	mi := &file_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -580,7 +524,7 @@ func (x *UpdateUserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserReq.ProtoReflect.Descriptor instead.
 func (*UpdateUserReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{6}
+	return file_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateUserReq) GetId() uint64 {
@@ -609,7 +553,7 @@ type UploadReq struct {
 func (x *UploadReq) Reset() {
 	*x = UploadReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[7]
+		mi := &file_service_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -622,7 +566,7 @@ func (x *UploadReq) String() string {
 func (*UploadReq) ProtoMessage() {}
 
 func (x *UploadReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[7]
+	mi := &file_service_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -635,7 +579,7 @@ func (x *UploadReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadReq.ProtoReflect.Descriptor instead.
 func (*UploadReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{7}
+	return file_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UploadReq) GetPath() string {
@@ -666,7 +610,7 @@ type UserReq struct {
 func (x *UserReq) Reset() {
 	*x = UserReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[8]
+		mi := &file_service_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -679,7 +623,7 @@ func (x *UserReq) String() string {
 func (*UserReq) ProtoMessage() {}
 
 func (x *UserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[8]
+	mi := &file_service_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -692,7 +636,7 @@ func (x *UserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserReq.ProtoReflect.Descriptor instead.
 func (*UserReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{8}
+	return file_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UserReq) GetId() uint64 {
@@ -731,7 +675,7 @@ type ConfigReq struct {
 func (x *ConfigReq) Reset() {
 	*x = ConfigReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[9]
+		mi := &file_service_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -744,7 +688,7 @@ func (x *ConfigReq) String() string {
 func (*ConfigReq) ProtoMessage() {}
 
 func (x *ConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[9]
+	mi := &file_service_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -757,7 +701,7 @@ func (x *ConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfigReq.ProtoReflect.Descriptor instead.
 func (*ConfigReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{9}
+	return file_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ConfigReq) GetBaseDir() string {
@@ -808,7 +752,7 @@ type ResultDTOResp struct {
 func (x *ResultDTOResp) Reset() {
 	*x = ResultDTOResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[10]
+		mi := &file_service_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -821,7 +765,7 @@ func (x *ResultDTOResp) String() string {
 func (*ResultDTOResp) ProtoMessage() {}
 
 func (x *ResultDTOResp) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[10]
+	mi := &file_service_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -834,7 +778,7 @@ func (x *ResultDTOResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResultDTOResp.ProtoReflect.Descriptor instead.
 func (*ResultDTOResp) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{10}
+	return file_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ResultDTOResp) GetCode() uint32 {
@@ -866,10 +810,7 @@ var file_service_proto_rawDesc = []byte{
 	0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70,
 	0x65, 0x12, 0x16, 0x0a, 0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
 	0x04, 0x52, 0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x69, 0x6d,
-	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x04, 0x74, 0x69, 0x6d, 0x65, 0x22, 0x2e, 0x0a,
-	0x08, 0x53, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x12, 0x0e, 0x0a, 0x02, 0x6e, 0x6f, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x6e, 0x6f, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x65, 0x6e,
-	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x65, 0x6e, 0x64, 0x22, 0x5f, 0x0a,
+	0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x04, 0x74, 0x69, 0x6d, 0x65, 0x22, 0x5f, 0x0a,
 	0x07, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x16, 0x0a, 0x06,
 	0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61,
@@ -950,22 +891,21 @@ func file_service_proto_rawDescGZIP() []byte {
 }
 
 var file_service_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_service_proto_goTypes = []interface{}{
 	(ResultDTOCode)(0),        // 0: ResultDTOCode
 	(ConfigReq_LogSwitch)(0),  // 1: ConfigReq.LogSwitch
 	(ConfigReq_DeviceType)(0), // 2: ConfigReq.DeviceType
 	(*MsgPageDTO)(nil),        // 3: MsgPageDTO
-	(*SendResp)(nil),          // 4: SendResp
-	(*ChatReq)(nil),           // 5: ChatReq
-	(*FriendReq)(nil),         // 6: FriendReq
-	(*SearchReq)(nil),         // 7: SearchReq
-	(*FriendApplyReq)(nil),    // 8: FriendApplyReq
-	(*UpdateUserReq)(nil),     // 9: UpdateUserReq
-	(*UploadReq)(nil),         // 10: UploadReq
-	(*UserReq)(nil),           // 11: UserReq
-	(*ConfigReq)(nil),         // 12: ConfigReq
-	(*ResultDTOResp)(nil),     // 13: ResultDTOResp
+	(*ChatReq)(nil),           // 4: ChatReq
+	(*FriendReq)(nil),         // 5: FriendReq
+	(*SearchReq)(nil),         // 6: SearchReq
+	(*FriendApplyReq)(nil),    // 7: FriendApplyReq
+	(*UpdateUserReq)(nil),     // 8: UpdateUserReq
+	(*UploadReq)(nil),         // 9: UploadReq
+	(*UserReq)(nil),           // 10: UserReq
+	(*ConfigReq)(nil),         // 11: ConfigReq
+	(*ResultDTOResp)(nil),     // 12: ResultDTOResp
 }
 var file_service_proto_depIdxs = []int32{
 	2, // 0: ConfigReq.deviceType:type_name -> ConfigReq.DeviceType
@@ -996,18 +936,6 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SendResp); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ChatReq); i {
 			case 0:
 				return &v.state
@@ -1019,7 +947,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FriendReq); i {
 			case 0:
 				return &v.state
@@ -1031,7 +959,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SearchReq); i {
 			case 0:
 				return &v.state
@@ -1043,7 +971,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FriendApplyReq); i {
 			case 0:
 				return &v.state
@@ -1055,7 +983,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateUserReq); i {
 			case 0:
 				return &v.state
@@ -1067,7 +995,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UploadReq); i {
 			case 0:
 				return &v.state
@@ -1079,7 +1007,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UserReq); i {
 			case 0:
 				return &v.state
@@ -1091,7 +1019,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ConfigReq); i {
 			case 0:
 				return &v.state
@@ -1103,7 +1031,7 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ResultDTOResp); i {
 			case 0:
 				return &v.state
@@ -1122,7 +1050,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   11,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
