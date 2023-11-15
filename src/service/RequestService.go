@@ -61,6 +61,7 @@ func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 func Send(protocol *model.Protocol) *utils.Error {
 	mgr := handler.GetClientHandler().GetMessageManager()
 	if mgr == nil {
+		log.Error("获取消息管理器失败")
 		return utils.ERR_SEND_FAIL
 	}
 	mgr.Send(protocol)

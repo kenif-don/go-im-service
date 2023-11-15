@@ -70,11 +70,17 @@ func (_self *FriendService) DelFriend(id uint64) *utils.Error {
 	//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
 	req := make(map[string]uint64)
 	req["id"] = id
+	//TODO 这里需要事务
 	_, err := Post("/api/friend/delete", req)
 	if err != nil {
 		return log.WithError(err)
 	}
 	err = _self.DelLocalFriend(&entity.Friend{Id: id})
+	if err != nil {
+		return log.WithError(err)
+	}
+	//删除聊天
+	//删除消息
 	return err
 }
 func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {

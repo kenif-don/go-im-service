@@ -38,6 +38,7 @@ func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
 	}
 	err := Send(protocol)
 	if err != nil {
+		log.Error(err)
 		return log.WithError(err)
 	}
 	return _self.DelLocalChatMsg(tp, target)
@@ -52,6 +53,7 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 	}
 	e := _self.repo.Delete(message)
 	if e != nil {
+		log.Error(e)
 		return log.WithError(utils.ERR_DEL_FAIL)
 	}
 	//如果是PC 更新会话
@@ -59,10 +61,12 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 		//更新会话
 		chat, e := QueryChat(tp, target, repository.NewChatRepo())
 		if e != nil {
+			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
 		err := NewChatService().ChatNotify(chat)
 		if err != nil {
+			log.Error(err)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
 	}

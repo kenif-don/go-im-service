@@ -145,18 +145,16 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 }
 func (_self *LogicProcess) Exception(msg string) {
 	log.Errorf("exception:%v", msg)
-	if msg == "unexpected EOF" || msg == "ws closed: 1000 Bye" {
-		conf.Conf.Connected = false
-		log.Debug("服务器断开连接,进行重连")
-		go func() {
-			for {
-				err := conf.Conf.Client.Reconnect()
-				if err == nil {
-					return
-				}
-				log.Error(err)
-				time.Sleep(5 * time.Second)
+	conf.Conf.Connected = false
+	log.Debug("服务器断开连接,进行重连")
+	go func() {
+		for {
+			err := conf.Conf.Client.Reconnect()
+			if err == nil {
+				return
 			}
-		}()
-	}
+			log.Error(err)
+			time.Sleep(5 * time.Second)
+		}
+	}()
 }
