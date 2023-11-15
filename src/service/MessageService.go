@@ -275,7 +275,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				}
 			}
 			//判断是否存在聊天
-			chat, e := QueryChat(message.Type, message.UserId, repository.NewChatRepo())
+			chat, e := QueryChat(message.Type, util.Str2Uint64(protocol.From), repository.NewChatRepo())
 			if e != nil {
 				return log.WithError(e)
 			}
