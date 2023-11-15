@@ -46,32 +46,57 @@ func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
 
 // DelLocalChatMsg 删除登录者本地消息
 func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Error {
-	//删除对方的
-	message := &entity.Message{
-		Type:     tp,
-		TargetId: target,
-		UserId:   conf.GetLoginInfo().User.Id,
-	}
-	e := _self.repo.Delete(message)
-	if e != nil {
-		log.Error(e)
-		return log.WithError(utils.ERR_DEL_FAIL)
-	}
-	//如果是PC 更新会话
-	if conf.Base.DeviceType == conf.PC {
-		//更新会话
-		chat, e := QueryChat(tp, target, repository.NewChatRepo())
+	tx := _self.repo.BeginTx()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		//自己删除自己发送给对方的
+		message := &entity.Message{
+			Type:     tp,
+			TargetId: target, //对方ID
+			UserId:   conf.GetLoginInfo().User.Id,
+			From:     strconv.FormatUint(conf.GetLoginInfo().User.Id, 10), //发送者是自己
+		}
+		e := _self.repo.Delete(message)
 		if e != nil {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		err := NewChatService().ChatNotify(chat)
-		if err != nil {
-			log.Error(err)
+		//自己删除对方发给自己的
+		message = &entity.Message{
+			Type:     tp,
+			TargetId: conf.GetLoginInfo().User.Id, //对方ID
+			UserId:   conf.GetLoginInfo().User.Id,
+			From:     strconv.FormatUint(target, 10), //发送者是自己
+		}
+		e = _self.repo.Delete(message)
+		if e != nil {
+			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		//如果是PC 更新会话
+		if conf.Base.DeviceType == conf.PC {
+			//更新会话
+			chat, e := QueryChat(tp, target, repository.NewChatRepo())
+			if e != nil {
+				log.Error(e)
+				return log.WithError(utils.ERR_DEL_FAIL)
+			}
+			err := NewChatService().ChatNotify(chat)
+			if err != nil {
+				log.Error(err)
+				return log.WithError(utils.ERR_DEL_FAIL)
+			}
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
 	}
-	return nil
+	return err
 }
 
 // DelAllMessage 删除制定用户所有消息 用于自毁
