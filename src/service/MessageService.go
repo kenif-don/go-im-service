@@ -54,6 +54,18 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 	if e != nil {
 		return log.WithError(utils.ERR_DEL_FAIL)
 	}
+	//如果是PC 更新会话
+	if conf.Base.DeviceType == conf.PC {
+		//更新会话
+		chat, e := QueryChat(tp, target, repository.NewChatRepo())
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		err := NewChatService().ChatNotify(chat)
+		if err != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+	}
 	return nil
 }
 
