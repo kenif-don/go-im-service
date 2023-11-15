@@ -66,6 +66,14 @@ func InitConfig(baseConfig *BaseConfig) {
 				Bucket:   "world",
 			},
 		}
+		//初始化时 判断是否需要二级密码
+		if GetLoginInfo().User.Password2 != "" {
+			//需要输入二级密码
+			UpdateInputPwd2(1)
+		} else {
+			//不需要输入二级密码
+			UpdateInputPwd2(-1)
+		}
 	})
 }
 func ClearLoginInfo() {
