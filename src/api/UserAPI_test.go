@@ -5,6 +5,7 @@ import (
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
+	"time"
 )
 
 func init() {
@@ -115,8 +116,11 @@ func TestSearch(t *testing.T) {
 	log.Debug(result)
 }
 func TestLogout(t *testing.T) {
+	TestLogin(t)
+	time.Sleep(time.Second * 3)
 	resp := Logout()
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debug(result)
+	time.Sleep(time.Hour)
 }

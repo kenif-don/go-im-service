@@ -69,7 +69,7 @@ func Send(protocol *model.Protocol) *utils.Error {
 
 // ValidatePwd2 判断是否需要输入2级密码 且是否已经输入2级密码 需要且没输 就前往输入2级密码
 func ValidatePwd2() bool {
-	if conf.GetLoginInfo().User == nil && conf.GetLoginInfo().User.Password2 != "" && conf.GetLoginInfo().InputPwd2 == 1 && Listener != nil {
+	if conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Password2 != "" && conf.GetLoginInfo().InputPwd2 == 1 && Listener != nil {
 		//需要输入二级密码 但是没输
 		Listener.OnLoginPwd2()
 		return false
