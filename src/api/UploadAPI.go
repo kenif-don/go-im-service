@@ -9,11 +9,11 @@ import (
 )
 
 func Upload(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UploadReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -28,11 +28,11 @@ func Upload(data []byte) []byte {
 	return res
 }
 func UploadData(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UploadReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}

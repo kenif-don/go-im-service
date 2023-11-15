@@ -35,11 +35,11 @@ func ValidatePwd2() []byte {
 }
 
 func SelectOneUser(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UserReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -62,10 +62,10 @@ func SelectOneUser(data []byte) []byte {
 
 }
 func Logout() []byte {
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
-	}
 	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
 	err := service.NewUserService().Logout()
 	if err != nil {
 		return SyncPutErr(err, resp)
@@ -80,11 +80,11 @@ func Logout() []byte {
 }
 
 func Search(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.SearchReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -103,11 +103,11 @@ func Search(data []byte) []byte {
 	return res
 }
 func UpdateBurstPwd(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdatePwdReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -130,11 +130,11 @@ func UpdateBurstPwd(data []byte) []byte {
 	return res
 }
 func UpdatePwd2(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdatePwdReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -157,11 +157,11 @@ func UpdatePwd2(data []byte) []byte {
 	return res
 }
 func UpdatePwd(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdatePwdReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -184,11 +184,11 @@ func UpdatePwd(data []byte) []byte {
 	return res
 }
 func UpdateHeadImg(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -211,11 +211,11 @@ func UpdateHeadImg(data []byte) []byte {
 	return res
 }
 func UpdateEmail(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -238,11 +238,11 @@ func UpdateEmail(data []byte) []byte {
 	return res
 }
 func UpdateIntro(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -265,11 +265,11 @@ func UpdateIntro(data []byte) []byte {
 	return res
 }
 func UpdateNickname(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -295,10 +295,10 @@ func UpdateNickname(data []byte) []byte {
 
 // Info 获取登录者信息
 func Info() []byte {
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
-	}
 	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
 	if conf.GetLoginInfo() == nil || conf.GetLoginInfo().User == nil {
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		resp.Msg = "success"

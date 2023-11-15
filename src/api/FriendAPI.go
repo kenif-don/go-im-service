@@ -9,11 +9,11 @@ import (
 )
 
 func IsFriend(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.FriendReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -37,11 +37,11 @@ func IsFriend(data []byte) []byte {
 }
 
 func DelFriend(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.FriendApplyReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -59,11 +59,11 @@ func DelFriend(data []byte) []byte {
 	return res
 }
 func SelectOneFriend(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.FriendReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
@@ -86,10 +86,10 @@ func SelectOneFriend(data []byte) []byte {
 	return res
 }
 func SelectAllFriend() []byte {
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
-	}
 	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
 	friendService := service.NewFriendService()
 	fs, err := friendService.SelectAll()
 	if err != nil {
@@ -109,11 +109,11 @@ func SelectAllFriend() []byte {
 	return res
 }
 func UpdateFriendName(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.FriendReq{}
-	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
