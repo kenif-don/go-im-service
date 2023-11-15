@@ -70,7 +70,7 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 			Type:     tp,
 			TargetId: conf.GetLoginInfo().User.Id, //对方ID
 			UserId:   conf.GetLoginInfo().User.Id,
-			From:     strconv.FormatUint(target, 10), //发送者是自己
+			From:     strconv.FormatUint(target, 10), //发送者是对方
 		}
 		e = _self.repo.Delete(message)
 		if e != nil {
@@ -254,6 +254,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			//重置userId为当前用户 不然userId就是发送者了
+			message.UserId = conf.GetLoginInfo().User.Id
 			e = messageService.repo.Save(message)
 			if e != nil {
 				return log.WithError(e)

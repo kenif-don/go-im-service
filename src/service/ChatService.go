@@ -179,17 +179,9 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
 		// 删除聊天记录
-		var message entity.Message
-		message.Type = tp
-		message.TargetId = target
-		message.UserId = conf.GetLoginInfo().User.Id
-		e = NewMessageService().repo.Delete(&message)
-		if e != nil {
-			return log.WithError(utils.ERR_DEL_FAIL)
-		}
-		// 删除聊天
-		e = _self.repo.Delete(&chat)
-		if e != nil {
+		err := NewMessageService().DelLocalChatMsg(tp, target)
+		if err != nil {
+			log.Error(err)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
 		e = tx.Commit().Error
