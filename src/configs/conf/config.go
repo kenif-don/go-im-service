@@ -67,6 +67,9 @@ func InitConfig(baseConfig *BaseConfig) {
 			},
 		}
 		//初始化时 判断是否需要二级密码
+		if GetLoginInfo().User == nil {
+			return
+		}
 		if GetLoginInfo().User.Password2 != "" {
 			//需要输入二级密码
 			UpdateInputPwd2(1)

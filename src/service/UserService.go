@@ -277,11 +277,11 @@ func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
 			}
 		}()
 		err = func() *utils.Error {
-			err = NewChatService().DelAllChat(conf.GetLoginInfo().User.Id)
+			err = NewChatService().DelAllChat()
 			if err != nil {
 				return log.WithError(err)
 			}
-			err = NewMessageService().DelAllMessage(conf.GetLoginInfo().User.Id)
+			err = NewMessageService().DelAllMessage()
 			if err != nil {
 				return log.WithError(err)
 			}

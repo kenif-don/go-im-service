@@ -18,6 +18,8 @@ type MessageListener interface {
 	OnFriendApply()
 	//OnLogin 登录失效通知
 	OnLogin()
+	//OnLoginPwd2 输入二级密码
+	OnLoginPwd2()
 }
 
 // SyncPutErr 同步导出

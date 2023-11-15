@@ -10,10 +10,32 @@ import (
 	"im-sdk/model"
 )
 
+var Listener MessageListener
+
+type MessageListener interface {
+	//OnReceive 当前聊天接收到消息
+	OnReceive(data string)
+	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
+	OnSendReceive(data string)
+	//OnDoChat 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
+	OnDoChat(data string)
+	//OnFriendApply 好友申请 仅代表有新的好友申请 但是无参
+	OnFriendApply()
+	//OnLogin 登录失效通知
+	OnLogin()
+	//OnLoginPwd2 输入二级密码
+	OnLoginPwd2()
+}
+
+func SetListener(listener MessageListener) {
+	once.Do(func() {
+		Listener = listener
+		Keys = make(map[string]string)
+	})
+}
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
-	//排除输入2级密码的URL
-	if url != "/api/user/loginPwd2" && conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Id > 0 &&
-		conf.GetLoginInfo().InputPwd2 == 1 {
+	//排除输入2级密码的URI和需要放行的URI
+	if url != "/api/user/loginPwd2" && util.IndexOfString(url, conf.Conf.ExUris) == -1 && !ValidatePwd2() {
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
 	resultDTO, e := util.Post(url, req)
@@ -43,4 +65,14 @@ func Send(protocol *model.Protocol) *utils.Error {
 	}
 	mgr.Send(protocol)
 	return nil
+}
+
+// ValidatePwd2 判断是否需要输入2级密码 且是否已经输入2级密码 需要且没输 就前往输入2级密码
+func ValidatePwd2() bool {
+	if conf.GetLoginInfo().User == nil && conf.GetLoginInfo().User.Password2 != "" && conf.GetLoginInfo().InputPwd2 == 1 && Listener != nil {
+		//需要输入二级密码 但是没输
+		Listener.OnLoginPwd2()
+		return false
+	}
+	return true
 }

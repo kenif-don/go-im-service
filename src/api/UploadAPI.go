@@ -3,11 +3,15 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
 func Upload(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UploadReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -24,6 +28,9 @@ func Upload(data []byte) []byte {
 	return res
 }
 func UploadData(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UploadReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {

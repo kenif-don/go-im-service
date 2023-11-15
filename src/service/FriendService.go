@@ -64,18 +64,20 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 	}
 	return &fa, nil
 }
-func (_self *FriendService) Del(id uint64) *utils.Error {
-	//先通过服务器删除
+
+// DelFriend 删除双方好友
+func (_self *FriendService) DelFriend(id uint64) *utils.Error {
+	//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
 	req := make(map[string]uint64)
 	req["id"] = id
-	_, err := Post("/api/friend/selectOne", req)
+	_, err := Post("/api/friend/delete", req)
 	if err != nil {
 		return log.WithError(err)
 	}
-	err = _self.DelLocal(&entity.Friend{Id: id})
+	err = _self.DelLocalFriend(&entity.Friend{Id: id})
 	return err
 }
-func (_self *FriendService) DelLocal(friend *entity.Friend) *utils.Error {
+func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
 	tx := _self.repo.BeginTx()
 	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)

@@ -8,6 +8,7 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
+	"github.com/google/uuid"
 	"im-sdk/model"
 	"strconv"
 	"time"
@@ -22,9 +23,44 @@ func NewMessageService() *MessageService {
 		repo: repository.NewMessageRepo(),
 	}
 }
-func (_self *MessageService) DelAllMessage(userId uint64) *utils.Error {
+
+// DelChatMsg 删除双方聊天记录
+func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
+	//发出消息 让对方删除
+	//发送删除请求
+	protocol := &model.Protocol{
+		Type: 998,
+		From: strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
+		To:   strconv.FormatUint(target, 10),
+		Ack:  100,
+		Data: tp, //将聊天类型传递过去
+		No:   uuid.New().String(),
+	}
+	err := Send(protocol)
+	if err != nil {
+		return log.WithError(err)
+	}
+	return _self.DelLocalChatMsg(tp, target)
+}
+
+// DelLocalChatMsg 删除登录者本地消息
+func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Error {
 	message := &entity.Message{
-		UserId: userId,
+		Type:     tp,
+		TargetId: target,
+		UserId:   conf.GetLoginInfo().User.Id,
+	}
+	e := _self.repo.Delete(message)
+	if e != nil {
+		return log.WithError(utils.ERR_DEL_FAIL)
+	}
+	return nil
+}
+
+// DelAllMessage 删除制定用户所有消息 用于自毁
+func (_self *MessageService) DelAllMessage() *utils.Error {
+	message := &entity.Message{
+		UserId: conf.GetLoginInfo().User.Id,
 	}
 	e := _self.repo.Delete(message)
 	if e != nil {
@@ -149,10 +185,19 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 301: // 被好友删除
-		err := NewFriendService().DelLocal(&entity.Friend{He: util.Str2Uint64(protocol.From), Me: util.Str2Uint64(protocol.To)})
-		return log.WithError(err)
+		err := NewFriendService().DelLocalFriend(&entity.Friend{He: util.Str2Uint64(protocol.From), Me: util.Str2Uint64(protocol.To)})
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
+	case 998: //删除本地聊天记录
+		err := NewMessageService().DelLocalChatMsg(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
 	case 999: //删除聊天和记录
-		err := NewChatService().DelChat(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		err := NewChatService().DelLocalChat(protocol.Data.(string), util.Str2Uint64(protocol.From))
 		if err != nil {
 			return log.WithError(err)
 		}

@@ -9,7 +9,57 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// DelChatMsg 删除双方聊天消息
+func DelChatMsg(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
+	req := &api.ChatReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	messageService := service.NewMessageService()
+	err := messageService.DelChatMsg(req.Type, req.Target)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}
+
+// DelLocalChatMsg 删除聊天消息
+func DelLocalChatMsg(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
+	req := &api.ChatReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	messageService := service.NewMessageService()
+	err := messageService.DelLocalChatMsg(req.Type, req.Target)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}
 func GetConnectState() []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	resp := &api.ResultDTOResp{}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
@@ -27,6 +77,9 @@ func GetConnectState() []byte {
 
 // DelLocalChat 删除本地聊天记录
 func DelLocalChat(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -48,6 +101,9 @@ func DelLocalChat(data []byte) []byte {
 
 // DelChat 删除双方聊天记录
 func DelChat(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -67,6 +123,9 @@ func DelChat(data []byte) []byte {
 	return res
 }
 func GetChats() []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	resp := &api.ResultDTOResp{}
 	chatService := service.NewChatService()
 	chats, err := chatService.GetChats()
@@ -87,6 +146,9 @@ func GetChats() []byte {
 	return res
 }
 func OpenChat(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -111,6 +173,9 @@ func OpenChat(data []byte) []byte {
 	return res
 }
 func SendMsg(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.ChatReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -132,6 +197,9 @@ func SendMsg(data []byte) []byte {
 
 // GetMsgs 分页获取消息
 func GetMsgs(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.MsgPageReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {

@@ -16,30 +16,9 @@ import (
 )
 
 var (
-	once     sync.Once
-	Listener MessageListener
-	Keys     map[string]string // 加密缓存 对方用户id为key，秘钥为value
+	once sync.Once
+	Keys map[string]string // 加密缓存 对方用户id为key，秘钥为value
 )
-
-type MessageListener interface {
-	//OnReceive 当前聊天接收到消息
-	OnReceive(data string)
-	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
-	OnSendReceive(data string)
-	//OnDoChat 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
-	OnDoChat(data string)
-	//OnFriendApply 好友申请 仅代表有新的好友申请 但是无参
-	OnFriendApply()
-	//OnLogin 登录失效通知
-	OnLogin()
-}
-
-func SetListener(listener MessageListener) {
-	once.Do(func() {
-		Listener = listener
-		Keys = make(map[string]string)
-	})
-}
 
 type IChatRepo interface {
 	Query(obj *entity.Chat) (*entity.Chat, error)
@@ -242,17 +221,13 @@ func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
 	if err != nil {
 		return log.WithError(err)
 	}
-	err = _self.DelLocalChat(tp, target)
-	if err != nil {
-		return log.WithError(err)
-	}
-	return nil
+	return _self.DelLocalChat(tp, target)
 }
 
 // DelAllChat 删除制定用户所有聊天
-func (_self *ChatService) DelAllChat(userId uint64) *utils.Error {
+func (_self *ChatService) DelAllChat() *utils.Error {
 	chat := &entity.Chat{
-		UserId: userId,
+		UserId: conf.GetLoginInfo().User.Id,
 	}
 	e := _self.repo.Delete(chat)
 	if e != nil {

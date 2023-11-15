@@ -12,6 +12,9 @@ import (
 //		On(data []byte)
 //	}
 func UpdateFriendApply(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.FriendApplyReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -31,6 +34,9 @@ func UpdateFriendApply(data []byte) []byte {
 	return res
 }
 func SelectFriendApplyNotOperated() []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	resp := &api.ResultDTOResp{}
 	friendApplyService := service.NewFriendApplyService()
 	fas, err := friendApplyService.SelectFriendApplyNotOperated()
@@ -51,6 +57,9 @@ func SelectFriendApplyNotOperated() []byte {
 	return res
 }
 func SelectAllFriendApply() []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	resp := &api.ResultDTOResp{}
 	friendApplyService := service.NewFriendApplyService()
 	fas, err := friendApplyService.SelectAll()
@@ -71,6 +80,9 @@ func SelectAllFriendApply() []byte {
 	return res
 }
 func AddFriend(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.FriendApplyReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {

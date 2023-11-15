@@ -14,7 +14,30 @@ import (
 	"strconv"
 )
 
+// ValidatePwd2 判断是否需要输入2级密码 这个接口会清空2级密码的输入状态
+func ValidatePwd2() []byte {
+	resp := &api.ResultDTOResp{}
+	if conf.GetLoginInfo().User == nil && conf.GetLoginInfo().User.Password2 != "" {
+		//需要输入二级密码
+		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
+		conf.UpdateInputPwd2(1)
+	} else {
+		//不需要输入二级密码
+		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+		conf.UpdateInputPwd2(-1)
+	}
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+	}
+	return res
+}
+
 func SelectOneUser(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -39,6 +62,9 @@ func SelectOneUser(data []byte) []byte {
 
 }
 func Logout() []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	resp := &api.ResultDTOResp{}
 	err := service.NewUserService().Logout()
 	if err != nil {
@@ -54,6 +80,9 @@ func Logout() []byte {
 }
 
 func Search(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.SearchReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -74,6 +103,9 @@ func Search(data []byte) []byte {
 	return res
 }
 func UpdateBurstPwd(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdatePwdReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -98,6 +130,9 @@ func UpdateBurstPwd(data []byte) []byte {
 	return res
 }
 func UpdatePwd2(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdatePwdReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -122,6 +157,9 @@ func UpdatePwd2(data []byte) []byte {
 	return res
 }
 func UpdatePwd(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdatePwdReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -146,6 +184,9 @@ func UpdatePwd(data []byte) []byte {
 	return res
 }
 func UpdateHeadImg(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdateUserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -170,6 +211,9 @@ func UpdateHeadImg(data []byte) []byte {
 	return res
 }
 func UpdateEmail(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdateUserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -194,6 +238,9 @@ func UpdateEmail(data []byte) []byte {
 	return res
 }
 func UpdateIntro(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdateUserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -218,6 +265,9 @@ func UpdateIntro(data []byte) []byte {
 	return res
 }
 func UpdateNickname(data []byte) []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	req := &api.UpdateUserReq{}
 	resp := &api.ResultDTOResp{}
 	if err := proto.Unmarshal(data, req); err != nil {
@@ -245,6 +295,9 @@ func UpdateNickname(data []byte) []byte {
 
 // Info 获取登录者信息
 func Info() []byte {
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, nil)
+	}
 	resp := &api.ResultDTOResp{}
 	if conf.GetLoginInfo() == nil || conf.GetLoginInfo().User == nil {
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
