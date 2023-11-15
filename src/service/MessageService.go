@@ -89,6 +89,11 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 				return log.WithError(utils.ERR_DEL_FAIL)
 			}
 		}
+		e = tx.Commit().Error
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
 		return nil
 	}()
 	if err != nil {
@@ -230,15 +235,30 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		if err != nil {
 			return log.WithError(err)
 		}
-		break
-	case 998: //删除本地聊天记录
-		err := NewMessageService().DelLocalChatMsg(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		//如果当前打开的会话是要被删除聊天记录的 就进行通知
+		err = DelMsgNotify("friend", util.Str2Uint64(protocol.From))
 		if err != nil {
 			return log.WithError(err)
 		}
 		break
-	case 999: //删除聊天和记录
+	case 998: //被删除本地聊天记录
+		err := NewMessageService().DelLocalChatMsg(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		if err != nil {
+			return log.WithError(err)
+		}
+		//如果当前打开的会话是要被删除聊天记录的 就进行通知
+		err = DelMsgNotify("friend", util.Str2Uint64(protocol.From))
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
+	case 999: //被删除聊天和记录
 		err := NewChatService().DelLocalChat(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		if err != nil {
+			return log.WithError(err)
+		}
+		//如果当前打开的会话是要被删除聊天记录的 就进行通知
+		err = DelMsgNotify("friend", util.Str2Uint64(protocol.From))
 		if err != nil {
 			return log.WithError(err)
 		}
@@ -435,4 +455,22 @@ func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
 		}
 	}
 	return data, nil
+}
+func DelMsgNotify(tp string, target uint64) *utils.Error {
+	if conf.Conf.ChatId != target {
+		return nil
+	}
+	if Listener != nil {
+		chat := &entity.Chat{
+			Type:     tp,
+			TargetId: target,
+		}
+		data, e := util.Obj2Str(chat)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_NOTIFY_FAIL)
+		}
+		Listener.OnDelMsg(data)
+	}
+	return nil
 }
