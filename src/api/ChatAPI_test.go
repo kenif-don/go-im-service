@@ -75,3 +75,19 @@ func TestGetMsgs(t *testing.T) {
 	log.Debug(result.Body)
 	time.Sleep(time.Hour)
 }
+func TestDelChatMsg(t *testing.T) {
+	TestLogin(t)
+	oldReq := &api.ChatReq{
+		Type:   "friend",
+		Target: 1,
+	}
+	req, _ := proto.Marshal(oldReq)
+	resp := DelChatMsg(req)
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Debug(result)
+	time.Sleep(time.Hour)
+}

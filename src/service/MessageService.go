@@ -227,10 +227,13 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			if e != nil {
 				return log.WithError(e)
 			}
+			//重置userId为当前用户 不然userId就是发送者了
+			message.UserId = message.TargetId
 			e = messageService.repo.Save(message)
 			if e != nil {
 				return log.WithError(e)
 			}
+			//如果发送者是当前用户打开的聊天目标
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
 				//解密
 				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data)
