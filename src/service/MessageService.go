@@ -254,7 +254,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			//重置userId为当前用户 不然userId就是发送者了
-			message.UserId = message.TargetId
 			e = messageService.repo.Save(message)
 			if e != nil {
 				return log.WithError(e)
