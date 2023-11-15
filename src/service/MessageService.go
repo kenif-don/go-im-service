@@ -46,6 +46,7 @@ func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
 
 // DelLocalChatMsg 删除登录者本地消息
 func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Error {
+	//删除对方的
 	message := &entity.Message{
 		Type:     tp,
 		TargetId: target,
