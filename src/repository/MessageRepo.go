@@ -48,8 +48,8 @@ func (_self *MessageRepo) Delete(obj *entity.Message) error {
 }
 func (_self *MessageRepo) QueryLast(obj *entity.Message) (*entity.Message, error) {
 	tx := _self.Data.Db.Model(&obj).
-		Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId).
-		Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.TargetId).
+		Where("type=? and target_id=? and user_id=? and `from` = ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
+		Or("type=? and target_id=? and user_id=? and `from` = ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
 		Order("time desc").First(obj)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return nil, nil
@@ -64,13 +64,13 @@ func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) 
 	var tx *gorm.DB
 	if obj.Time > 0 {
 		tx = _self.Data.Db.Model(&obj).
-			Where("type=? and target_id=? and user_id=? and from = ? and time < ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId, obj.Time).
-			Or("type=? and target_id=? and user_id=? and from = ? and time < ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId, obj.Time).
+			Where("type=? and target_id=? and user_id=? and `from` = ? and time < ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId, obj.Time).
+			Or("type=? and target_id=? and user_id=? and `from` = ? and time < ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId, obj.Time).
 			Order("time desc").Limit(15).Find(objs)
 	} else {
 		tx = _self.Data.Db.Model(&obj).
-			Where("type=? and target_id=? and user_id=? and from = ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
-			Or("type=? and target_id=? and user_id=? and from = ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
+			Where("type=? and target_id=? and user_id=? and `from` = ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
+			Or("type=? and target_id=? and user_id=? and `from` = ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
 			Order("time desc").Limit(15).Find(objs)
 	}
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {

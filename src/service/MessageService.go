@@ -38,7 +38,6 @@ func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
 	}
 	err := Send(protocol)
 	if err != nil {
-		log.Error(err)
 		return log.WithError(err)
 	}
 	return _self.DelLocalChatMsg(tp, target)
@@ -87,7 +86,6 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 			}
 			err := NewChatService().ChatNotify(chat)
 			if err != nil {
-				log.Error(err)
 				return log.WithError(utils.ERR_DEL_FAIL)
 			}
 		}
@@ -124,6 +122,7 @@ func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Me
 	}
 	msgs, e := _self.repo.Paging(pageReq)
 	if e != nil {
+		log.Error(e)
 		return []entity.Message{}, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	//循环解密
