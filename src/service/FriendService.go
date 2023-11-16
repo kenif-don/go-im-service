@@ -68,14 +68,14 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 
 // DelFriend 删除双方好友
 func (_self *FriendService) DelFriend(id uint64) *utils.Error {
-	//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
-	req := make(map[string]uint64)
-	req["id"] = id
-	_, err := Post("/api/friend/delete", req)
+	err := _self.DelLocalFriend(&entity.Friend{Id: id})
 	if err != nil {
 		return log.WithError(err)
 	}
-	err = _self.DelLocalFriend(&entity.Friend{Id: id})
+	//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
+	req := make(map[string]uint64)
+	req["id"] = id
+	_, err = Post("/api/friend/delete", req)
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -98,16 +98,16 @@ func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
 		}
 		//先修改好友申请为拒绝
 		faService := NewFriendApplyService()
-		e = faService.updateReject(f.Me, f.He)
-		if e != nil {
+		err := faService.updateReject(f.Me, f.He)
+		if err != nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}
-		e = faService.updateReject(f.He, f.Me)
-		if e != nil {
+		err = faService.updateReject(f.He, f.Me)
+		if err != nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}
 		//删除聊天--删除聊天时即会删除消息,也会对PC聊天列表进行通知
-		err := NewChatService().DelLocalChat("friend", f.He)
+		err = NewChatService().DelLocalChat("friend", f.He)
 		if err != nil {
 			return log.WithError(err)
 		}

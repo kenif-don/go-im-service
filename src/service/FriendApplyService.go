@@ -45,6 +45,9 @@ func (_self *FriendApplyService) updateReject(from, to uint64) *utils.Error {
 	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
+	if fa == nil { //查不到可能不是别人加的我 因为好友申请，本地只存别人加自己的请求
+		return nil
+	}
 	fa.State = -1
 	fa.Remark = ""
 	e = _self.repo.Save(fa)
