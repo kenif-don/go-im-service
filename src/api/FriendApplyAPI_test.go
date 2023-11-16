@@ -22,7 +22,6 @@ func TestAddFriend(t *testing.T) {
 		log.Debug(err)
 	}
 	log.Debug(result)
-
 }
 func TestSelectAllFriendApply(t *testing.T) {
 	TestLogin(t)

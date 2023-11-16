@@ -2,7 +2,6 @@ package service
 
 import (
 	"IM-Service/src/configs/conf"
-	"IM-Service/src/configs/db"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
@@ -68,47 +67,18 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 
 // DelFriend 删除双方好友
 func (_self *FriendService) DelFriend(id uint64) *utils.Error {
-	tx := db.NewTransaction().BeginTx()
-	if e := tx.Error; e != nil {
-		return log.WithError(utils.ERR_OPERATION_FAIL)
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	err := func() *utils.Error {
-		friend, e := QueryFriend(&entity.Friend{Id: id}, _self.repo)
-		if e != nil {
-			log.Error(e)
-			return log.WithError(utils.ERR_OPERATION_FAIL)
-		}
-		//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
-		req := make(map[string]uint64)
-		req["id"] = id
-		_, err := Post("/api/friend/delete", req)
-		if err != nil {
-			return log.WithError(err)
-		}
-		err = _self.DelLocalFriend(&entity.Friend{Id: id})
-		if err != nil {
-			return log.WithError(err)
-		}
-		//删除聊天--删除聊天时即会删除消息,也会对PC聊天列表进行通知
-		err = NewChatService().DelLocalChat("friend", friend.He)
-		if err != nil {
-			return log.WithError(err)
-		}
-		e = tx.Commit().Error
-		if e != nil {
-			return log.WithError(utils.ERR_DEL_FAIL)
-		}
-		return nil
-	}()
+	//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
+	req := make(map[string]uint64)
+	req["id"] = id
+	_, err := Post("/api/friend/delete", req)
 	if err != nil {
-		tx.Rollback()
+		return log.WithError(err)
 	}
-	return err
+	err = _self.DelLocalFriend(&entity.Friend{Id: id})
+	if err != nil {
+		return log.WithError(err)
+	}
+	return nil
 }
 func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
 	tx := _self.repo.BeginTx()
@@ -121,22 +91,27 @@ func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
 		}
 	}()
 	err := func() *utils.Error {
-		friend, e := _self.repo.Query(friend)
+		f, e := _self.repo.Query(friend)
 		if e != nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+		//先修改好友申请为拒绝
+		faService := NewFriendApplyService()
+		e = faService.updateReject(f.Me, f.He)
+		if e != nil {
+			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+		e = faService.updateReject(f.He, f.Me)
+		if e != nil {
+			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+		//删除聊天--删除聊天时即会删除消息,也会对PC聊天列表进行通知
+		err := NewChatService().DelLocalChat("friend", f.He)
+		if err != nil {
+			return log.WithError(err)
 		}
 		//再删除本地好友记录 不删用户
-		e = _self.repo.Delete(friend)
-		if e != nil {
-			return log.WithError(utils.ERR_OPERATION_FAIL)
-		}
-		//再修改好友申请为拒绝
-		faService := NewFriendApplyService()
-		e = faService.updateReject(friend.Me, friend.He)
-		if e != nil {
-			return log.WithError(utils.ERR_OPERATION_FAIL)
-		}
-		e = faService.updateReject(friend.He, friend.Me)
+		e = _self.repo.Delete(f)
 		if e != nil {
 			return log.WithError(utils.ERR_OPERATION_FAIL)
 		}
@@ -285,14 +260,28 @@ func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
 	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
-	//通知客户端更新聊天列表
-	if conf.Base.DeviceType == conf.PC {
-		err = NewChatService().ChatNotify(&entity.Chat{
-			Type:     "friend",
-			TargetId: friend.He,
-		})
-		if err != nil {
+	//如果聊天存在 同步修改聊天中的name
+	chat, e := QueryChat("friend", friend.Me, repository.NewChatRepo())
+	if e != nil {
+		log.Error(e)
+		return log.WithError(utils.ERR_OPERATION_FAIL)
+	}
+	if chat != nil {
+		chat.Name = name
+		e = NewChatService().repo.Save(chat)
+		if e != nil {
+			log.Error(e)
 			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+		//通知客户端更新聊天列表
+		if conf.Base.DeviceType == conf.PC {
+			err = NewChatService().ChatNotify(&entity.Chat{
+				Type:     "friend",
+				TargetId: friend.He,
+			})
+			if err != nil {
+				return log.WithError(utils.ERR_OPERATION_FAIL)
+			}
 		}
 	}
 	return nil
