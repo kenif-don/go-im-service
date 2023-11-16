@@ -2,6 +2,7 @@ package service
 
 import (
 	"IM-Service/src/configs/conf"
+	"IM-Service/src/configs/db"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
@@ -81,7 +82,7 @@ func (_self *FriendService) DelFriend(id uint64) *utils.Error {
 	return nil
 }
 func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
-	tx := _self.repo.BeginTx()
+	tx := db.NewTransaction().BeginTx()
 	if e := tx.Error; e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}

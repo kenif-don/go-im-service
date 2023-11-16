@@ -9,10 +9,7 @@ type Transaction struct {
 }
 
 func (_self *Transaction) BeginTx() *gorm.DB {
-	//data := _self.Data.Db.Begin().WithContext(Ctx)
-	//_self.Data = &DB{Db: data}
-	//return data
-	return _self.Data.Db.Begin()
+	return _self.Data.Db.Begin().WithContext(Ctx)
 }
 
 func NewTransaction() *Transaction {
