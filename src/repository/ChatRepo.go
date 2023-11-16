@@ -34,7 +34,7 @@ func (_self *ChatRepo) QueryAll(obj *entity.Chat) ([]entity.Chat, error) {
 }
 func (_self *ChatRepo) Save(obj *entity.Chat) error {
 	tx := _self.Data.Db.Where("`type` = ? and target_id = ? and user_id = ?", obj.Type, obj.TargetId, obj.UserId).First(obj)
-	if tx.Error != nil {
+	if tx.Error != nil && !errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return tx.Error
 	}
 	tx = _self.Data.Db.Where("`type` = ? and target_id = ? and user_id = ?", obj.Type, obj.TargetId, obj.UserId).Save(obj)
