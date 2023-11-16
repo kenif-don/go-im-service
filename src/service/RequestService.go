@@ -27,8 +27,6 @@ type MessageListener interface {
 	OnLogin()
 	//OnLoginPwd2 输入二级密码
 	OnLoginPwd2()
-	//OnSend 消息发送给了服务器 但是不知道成功还是失败 只是发出去了
-	OnSend(data string)
 }
 
 func SetListener(listener MessageListener) {

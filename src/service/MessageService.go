@@ -337,8 +337,6 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no, content strin
 	if e != nil {
 		return log.WithError(utils.ERR_SEND_FAIL)
 	}
-	//发送通知
-	SendNotify(message)
 	return nil
 }
 func (_self *MessageService) coverProtocol(message *entity.Message) (*model.Protocol, *utils.Error) {
@@ -474,14 +472,4 @@ func DelMsgNotify(tp string, target uint64) *utils.Error {
 		Listener.OnDelMsg(data)
 	}
 	return nil
-}
-func SendNotify(message *entity.Message) {
-	if Listener != nil {
-		res, e := util.Obj2Str(message)
-		if e != nil {
-			log.Error(e)
-			return
-		}
-		Listener.OnSend(res)
-	}
 }
