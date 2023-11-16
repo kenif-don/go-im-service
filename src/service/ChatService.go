@@ -51,16 +51,17 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 		//根据类型查询数据
 		switch tp {
 		case "friend":
+			//更新一次好友信息
+			_, err := NewUserService().UpdateUser(target)
+			if err != nil {
+				return nil, log.WithError(err)
+			}
+			//再根据最新user 更新一次聊天信息
 			c, err := _self.CoverChat(tp, target)
 			if err != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
 			chat = c
-			//更新一次好友信息
-			_, err = NewUserService().UpdateUser(target)
-			if err != nil {
-				return nil, log.WithError(err)
-			}
 			break
 		case "group":
 			break
