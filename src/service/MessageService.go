@@ -79,12 +79,11 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 		//如果是PC 更新会话
 		if conf.Base.DeviceType == conf.PC {
 			//更新会话
-			chat, e := QueryChat(tp, target, repository.NewChatRepo())
-			if e != nil {
-				log.Error(e)
-				return log.WithError(utils.ERR_DEL_FAIL)
-			}
-			err := NewChatService().ChatNotify(chat)
+			err := NewChatService().ChatNotify(&entity.Chat{
+				Type:     tp,
+				TargetId: target,
+				UserId:   conf.GetLoginInfo().User.Id,
+			})
 			if err != nil {
 				return log.WithError(utils.ERR_DEL_FAIL)
 			}

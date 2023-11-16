@@ -5,7 +5,6 @@ import (
 	"IM-Service/src/configs/log"
 	"google.golang.org/protobuf/proto"
 	"testing"
-	"time"
 )
 
 func TestIsFriend(t *testing.T) {
@@ -30,7 +29,6 @@ func TestDelFriend(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result)
-	time.Sleep(time.Hour)
 }
 func TestSelectAllFriend(t *testing.T) {
 	TestLogin(t)

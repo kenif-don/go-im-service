@@ -102,6 +102,7 @@ func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *ut
 	}
 	e := _self.repo.Save(chat)
 	if e != nil {
+		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	return chat, nil
@@ -122,6 +123,12 @@ func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
 		if err != nil {
 			return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
 		}
+		//更新聊天信息
+		c, err := _self.CoverChat(chats[i].Type, chats[i].TargetId)
+		if err != nil {
+			return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		chats[i] = *c
 	}
 	//排序 根据最后的消息时间倒序
 	sort.Slice(chats, func(i, j int) bool {
