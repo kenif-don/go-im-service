@@ -17,7 +17,7 @@ import (
 // ValidatePwd2 判断是否需要输入2级密码 这个接口会清空2级密码的输入状态
 func ValidatePwd2() []byte {
 	resp := &api.ResultDTOResp{}
-	if conf.GetLoginInfo().User == nil && conf.GetLoginInfo().User.Password2 != "" {
+	if conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Password2 != "" {
 		//需要输入二级密码
 		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
 		conf.UpdateInputPwd2(1)
