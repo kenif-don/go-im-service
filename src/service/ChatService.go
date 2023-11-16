@@ -56,6 +56,11 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
 			chat = c
+			//更新一次好友信息
+			_, err = NewUserService().UpdateUser(target)
+			if err != nil {
+				return nil, log.WithError(err)
+			}
 			break
 		case "group":
 			break
@@ -67,11 +72,6 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	}
 	//记录当前聊天ID
 	conf.Conf.ChatId = chat.TargetId
-	//更新一次好友信息
-	_, err = NewUserService().UpdateUser(target)
-	if err != nil {
-		return nil, log.WithError(err)
-	}
 	//如果是PC的话 需要通知客户端更新聊天列表
 	if conf.Base.DeviceType == conf.PC {
 		err = _self.ChatNotify(chat)
@@ -123,12 +123,6 @@ func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
 		if err != nil {
 			return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
 		}
-		//更新聊天信息
-		c, err := _self.CoverChat(chats[i].Type, chats[i].TargetId)
-		if err != nil {
-			return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		chats[i] = *c
 	}
 	//排序 根据最后的消息时间倒序
 	sort.Slice(chats, func(i, j int) bool {
