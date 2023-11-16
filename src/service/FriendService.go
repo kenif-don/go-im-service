@@ -2,6 +2,7 @@ package service
 
 import (
 	"IM-Service/src/configs/conf"
+	"IM-Service/src/configs/db"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
@@ -67,20 +68,46 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 
 // DelFriend 删除双方好友
 func (_self *FriendService) DelFriend(id uint64) *utils.Error {
-	//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
-	req := make(map[string]uint64)
-	req["id"] = id
-	//TODO 这里需要事务
-	_, err := Post("/api/friend/delete", req)
-	if err != nil {
-		return log.WithError(err)
+	tx := db.NewTransaction().BeginTx()
+	if e := tx.Error; e != nil {
+		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
-	err = _self.DelLocalFriend(&entity.Friend{Id: id})
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		friend, e := QueryFriend(&entity.Friend{Id: id}, _self.repo)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
+		//先通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
+		req := make(map[string]uint64)
+		req["id"] = id
+		_, err := Post("/api/friend/delete", req)
+		if err != nil {
+			return log.WithError(err)
+		}
+		err = _self.DelLocalFriend(&entity.Friend{Id: id})
+		if err != nil {
+			return log.WithError(err)
+		}
+		//删除聊天--删除聊天时即会删除消息,也会对PC聊天列表进行通知
+		err = NewChatService().DelLocalChat("friend", friend.He)
+		if err != nil {
+			return log.WithError(err)
+		}
+		e = tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		return nil
+	}()
 	if err != nil {
-		return log.WithError(err)
+		tx.Rollback()
 	}
-	//删除聊天
-	//删除消息
 	return err
 }
 func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
@@ -257,6 +284,16 @@ func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
 	e = _self.repo.Save(friend)
 	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
+	}
+	//通知客户端更新聊天列表
+	if conf.Base.DeviceType == conf.PC {
+		err = NewChatService().ChatNotify(&entity.Chat{
+			Type:     "friend",
+			TargetId: friend.He,
+		})
+		if err != nil {
+			return log.WithError(utils.ERR_OPERATION_FAIL)
+		}
 	}
 	return nil
 }
