@@ -295,7 +295,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			}
 			//判断是否存在聊天
 			chat, e := QueryChat(message.Type, util.Str2Uint64(protocol.From), repository.NewChatRepo())
-			log.Debug("聊天是否存在：%v", chat)
 			if e != nil {
 				return log.WithError(e)
 			}
@@ -307,7 +306,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				chat = c
 			}
 			// 通知聊天列表更新
-			log.Debug("==================通知聊天列表更新")
 			err := NewChatService().ChatNotify(chat)
 			if err != nil {
 				return log.WithError(err)
