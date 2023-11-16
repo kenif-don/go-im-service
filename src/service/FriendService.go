@@ -261,7 +261,7 @@ func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
 	//如果聊天存在 同步修改聊天中的name
-	chat, e := QueryChat("friend", friend.Me, repository.NewChatRepo())
+	chat, e := QueryChat("friend", friend.He, repository.NewChatRepo())
 	if e != nil {
 		log.Error(e)
 		return log.WithError(utils.ERR_OPERATION_FAIL)
