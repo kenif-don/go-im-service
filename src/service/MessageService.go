@@ -385,7 +385,7 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 		return nil, log.WithError(err)
 	}
 	message.Data = data
-	message.Time = uint64(time.Now().Unix())
+	message.Time = uint64(time.Now().UnixNano())
 	message.Send = 1 // 发送中
 	message.Read = 2 // 自己发的 肯定是已读
 	return message, nil
