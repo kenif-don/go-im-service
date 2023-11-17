@@ -70,7 +70,7 @@ func (_self *RechargeOrderService) AddRechargeOrder(tp int, value string) (*enti
 	}
 	//转换为实体
 	rechargeOrder := &entity.RechargeOrder{}
-	e := util.Obj2Obj(resultDTO.Data, rechargeOrder)
+	e := util.Str2Obj(resultDTO.Data.(string), rechargeOrder)
 	if e != nil {
 		log.Error(e)
 		return nil, utils.ERR_RECHARGE_FAIL
