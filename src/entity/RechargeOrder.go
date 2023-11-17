@@ -2,8 +2,8 @@ package entity
 
 type RechargeOrder struct {
 	Id         uint64 `gorm:"unique;<-:create" json:"id"`
-	UserId     uint64 `gorm:"unique" json:"userId"` //订单
-	Value      string `json:"value"`                //重置金额
+	UserId     uint64 `json:"userId"`
+	Value      string `json:"value"` //充值金额
 	Status     int    `json:"status"`
 	Type       int    `json:"type"`
 	CreateTime int64  `json:"createTime"`
