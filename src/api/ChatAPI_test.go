@@ -26,7 +26,9 @@ func TestOpenChat(t *testing.T) {
 }
 func TestSendMsg(t *testing.T) {
 	TestLogin(t)
+	TestGetChats(t)
 	TestOpenChat(t)
+	TestGetMsgs(t)
 	contentObj := &entity.MessageData{
 		Type:    1,
 		Content: "111",
@@ -56,7 +58,6 @@ func TestGetChats(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result)
-	time.Sleep(time.Hour)
 }
 
 func TestGetMsgs(t *testing.T) {
@@ -73,7 +74,6 @@ func TestGetMsgs(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result.Body)
-	time.Sleep(time.Hour)
 }
 func TestDelChatMsg(t *testing.T) {
 	TestLogin(t)

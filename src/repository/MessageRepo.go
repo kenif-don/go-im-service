@@ -33,7 +33,7 @@ func (_self *MessageRepo) QueryAll(obj *entity.Message) ([]entity.Message, error
 	return *objs, nil
 }
 func (_self *MessageRepo) Save(obj *entity.Message) error {
-	tx := _self.Data.Db.Model(&entity.Message{}).Where("no = ?", obj.No).Save(obj)
+	tx := _self.Data.Db.Where("no = ?", obj.No).Save(obj)
 	if tx.Error != nil {
 		return tx.Error
 	}
