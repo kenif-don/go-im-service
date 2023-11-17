@@ -37,6 +37,8 @@ var (
 	ERR_NOT_PWD2_FAIL           = NewError(1029, "please input security password", "请输入二级密码")
 	ERR_NOTIFY_FAIL             = NewError(1030, "notify fail", "通知失败")
 	ERR_RECHARGE_FAIL           = NewError(1031, "recharge fail", "充值失败")
+	ERR_SELECT_PAY_NETWORK_FAIL = NewError(1032, "please select pay network", "请选择支付网络")
+	ERR_INPUT_PAY_MONEY_FAIL    = NewError(1033, "please input pay money", "请输入支付金额")
 )
 
 type Error struct {

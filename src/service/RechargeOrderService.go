@@ -46,6 +46,13 @@ func (_self *RechargeOrderService) AddRechargeOrder(tp int, value string) (*enti
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, utils.ERR_NOT_LOGIN
 	}
+	if tp == 0 {
+		return nil, utils.ERR_SELECT_PAY_NETWORK_FAIL
+	}
+	v := util.Str2Uint64(value)
+	if v == 0 {
+		return nil, utils.ERR_INPUT_PAY_MONEY_FAIL
+	}
 	reo := &entity.RechargeOrder{
 		Value: value,
 		Type:  tp,
