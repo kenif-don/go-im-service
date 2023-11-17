@@ -36,6 +36,7 @@ var (
 	ERR_INTRO_VALIDATE_FAIL     = NewError(1028, "intro length is error", "简介为1-30位")
 	ERR_NOT_PWD2_FAIL           = NewError(1029, "please input security password", "请输入二级密码")
 	ERR_NOTIFY_FAIL             = NewError(1030, "notify fail", "通知失败")
+	ERR_RECHARGE_FAIL           = NewError(1031, "recharge fail", "充值失败")
 )
 
 type Error struct {

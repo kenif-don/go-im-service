@@ -12,6 +12,12 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+/** 充值请求对象 */
+message RechargeOrderReq{
+  int32 type = 1;
+  string value = 2;
+}
+/** 查询消息列表请求对象 */
 message MsgPageReq{
   string type = 1;//聊天类型 friend、group
   uint64 target = 2;//聊天目标 用户ID或群ID
