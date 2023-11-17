@@ -3,8 +3,6 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
@@ -16,7 +14,7 @@ func SelectRemoteAccount() []byte {
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
-	obj, err := service.NewAccountService().SelectOneAccount()
+	obj, err := service.NewAccountService().SelectOneAccount(true)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -40,9 +38,9 @@ func SelectOneAccount() []byte {
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
-	obj, e := service.QueryAccount(repository.NewAccountRepo())
-	if e != nil {
-		return SyncPutErr(log.WithError(e), resp)
+	obj, err := service.NewAccountService().SelectOneAccount(false)
+	if err != nil {
+		return SyncPutErr(err, resp)
 	}
 	result, e := util.Obj2Str(obj)
 	if e != nil {

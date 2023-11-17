@@ -26,30 +26,20 @@ func NewAccountService() *AccountService {
 		repo: repository.NewAccountRepo(),
 	}
 }
-func QueryAccount(repo IAccountRepo) (*entity.Account, error) {
-	account, e := repo.Query(&entity.Account{UserId: conf.GetLoginInfo().User.Id})
-	if e != nil {
-		return nil, e
-	}
-	if account == nil {
-		a, err := NewAccountService().SelectOneAccount()
-		if err != nil {
-			return nil, err
-		}
-		return a, nil
-	}
-	return account, nil
-}
 
 // SelectOneAccount 获取登录者账户数据 没有就从服务器同步
-func (_self *AccountService) SelectOneAccount() (*entity.Account, *utils.Error) {
+func (_self *AccountService) SelectOneAccount(flush bool) (*entity.Account, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, utils.ERR_NOT_LOGIN
 	}
-	account, e := QueryAccount(_self.repo)
+	account, e := _self.repo.Query(&entity.Account{UserId: conf.GetLoginInfo().User.Id})
 	if e != nil {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	//有数据 并且不使用远程就直接返回
+	if account != nil && !flush {
+		return account, nil
 	}
 	if account == nil {
 		//没有就从服务器同步
