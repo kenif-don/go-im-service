@@ -310,6 +310,8 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			if err != nil {
 				return log.WithError(err)
 			}
+			// 通知语音播报
+			err = NewChatService().VoiceNotify(message)
 		}
 		break
 	}

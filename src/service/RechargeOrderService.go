@@ -58,7 +58,7 @@ func (_self *RechargeOrderService) AddRechargeOrder(tp int, value string) (*enti
 		Type:  tp,
 	}
 	// 先添加
-	resultDTO, err := Post("/api/recharge-order/selectOne", reo)
+	resultDTO, err := Post("/api/recharge-order/add", reo)
 	if err != nil {
 		return nil, log.WithError(err)
 	}

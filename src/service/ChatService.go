@@ -246,3 +246,14 @@ func (_self *ChatService) ChatNotify(chat *entity.Chat) *utils.Error {
 	}
 	return nil
 }
+
+func (_self *ChatService) VoiceNotify(message *entity.Message) *utils.Error {
+	if Listener != nil {
+		res, e := util.Obj2Str(message)
+		if e != nil {
+			return log.WithError(e)
+		}
+		Listener.OnDoVoice(res)
+	}
+	return nil
+}

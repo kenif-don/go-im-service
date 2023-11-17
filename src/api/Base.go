@@ -22,6 +22,8 @@ type MessageListener interface {
 	OnLogin()
 	//OnLoginPwd2 输入二级密码
 	OnLoginPwd2()
+	//OnNewMsg 收到新消息通知 用来播放语音提示
+	OnDoVoice(data string)
 }
 
 // SyncPutErr 同步导出
