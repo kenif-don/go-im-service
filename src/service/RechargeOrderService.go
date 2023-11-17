@@ -37,7 +37,7 @@ func (_self *RechargeOrderService) GetTypes() *[]PayType {
 	//将1-TRC20 2-ERC20封装到*[]PayType中
 	return &[]PayType{
 		{1, "TRC20"},
-		{2, "ERC20"},
+		//{2, "ERC20"},
 	}
 }
 
