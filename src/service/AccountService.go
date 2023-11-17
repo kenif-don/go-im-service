@@ -46,7 +46,7 @@ func (_self *AccountService) SelectOneAccount(flush bool) (*entity.Account, *uti
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
-	var a *entity.Account
+	a := &entity.Account{}
 	e = util.Str2Obj(resultDTO.Data.(string), a)
 	if e != nil {
 		log.Error(e)
