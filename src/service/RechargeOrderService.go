@@ -21,8 +21,8 @@ type RechargeOrderService struct {
 	repo IRechargeOrderRepo
 }
 type PayType struct {
-	Type int
-	Name string
+	Type int    `json:"type"`
+	Name string `json:"name"`
 }
 
 func NewRechargeOrderService() *RechargeOrderService {
