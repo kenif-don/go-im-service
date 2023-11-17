@@ -53,7 +53,7 @@ func (_self *AccountService) SelectOneAccount(flush bool) (*entity.Account, *uti
 			log.Error(e)
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
-		e = _self.repo.Save(account)
+		e = _self.repo.Save(&a)
 		if e != nil {
 			log.Error(e)
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
