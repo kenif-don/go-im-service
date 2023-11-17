@@ -47,3 +47,6 @@ func Uint642Str(i uint64) string {
 func GetErrMsg(err *utils.Error) string {
 	return err.MsgZh
 }
+func Len(str string) int {
+	return len([]rune(str))
+}

@@ -113,7 +113,7 @@ func (_self *UserService) UpdateEmail(id uint64, email string) *utils.Error {
 	return _self.Update(user)
 }
 func (_self *UserService) UpdateIntro(id uint64, intro string) *utils.Error {
-	if len(intro) < 1 || len(intro) > 10 {
+	if util.Len(intro) < 1 || util.Len(intro) > 10 {
 		return log.WithError(utils.ERR_INTRO_VALIDATE_FAIL)
 	}
 	user, err := QueryUser(id, _self.repo)
@@ -124,7 +124,7 @@ func (_self *UserService) UpdateIntro(id uint64, intro string) *utils.Error {
 	return _self.Update(user)
 }
 func (_self *UserService) UpdateNickname(id uint64, nickname string) *utils.Error {
-	if len(nickname) < 1 || len(nickname) > 10 {
+	if util.Len(nickname) < 1 || util.Len(nickname) > 10 {
 		return log.WithError(utils.ERR_NICKNAME_VALIDATE_FAIL)
 	}
 	user, err := QueryUser(id, _self.repo)
@@ -216,10 +216,10 @@ func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Erro
 
 // Register 用户注册
 func (_self *UserService) Register(username, password string) *utils.Error {
-	if len(username) < 6 || len(username) > 20 {
+	if util.Len(username) < 6 || util.Len(username) > 20 {
 		return log.WithError(utils.ERR_USER_USERNAME_LENGTH)
 	}
-	if len(password) < 6 || len(password) > 20 {
+	if util.Len(password) < 6 || util.Len(password) > 20 {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
 	params := &entity.RegisterUser{
@@ -234,10 +234,10 @@ func (_self *UserService) Register(username, password string) *utils.Error {
 }
 
 func (_self *UserService) Login(username, password string) *utils.Error {
-	if len(username) < 6 || len(username) > 20 {
+	if util.Len(username) < 6 || util.Len(username) > 20 {
 		return log.WithError(utils.ERR_USER_USERNAME_LENGTH)
 	}
-	if len(password) < 6 || len(password) > 20 {
+	if util.Len(password) < 6 || util.Len(password) > 20 {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
 
@@ -257,7 +257,7 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 	return _self.LoginInfo()
 }
 func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
-	if len(pwd2) < 6 || len(pwd2) > 20 {
+	if util.Len(pwd2) < 6 || util.Len(pwd2) > 20 {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
 	//远程服务器确认密码是否正确
