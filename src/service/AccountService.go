@@ -27,7 +27,18 @@ func NewAccountService() *AccountService {
 	}
 }
 func QueryAccount(repo IAccountRepo) (*entity.Account, error) {
-	return repo.Query(&entity.Account{UserId: conf.GetLoginInfo().User.Id})
+	account, e := repo.Query(&entity.Account{UserId: conf.GetLoginInfo().User.Id})
+	if e != nil {
+		return nil, e
+	}
+	if account == nil {
+		a, err := NewAccountService().SelectOneAccount()
+		if err != nil {
+			return nil, err
+		}
+		return a, nil
+	}
+	return account, nil
 }
 
 // SelectOneAccount 获取登录者账户数据 没有就从服务器同步
