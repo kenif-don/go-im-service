@@ -99,7 +99,15 @@ func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *ut
 		HeadImg:  friend.HeUser.HeadImg,
 		UnReadNo: 0,
 	}
-	e := _self.repo.Save(chat)
+	c, e := QueryChat(tp, target, _self.repo)
+	if e != nil {
+		log.Error(e)
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	if c != nil {
+		chat.Id = c.Id
+	}
+	e = _self.repo.Save(chat)
 	if e != nil {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
