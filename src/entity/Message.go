@@ -2,9 +2,9 @@ package entity
 
 type Message struct {
 	No       string `gorm:"<-:create" gorm:"index:idx_1"  json:"no"` //消息唯一编号  4个字段的联合索引
-	Type     string `gorm:"index:idx_1,unique" json:"type"`          //聊天类型 friend、group  4个字段的联合索引
-	TargetId uint64 `gorm:"index:idx_1,unique" json:"targetId"`      //聊天目标 用户ID或群ID  4个字段的联合索引
-	UserId   uint64 `gorm:"index:idx_1,unique" json:"userId"`        //当前聊天所有者  4个字段的联合索引
+	Type     string `json:"type"`                                    //聊天类型 friend、group  4个字段的联合索引
+	TargetId uint64 `json:"targetId"`                                //聊天目标 用户ID或群ID  4个字段的联合索引
+	UserId   uint64 `json:"userId"`                                  //当前聊天所有者  4个字段的联合索引
 	From     string `json:"from"`                                    //消息发送者
 	Data     string `json:"data"`                                    //消息内容 MessageData的json字符串
 	Time     uint64 `json:"time"`                                    //消息发送时间
