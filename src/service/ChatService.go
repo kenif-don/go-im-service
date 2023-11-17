@@ -47,25 +47,23 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	if e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
-	if chat == nil {
-		//根据类型查询数据
-		switch tp {
-		case "friend":
-			//更新一次好友信息
-			_, err := NewUserService().UpdateUser(target)
-			if err != nil {
-				return nil, log.WithError(err)
-			}
-			//再根据最新user 更新一次聊天信息
-			c, err := _self.CoverChat(tp, target)
-			if err != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			chat = c
-			break
-		case "group":
-			break
+	//根据类型查询数据
+	switch tp {
+	case "friend":
+		//更新一次好友信息
+		_, err := NewUserService().UpdateUser(target)
+		if err != nil {
+			return nil, log.WithError(err)
 		}
+		//再根据最新user 更新一次聊天信息
+		c, err := _self.CoverChat(tp, target)
+		if err != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		chat = c
+		break
+	case "group":
+		break
 	}
 	err := _self.coverLastMsg(chat)
 	if err != nil {

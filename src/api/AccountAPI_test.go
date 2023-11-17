@@ -16,3 +16,12 @@ func TestSelectOneAccount(t *testing.T) {
 	}
 	log.Debug(result)
 }
+func TestSelectRemoteAccount(t *testing.T) {
+	resp := SelectRemoteAccount()
+	result := &api.ResultDTOResp{}
+	err := proto.Unmarshal(resp, result)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Debug(result)
+}

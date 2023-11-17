@@ -41,24 +41,21 @@ func (_self *AccountService) SelectOneAccount(flush bool) (*entity.Account, *uti
 	if account != nil && !flush {
 		return account, nil
 	}
-	if account == nil {
-		//没有就从服务器同步
-		resultDTO, err := Post("/api/account/selectOne", &entity.Account{UserId: conf.GetLoginInfo().User.Id})
-		if err != nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		var a entity.Account
-		e = util.Str2Obj(resultDTO.Data.(string), &a)
-		if e != nil {
-			log.Error(e)
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		e = _self.repo.Save(&a)
-		if e != nil {
-			log.Error(e)
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		account = &a
+	//没有就从服务器同步
+	resultDTO, err := Post("/api/account/selectOne", &entity.Account{UserId: conf.GetLoginInfo().User.Id})
+	if err != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
-	return account, nil
+	var a *entity.Account
+	e = util.Str2Obj(resultDTO.Data.(string), a)
+	if e != nil {
+		log.Error(e)
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	e = _self.repo.Save(a)
+	if e != nil {
+		log.Error(e)
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	return a, nil
 }
