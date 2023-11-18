@@ -12,6 +12,24 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+/** 动态的回复请求对象 */
+message ReplyReq{
+  uint64 moodId = 1;//哪条动态
+  uint64 replyUserId = 2;//回复某人
+  string content = 3;//回复内容
+}
+/** 查询动态列表请求对象 */
+message MoodPageReq{
+  int32 page = 1;//页码
+  int32 pageSize = 2;//每页显示条数
+  uint64 userId = 3;//只查某个用户 不传就是查全部
+}
+/** 动态请求对象 */
+message MoodReq{
+  uint64 id = 1;//删除时使用
+  string content = 2;// 添加时使用
+  string urls = 3;//添加时使用 可以为null,json字符串
+}
 /** 充值请求对象 */
 message RechargeOrderReq{
   int32 type = 1;
@@ -21,7 +39,7 @@ message RechargeOrderReq{
 message MsgPageReq{
   string type = 1;//聊天类型 friend、group
   uint64 target = 2;//聊天目标 用户ID或群ID
-  uint64 time = 4;//消息发送时间 查询此时间之前的消息
+  uint64 time = 3;//消息发送时间 查询此时间之前的消息
 }
 
 message ChatReq{

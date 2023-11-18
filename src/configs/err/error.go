@@ -39,6 +39,10 @@ var (
 	ERR_RECHARGE_FAIL           = NewError(1031, "recharge fail", "充值失败")
 	ERR_SELECT_PAY_NETWORK_FAIL = NewError(1032, "please select pay network", "请选择支付网络")
 	ERR_INPUT_PAY_MONEY_FAIL    = NewError(1033, "please input pay money", "请输入支付金额")
+	ERR_ADD_MOOD_FAIL           = NewError(1034, "add mood fail", "添加动态失败")
+	ERR_DELETE_MOOD_FAIL        = NewError(1035, "delete mood fail", "删除动态失败")
+	ERR_SELECT_MOOD_FAIL        = NewError(1036, "select mood fail", "查询动态失败")
+	ERR_ADD_REPLY_FAIL          = NewError(1037, "add reply fail", "回复失败")
 )
 
 type Error struct {

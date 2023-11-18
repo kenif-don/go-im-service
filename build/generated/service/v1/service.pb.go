@@ -125,7 +125,7 @@ func (x ConfigReq_LogSwitch) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConfigReq_LogSwitch.Descriptor instead.
 func (ConfigReq_LogSwitch) EnumDescriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{10, 0}
+	return file_service_proto_rawDescGZIP(), []int{13, 0}
 }
 
 type ConfigReq_DeviceType int32
@@ -180,7 +180,199 @@ func (x ConfigReq_DeviceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ConfigReq_DeviceType.Descriptor instead.
 func (ConfigReq_DeviceType) EnumDescriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{10, 1}
+	return file_service_proto_rawDescGZIP(), []int{13, 1}
+}
+
+// * 动态的回复请求对象
+type ReplyReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	MoodId      uint64 `protobuf:"varint,1,opt,name=moodId,proto3" json:"moodId,omitempty"`           //哪条动态
+	ReplyUserId uint64 `protobuf:"varint,2,opt,name=replyUserId,proto3" json:"replyUserId,omitempty"` //回复某人
+	Content     string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`          //回复内容
+}
+
+func (x *ReplyReq) Reset() {
+	*x = ReplyReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_service_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReplyReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplyReq) ProtoMessage() {}
+
+func (x *ReplyReq) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplyReq.ProtoReflect.Descriptor instead.
+func (*ReplyReq) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ReplyReq) GetMoodId() uint64 {
+	if x != nil {
+		return x.MoodId
+	}
+	return 0
+}
+
+func (x *ReplyReq) GetReplyUserId() uint64 {
+	if x != nil {
+		return x.ReplyUserId
+	}
+	return 0
+}
+
+func (x *ReplyReq) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+// * 查询动态列表请求对象
+type MoodPageReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page     int32  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`         //页码
+	PageSize int32  `protobuf:"varint,2,opt,name=pageSize,proto3" json:"pageSize,omitempty"` //每页显示条数
+	UserId   uint64 `protobuf:"varint,3,opt,name=userId,proto3" json:"userId,omitempty"`     //只查某个用户 不传就是查全部
+}
+
+func (x *MoodPageReq) Reset() {
+	*x = MoodPageReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_service_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MoodPageReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoodPageReq) ProtoMessage() {}
+
+func (x *MoodPageReq) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoodPageReq.ProtoReflect.Descriptor instead.
+func (*MoodPageReq) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *MoodPageReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *MoodPageReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *MoodPageReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+// * 动态请求对象
+type MoodReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id      uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`          //删除时使用
+	Content string `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"` // 添加时使用
+	Urls    string `protobuf:"bytes,3,opt,name=urls,proto3" json:"urls,omitempty"`       //添加时使用 可以为null,json字符串
+}
+
+func (x *MoodReq) Reset() {
+	*x = MoodReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_service_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MoodReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoodReq) ProtoMessage() {}
+
+func (x *MoodReq) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoodReq.ProtoReflect.Descriptor instead.
+func (*MoodReq) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *MoodReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MoodReq) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *MoodReq) GetUrls() string {
+	if x != nil {
+		return x.Urls
+	}
+	return ""
 }
 
 // * 充值请求对象
@@ -196,7 +388,7 @@ type RechargeOrderReq struct {
 func (x *RechargeOrderReq) Reset() {
 	*x = RechargeOrderReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[0]
+		mi := &file_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -209,7 +401,7 @@ func (x *RechargeOrderReq) String() string {
 func (*RechargeOrderReq) ProtoMessage() {}
 
 func (x *RechargeOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[0]
+	mi := &file_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -222,7 +414,7 @@ func (x *RechargeOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RechargeOrderReq.ProtoReflect.Descriptor instead.
 func (*RechargeOrderReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{0}
+	return file_service_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *RechargeOrderReq) GetType() int32 {
@@ -247,13 +439,13 @@ type MsgPageReq struct {
 
 	Type   string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`      //聊天类型 friend、group
 	Target uint64 `protobuf:"varint,2,opt,name=target,proto3" json:"target,omitempty"` //聊天目标 用户ID或群ID
-	Time   uint64 `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`     //消息发送时间 查询此时间之前的消息
+	Time   uint64 `protobuf:"varint,3,opt,name=time,proto3" json:"time,omitempty"`     //消息发送时间 查询此时间之前的消息
 }
 
 func (x *MsgPageReq) Reset() {
 	*x = MsgPageReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[1]
+		mi := &file_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -266,7 +458,7 @@ func (x *MsgPageReq) String() string {
 func (*MsgPageReq) ProtoMessage() {}
 
 func (x *MsgPageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[1]
+	mi := &file_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -279,7 +471,7 @@ func (x *MsgPageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MsgPageReq.ProtoReflect.Descriptor instead.
 func (*MsgPageReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{1}
+	return file_service_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *MsgPageReq) GetType() string {
@@ -317,7 +509,7 @@ type ChatReq struct {
 func (x *ChatReq) Reset() {
 	*x = ChatReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[2]
+		mi := &file_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -330,7 +522,7 @@ func (x *ChatReq) String() string {
 func (*ChatReq) ProtoMessage() {}
 
 func (x *ChatReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[2]
+	mi := &file_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,7 +535,7 @@ func (x *ChatReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatReq.ProtoReflect.Descriptor instead.
 func (*ChatReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{2}
+	return file_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ChatReq) GetType() string {
@@ -387,7 +579,7 @@ type FriendReq struct {
 func (x *FriendReq) Reset() {
 	*x = FriendReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[3]
+		mi := &file_service_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -400,7 +592,7 @@ func (x *FriendReq) String() string {
 func (*FriendReq) ProtoMessage() {}
 
 func (x *FriendReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[3]
+	mi := &file_service_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -413,7 +605,7 @@ func (x *FriendReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FriendReq.ProtoReflect.Descriptor instead.
 func (*FriendReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{3}
+	return file_service_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *FriendReq) GetId() uint64 {
@@ -442,7 +634,7 @@ type SearchReq struct {
 func (x *SearchReq) Reset() {
 	*x = SearchReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[4]
+		mi := &file_service_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -455,7 +647,7 @@ func (x *SearchReq) String() string {
 func (*SearchReq) ProtoMessage() {}
 
 func (x *SearchReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[4]
+	mi := &file_service_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -468,7 +660,7 @@ func (x *SearchReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchReq.ProtoReflect.Descriptor instead.
 func (*SearchReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{4}
+	return file_service_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SearchReq) GetKeyword() string {
@@ -492,7 +684,7 @@ type FriendApplyReq struct {
 func (x *FriendApplyReq) Reset() {
 	*x = FriendApplyReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[5]
+		mi := &file_service_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -505,7 +697,7 @@ func (x *FriendApplyReq) String() string {
 func (*FriendApplyReq) ProtoMessage() {}
 
 func (x *FriendApplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[5]
+	mi := &file_service_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -518,7 +710,7 @@ func (x *FriendApplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FriendApplyReq.ProtoReflect.Descriptor instead.
 func (*FriendApplyReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{5}
+	return file_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *FriendApplyReq) GetId() uint64 {
@@ -554,7 +746,7 @@ type UpdateUserReq struct {
 func (x *UpdateUserReq) Reset() {
 	*x = UpdateUserReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[6]
+		mi := &file_service_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -567,7 +759,7 @@ func (x *UpdateUserReq) String() string {
 func (*UpdateUserReq) ProtoMessage() {}
 
 func (x *UpdateUserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[6]
+	mi := &file_service_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -580,7 +772,7 @@ func (x *UpdateUserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserReq.ProtoReflect.Descriptor instead.
 func (*UpdateUserReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{6}
+	return file_service_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateUserReq) GetData() string {
@@ -603,7 +795,7 @@ type UpdatePwdReq struct {
 func (x *UpdatePwdReq) Reset() {
 	*x = UpdatePwdReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[7]
+		mi := &file_service_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -616,7 +808,7 @@ func (x *UpdatePwdReq) String() string {
 func (*UpdatePwdReq) ProtoMessage() {}
 
 func (x *UpdatePwdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[7]
+	mi := &file_service_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -629,7 +821,7 @@ func (x *UpdatePwdReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePwdReq.ProtoReflect.Descriptor instead.
 func (*UpdatePwdReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{7}
+	return file_service_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UpdatePwdReq) GetPwd() string {
@@ -665,7 +857,7 @@ type UploadReq struct {
 func (x *UploadReq) Reset() {
 	*x = UploadReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[8]
+		mi := &file_service_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -678,7 +870,7 @@ func (x *UploadReq) String() string {
 func (*UploadReq) ProtoMessage() {}
 
 func (x *UploadReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[8]
+	mi := &file_service_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -691,7 +883,7 @@ func (x *UploadReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadReq.ProtoReflect.Descriptor instead.
 func (*UploadReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{8}
+	return file_service_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UploadReq) GetPath() string {
@@ -722,7 +914,7 @@ type UserReq struct {
 func (x *UserReq) Reset() {
 	*x = UserReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[9]
+		mi := &file_service_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -735,7 +927,7 @@ func (x *UserReq) String() string {
 func (*UserReq) ProtoMessage() {}
 
 func (x *UserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[9]
+	mi := &file_service_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -748,7 +940,7 @@ func (x *UserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserReq.ProtoReflect.Descriptor instead.
 func (*UserReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{9}
+	return file_service_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UserReq) GetId() uint64 {
@@ -787,7 +979,7 @@ type ConfigReq struct {
 func (x *ConfigReq) Reset() {
 	*x = ConfigReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[10]
+		mi := &file_service_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -800,7 +992,7 @@ func (x *ConfigReq) String() string {
 func (*ConfigReq) ProtoMessage() {}
 
 func (x *ConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[10]
+	mi := &file_service_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -813,7 +1005,7 @@ func (x *ConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfigReq.ProtoReflect.Descriptor instead.
 func (*ConfigReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{10}
+	return file_service_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ConfigReq) GetBaseDir() string {
@@ -864,7 +1056,7 @@ type ResultDTOResp struct {
 func (x *ResultDTOResp) Reset() {
 	*x = ResultDTOResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[11]
+		mi := &file_service_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -877,7 +1069,7 @@ func (x *ResultDTOResp) String() string {
 func (*ResultDTOResp) ProtoMessage() {}
 
 func (x *ResultDTOResp) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[11]
+	mi := &file_service_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -890,7 +1082,7 @@ func (x *ResultDTOResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResultDTOResp.ProtoReflect.Descriptor instead.
 func (*ResultDTOResp) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{11}
+	return file_service_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ResultDTOResp) GetCode() uint32 {
@@ -918,6 +1110,22 @@ var File_service_proto protoreflect.FileDescriptor
 
 var file_service_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
+	0x5e, 0x0a, 0x08, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a, 0x06, 0x6d,
+	0x6f, 0x6f, 0x64, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x6d, 0x6f, 0x6f,
+	0x64, 0x49, 0x64, 0x12, 0x20, 0x0a, 0x0b, 0x72, 0x65, 0x70, 0x6c, 0x79, 0x55, 0x73, 0x65, 0x72,
+	0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0b, 0x72, 0x65, 0x70, 0x6c, 0x79, 0x55,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22,
+	0x55, 0x0a, 0x0b, 0x4d, 0x6f, 0x6f, 0x64, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x12, 0x12,
+	0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70, 0x61,
+	0x67, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06,
+	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x47, 0x0a, 0x07, 0x4d, 0x6f, 0x6f, 0x64, 0x52, 0x65,
+	0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69,
+	0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x75,
+	0x72, 0x6c, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x75, 0x72, 0x6c, 0x73, 0x22,
 	0x3c, 0x0a, 0x10, 0x52, 0x65, 0x63, 0x68, 0x61, 0x72, 0x67, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72,
 	0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x05, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
@@ -926,7 +1134,7 @@ var file_service_proto_rawDesc = []byte{
 	0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12,
 	0x16, 0x0a, 0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52,
 	0x06, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x69, 0x6d, 0x65, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x04, 0x74, 0x69, 0x6d, 0x65, 0x22, 0x5f, 0x0a, 0x07, 0x43,
+	0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x04, 0x74, 0x69, 0x6d, 0x65, 0x22, 0x5f, 0x0a, 0x07, 0x43,
 	0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x74, 0x61,
 	0x72, 0x67, 0x65, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x74, 0x61, 0x72, 0x67,
@@ -1011,23 +1219,26 @@ func file_service_proto_rawDescGZIP() []byte {
 }
 
 var file_service_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_service_proto_goTypes = []interface{}{
 	(ResultDTOCode)(0),        // 0: ResultDTOCode
 	(ConfigReq_LogSwitch)(0),  // 1: ConfigReq.LogSwitch
 	(ConfigReq_DeviceType)(0), // 2: ConfigReq.DeviceType
-	(*RechargeOrderReq)(nil),  // 3: RechargeOrderReq
-	(*MsgPageReq)(nil),        // 4: MsgPageReq
-	(*ChatReq)(nil),           // 5: ChatReq
-	(*FriendReq)(nil),         // 6: FriendReq
-	(*SearchReq)(nil),         // 7: SearchReq
-	(*FriendApplyReq)(nil),    // 8: FriendApplyReq
-	(*UpdateUserReq)(nil),     // 9: UpdateUserReq
-	(*UpdatePwdReq)(nil),      // 10: UpdatePwdReq
-	(*UploadReq)(nil),         // 11: UploadReq
-	(*UserReq)(nil),           // 12: UserReq
-	(*ConfigReq)(nil),         // 13: ConfigReq
-	(*ResultDTOResp)(nil),     // 14: ResultDTOResp
+	(*ReplyReq)(nil),          // 3: ReplyReq
+	(*MoodPageReq)(nil),       // 4: MoodPageReq
+	(*MoodReq)(nil),           // 5: MoodReq
+	(*RechargeOrderReq)(nil),  // 6: RechargeOrderReq
+	(*MsgPageReq)(nil),        // 7: MsgPageReq
+	(*ChatReq)(nil),           // 8: ChatReq
+	(*FriendReq)(nil),         // 9: FriendReq
+	(*SearchReq)(nil),         // 10: SearchReq
+	(*FriendApplyReq)(nil),    // 11: FriendApplyReq
+	(*UpdateUserReq)(nil),     // 12: UpdateUserReq
+	(*UpdatePwdReq)(nil),      // 13: UpdatePwdReq
+	(*UploadReq)(nil),         // 14: UploadReq
+	(*UserReq)(nil),           // 15: UserReq
+	(*ConfigReq)(nil),         // 16: ConfigReq
+	(*ResultDTOResp)(nil),     // 17: ResultDTOResp
 }
 var file_service_proto_depIdxs = []int32{
 	2, // 0: ConfigReq.deviceType:type_name -> ConfigReq.DeviceType
@@ -1046,7 +1257,7 @@ func file_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RechargeOrderReq); i {
+			switch v := v.(*ReplyReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1058,7 +1269,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgPageReq); i {
+			switch v := v.(*MoodPageReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1070,7 +1281,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ChatReq); i {
+			switch v := v.(*MoodReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1082,7 +1293,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FriendReq); i {
+			switch v := v.(*RechargeOrderReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1094,7 +1305,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SearchReq); i {
+			switch v := v.(*MsgPageReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1106,7 +1317,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FriendApplyReq); i {
+			switch v := v.(*ChatReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1118,7 +1329,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateUserReq); i {
+			switch v := v.(*FriendReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1130,7 +1341,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdatePwdReq); i {
+			switch v := v.(*SearchReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1142,7 +1353,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UploadReq); i {
+			switch v := v.(*FriendApplyReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1154,7 +1365,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UserReq); i {
+			switch v := v.(*UpdateUserReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1166,7 +1377,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ConfigReq); i {
+			switch v := v.(*UpdatePwdReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1178,6 +1389,42 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UploadReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_service_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_service_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ConfigReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_service_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ResultDTOResp); i {
 			case 0:
 				return &v.state
@@ -1196,7 +1443,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   12,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
