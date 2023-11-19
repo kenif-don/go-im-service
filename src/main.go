@@ -1,9 +1,10 @@
 package main
 
 import (
+	"IM-Service/src/util"
 	"fmt"
 )
 
 func main() {
-	fmt.Println(len([]rune("1老123adqw弟在不在")))
+	fmt.Println(util.CurrentTime())
 }

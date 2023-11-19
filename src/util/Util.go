@@ -4,7 +4,6 @@ import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"encoding/json"
-	"fmt"
 	"sort"
 	"strconv"
 	"time"
@@ -54,8 +53,5 @@ func Len(str string) int {
 }
 func CurrentTime() uint64 {
 	// 获取当前时间戳
-	timestamp := time.Now().UnixNano()
-	// 将时间戳转换为 13 位时间戳
-	timestamp13 := fmt.Sprintf("%013d", timestamp)
-	return Str2Uint64(timestamp13)
+	return uint64(time.Now().UnixNano() / 1e6)
 }
