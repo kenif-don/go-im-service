@@ -11,7 +11,6 @@ import (
 	"github.com/google/uuid"
 	"im-sdk/model"
 	"strconv"
-	"time"
 )
 
 type MessageService struct {
@@ -374,18 +373,13 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	message.TargetId = target
 	message.UserId = conf.GetLoginInfo().User.Id
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
-	//更新一次好友信息 TODO 在APP环境中,这里同步操作属于多余,应该在打开聊天时对好友信息进行同步
-	_, err := NewUserService().UpdateUser(target)
-	if err != nil {
-		return nil, log.WithError(err)
-	}
 	//加密
 	data, err := Encrypt(message.TargetId, tp, content)
 	if err != nil {
 		return nil, log.WithError(err)
 	}
 	message.Data = data
-	message.Time = uint64(time.Now().UnixNano())
+	message.Time = util.CurrentTime()
 	message.Send = 1 // 发送中
 	message.Read = 2 // 自己发的 肯定是已读
 	return message, nil

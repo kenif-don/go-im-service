@@ -113,7 +113,7 @@ func (_self *UserService) UpdateEmail(id uint64, email string) *utils.Error {
 	return _self.Update(user)
 }
 func (_self *UserService) UpdateIntro(id uint64, intro string) *utils.Error {
-	if util.Len(intro) < 1 || util.Len(intro) > 10 {
+	if util.Len(intro) < 1 || util.Len(intro) > 30 {
 		return log.WithError(utils.ERR_INTRO_VALIDATE_FAIL)
 	}
 	user, err := QueryUser(id, _self.repo)

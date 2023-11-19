@@ -4,8 +4,10 @@ import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strconv"
+	"time"
 )
 
 // IndexOfString 查找字符串在数组中的位置
@@ -49,4 +51,11 @@ func GetErrMsg(err *utils.Error) string {
 }
 func Len(str string) int {
 	return len([]rune(str))
+}
+func CurrentTime() uint64 {
+	// 获取当前时间戳
+	timestamp := time.Now().UnixNano()
+	// 将时间戳转换为 13 位时间戳
+	timestamp13 := fmt.Sprintf("%013d", timestamp)
+	return Str2Uint64(timestamp13)
 }
