@@ -94,6 +94,8 @@ func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
 	if e != nil {
 		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
 	}
+	//清除秘钥缓存
+	Keys["friend"+"_"+util.Uint642Str(id)] = ""
 	return user, nil
 }
 func (_self *UserService) UpdateHeadImg(id uint64, headImg string) *utils.Error {
