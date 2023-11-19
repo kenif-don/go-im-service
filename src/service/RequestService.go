@@ -29,6 +29,8 @@ type MessageListener interface {
 	OnLoginPwd2()
 	//OnDoVoice 收到新消息通知 用来播放语音提示
 	OnDoVoice(data string)
+	//OnConnectChange 连接状态变化
+	OnConnectChange(state string)
 }
 
 func SetListener(listener MessageListener) {

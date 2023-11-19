@@ -50,6 +50,9 @@ func (_self *LogicProcess) Connected() {
 		Token:  conf.GetLoginInfo().Token,
 	}
 	handler.GetClientHandler().GetMessageManager().SendLogin(loginInfo)
+	if service.Listener != nil {
+		service.Listener.OnConnectChange("1")
+	}
 }
 
 // SendOk qos中的消息发送成功 服务器成功返回
@@ -144,6 +147,9 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 	}
 }
 func (_self *LogicProcess) Exception(msg string) {
+	if service.Listener != nil {
+		service.Listener.OnConnectChange("0")
+	}
 	log.Errorf("exception:%v", msg)
 	conf.Conf.Connected = false
 	log.Debug("服务器断开连接,进行重连")

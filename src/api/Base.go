@@ -24,6 +24,8 @@ type MessageListener interface {
 	OnLoginPwd2()
 	//OnDoVoice 收到新消息通知 用来播放语音提示
 	OnDoVoice(data string)
+	//OnConnectChange 连接状态变化 1-链接成功 0-链接失败
+	OnConnectChange(state string)
 }
 
 // SyncPutErr 同步导出
