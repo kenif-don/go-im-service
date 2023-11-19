@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
-	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -64,13 +63,9 @@ func SelectOneMood(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	obj, err := service.NewMoodService().SelectOneMood(req.Id)
+	result, err := service.NewMoodService().SelectOneMood(req.Id)
 	if err != nil {
 		return SyncPutErr(err, resp)
-	}
-	result, e := util.Obj2Str(obj)
-	if e != nil {
-		return SyncPutErr(utils.ERR_SELECT_MOOD_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
@@ -92,13 +87,9 @@ func PagingMood(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	obj, err := service.NewMoodService().PagingMood(int(req.Page), int(req.PageSize), req.UserId)
+	result, err := service.NewMoodService().PagingMood(int(req.Page), int(req.PageSize), req.UserId)
 	if err != nil {
 		return SyncPutErr(err, resp)
-	}
-	result, e := util.Obj2Str(obj)
-	if e != nil {
-		return SyncPutErr(utils.ERR_SELECT_MOOD_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
