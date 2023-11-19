@@ -29,6 +29,7 @@ message MoodReq{
   uint64 id = 1;//删除时使用
   string content = 2;// 添加时使用
   string urls = 3;//添加时使用 可以为null,json字符串
+  int32 type = 4;//1-正常 2-匿名发布
 }
 /** 充值请求对象 */
 message RechargeOrderReq{

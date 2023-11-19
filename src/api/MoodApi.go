@@ -17,7 +17,7 @@ func AddMood(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewMoodService().AddMood(req.Content, req.Urls)
+	err := service.NewMoodService().AddMood(int(req.Type), req.Content, req.Urls)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}

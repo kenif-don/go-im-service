@@ -1,6 +1,7 @@
 package service
 
 import (
+	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/dto"
@@ -13,8 +14,8 @@ func NewMoodService() *MoodService {
 	return &MoodService{}
 }
 
-func (_service *MoodService) AddMood(content, urls string) *utils.Error {
-	_, err := Post("/api/mood/add", map[string]interface{}{"content": content, "urls": urls})
+func (_service *MoodService) AddMood(tp int, content, urls string) *utils.Error {
+	_, err := Post("/api/mood/add", map[string]interface{}{"type": tp, "content": content, "urls": urls})
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -58,7 +59,8 @@ func (_service *MoodService) PagingMood(page, pageSize int, userId uint64) (stri
 // AddReply 添加动态回复
 func (_service *MoodService) AddReply(moodId, replyUserId uint64, content string) *utils.Error {
 	var err *utils.Error
-	if replyUserId == 0 {
+	//没有回复ID 或者回复的自己都算直接评论
+	if replyUserId == 0 || replyUserId == conf.GetLoginInfo().User.Id {
 		_, err = Post("/api/reply/add", map[string]interface{}{"moodId": moodId, "content": content})
 	} else {
 		_, err = Post("/api/reply/add", map[string]interface{}{"moodId": moodId, "content": content, "replyUserId": replyUserId})
