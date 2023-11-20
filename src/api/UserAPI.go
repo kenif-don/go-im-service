@@ -336,11 +336,6 @@ func Login(data []byte) []byte {
 		} else {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		}
-		//登录IM
-		err := loginIM()
-		if err != nil {
-			return SyncPutErr(err, resp)
-		}
 		resp.Msg = "success"
 		res, e := proto.Marshal(resp)
 		if e != nil {

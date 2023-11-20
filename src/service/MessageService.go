@@ -272,6 +272,8 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			}
 			//重置userId为当前用户 不然userId就是发送者了
 			message.UserId = conf.GetLoginInfo().User.Id
+			//别人给自己发的 肯定是发送成功
+			message.Send = 2
 			e = messageService.repo.Save(message)
 			if e != nil {
 				return log.WithError(e)
@@ -438,6 +440,7 @@ func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
 	case "group":
 		break
 	}
+	log.Debug(key+"解密秘钥:", Keys[key])
 	data, e := util.DecryptAes(content, Keys[key])
 	if e != nil {
 		msg := &entity.MessageData{
