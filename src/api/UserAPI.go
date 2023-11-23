@@ -357,6 +357,7 @@ func Login(data []byte) []byte {
 		if err != nil {
 			return SyncPutErr(err, resp)
 		}
+		log.Debug("没有私钥，创建私钥")
 	}
 	//公钥是否和本地一致
 	sysUser, e := service.QueryUser(conf.GetLoginInfo().User.Id, repository.NewUserRepo())
@@ -370,6 +371,7 @@ func Login(data []byte) []byte {
 		if err != nil {
 			return SyncPutErr(err, resp)
 		}
+		log.Debug("有私钥，但是私钥不一致，更换私钥")
 	}
 	// 判断是否存在二级密码
 	if conf.LoginInfo.User.Password2 != "" {

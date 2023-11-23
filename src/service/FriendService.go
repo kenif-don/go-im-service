@@ -248,7 +248,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 	return r, err
 }
 func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
-	friend, e := QueryFriend(&entity.Friend{Id: id}, _self.repo)
+	friend, e := QueryFriend(&entity.Friend{He: id, Me: conf.GetLoginInfo().User.Id}, _self.repo)
 	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}

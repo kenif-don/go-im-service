@@ -224,7 +224,7 @@ func (_self *UserService) Register(username, password string) *utils.Error {
 	if util.Len(password) < 6 || util.Len(password) > 20 {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
-	params := &entity.RegisterUser{
+	params := &entity.UserReq{
 		Username: username,
 		Password: password,
 	}
@@ -243,7 +243,7 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
 
-	params := &entity.RegisterUser{
+	params := &entity.UserReq{
 		Username: username,
 		Password: password,
 	}
@@ -332,13 +332,11 @@ func (_self *UserService) LoginInfo() *utils.Error {
 	//数据存在--需要把数据库中的私钥封装到登录者中
 	if sysUser != nil {
 		user.PrivateKey = sysUser.PrivateKey
-		//存到文件--如果没有 会重新生成公私钥
-		conf.PutLoginInfo(user)
-		return nil
-	}
-	e = _self.Save(&user)
-	if e != nil {
-		return log.WithError(utils.ERR_GET_USER_INFO)
+	} else {
+		e = _self.Save(&user)
+		if e != nil {
+			return log.WithError(utils.ERR_GET_USER_INFO)
+		}
 	}
 	//存到文件--如果没有 会重新生成公私钥
 	conf.PutLoginInfo(user)

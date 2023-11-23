@@ -51,7 +51,7 @@ message ChatReq{
 }
 /** 好友详情页根据ID获取好友数据 */
 message FriendReq{
-  uint64 id = 1; //好友ID
+  uint64 id = 1; //好友ID 就是用户ID
   string name = 2; //好友备注 查询/删除时留空，修改好友备注时传入
 }
 /** 搜索用户、群聊得到的请求参数 */

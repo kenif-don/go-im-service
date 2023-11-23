@@ -440,7 +440,6 @@ func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
 	case "group":
 		break
 	}
-	log.Debug(key+"解密秘钥:", Keys[key])
 	data, e := util.DecryptAes(content, Keys[key])
 	if e != nil {
 		msg := &entity.MessageData{

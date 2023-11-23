@@ -16,7 +16,7 @@ type User struct {
 	VersionCode   string `gorm:"column:versionCode" json:"versionCode"`
 	NoticeType    int    `gorm:"<-:create;column:noticeType" json:"noticeType"`
 }
-type RegisterUser struct {
+type UserReq struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
