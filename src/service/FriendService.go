@@ -69,7 +69,7 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 // DelFriend 删除双方好友
 func (_self *FriendService) DelFriend(id uint64) *utils.Error {
 	//先删本地
-	err := _self.DelLocalFriend(&entity.Friend{Id: id})
+	err := _self.DelLocalFriend(&entity.Friend{He: id, Me: conf.GetLoginInfo().User.Id})
 	if err != nil {
 		return log.WithError(err)
 	}
