@@ -23,6 +23,7 @@ var (
 	Base      *BaseConfig
 	Conf      *Config
 	LoginInfo *LoginInfoMode
+	DiffTime  int
 )
 
 type LoginInfoMode struct {
