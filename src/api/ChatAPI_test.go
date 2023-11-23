@@ -13,7 +13,7 @@ import (
 func TestOpenChat(t *testing.T) {
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 1,
+		Target: 19999999,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := OpenChat(req)
@@ -64,7 +64,7 @@ func TestGetMsgs(t *testing.T) {
 	TestLogin(t)
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 1,
+		Target: 999991,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := GetMsgs(req)

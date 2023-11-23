@@ -73,9 +73,9 @@ func (_self *FriendService) DelFriend(id uint64) *utils.Error {
 	if err != nil {
 		return log.WithError(err)
 	}
-	//再通过服务器删除 这里服务器删除的就是双方的 所以不需要发送长连接
+	//再通过服务器删除 这里服务器删除的就是双方的 服务器回去发送长连接
 	req := make(map[string]uint64)
-	req["id"] = id
+	req["he"] = id
 	_, err = Post("/api/friend/delete", req)
 	if err != nil {
 		return log.WithError(err)

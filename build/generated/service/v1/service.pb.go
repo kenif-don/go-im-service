@@ -580,7 +580,7 @@ type FriendReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id   uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`    //好友ID
+	Id   uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`    //好友ID 就是用户ID
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"` //好友备注 查询/删除时留空，修改好友备注时传入
 }
 
