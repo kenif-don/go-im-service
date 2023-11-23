@@ -112,7 +112,7 @@ func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 func (_self *LogicProcess) LoginOk(protocol *model.Protocol) {
 	conf.Conf.LoginIM = true
 	conf.DiffTime = int(util.Str2Uint64(protocol.Data.(string)) - util.CurrentTime())
-	log.Debugf("登录成功！服务器时间戳:%v")
+	log.Debugf("登录成功！时差:%v", conf.DiffTime)
 	//获取一次通讯录
 	_, e := service.NewFriendService().SelectAll()
 	//获取离线消息

@@ -223,3 +223,17 @@ func GetMsgs(data []byte) []byte {
 	}
 	return res
 }
+func CurrentTime() []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = util.Uint642Str(service.NewMessageService().CurrentTime())
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}

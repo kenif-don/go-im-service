@@ -381,10 +381,13 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 		return nil, log.WithError(err)
 	}
 	message.Data = data
-	message.Time = uint64(int64(util.CurrentTime()) + int64(conf.DiffTime))
+	message.Time = _self.CurrentTime()
 	message.Send = 1 // 发送中
 	message.Read = 2 // 自己发的 肯定是已读
 	return message, nil
+}
+func (_self *MessageService) CurrentTime() uint64 {
+	return uint64(int64(util.CurrentTime()) + int64(conf.DiffTime))
 }
 
 // Encrypt 聊天内容加密
