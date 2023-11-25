@@ -32,9 +32,14 @@ message MoodReq{
   int32 type = 4;//1-正常 2-匿名发布
 }
 /** 充值请求对象 */
+message WithdrawalReq{
+  float money = 1;
+  string address = 2;
+}
+/** 充值请求对象 */
 message RechargeOrderReq{
   int32 type = 1;
-  string value = 2;
+  float value = 2;
 }
 /** 查询消息列表请求对象 */
 message MsgPageReq{

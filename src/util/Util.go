@@ -42,6 +42,13 @@ func Str2Uint64(s string) uint64 {
 	}
 	return i
 }
+func Str2Float64(s string) float64 {
+	f, e := strconv.ParseFloat(s, 64)
+	if e != nil {
+		log.Error(e)
+	}
+	return f
+}
 func Uint642Str(i uint64) string {
 	return strconv.FormatUint(i, 10)
 }

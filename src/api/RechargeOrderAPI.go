@@ -39,13 +39,9 @@ func AddRechargeOrder(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	obj, err := service.NewRechargeOrderService().AddRechargeOrder(int(req.Type), req.Value)
+	result, err := service.NewRechargeOrderService().AddRechargeOrder(int(req.Type), float64(req.Value))
 	if err != nil {
 		return SyncPutErr(err, resp)
-	}
-	result, e := util.Obj2Str(obj)
-	if e != nil {
-		return SyncPutErr(utils.ERR_RECHARGE_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
