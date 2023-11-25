@@ -33,13 +33,13 @@ message MoodReq{
 }
 /** 充值请求对象 */
 message WithdrawalReq{
-  float money = 1;
+  string money = 1;
   string address = 2;
 }
 /** 充值请求对象 */
 message RechargeOrderReq{
   int32 type = 1;
-  float value = 2;
+  string value = 2;
 }
 /** 查询消息列表请求对象 */
 message MsgPageReq{

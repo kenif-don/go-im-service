@@ -37,7 +37,7 @@ func AddWithdrawal(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewWithdrawalService().AddWithdrawal(float64(req.Money), req.Address)
+	err := service.NewWithdrawalService().AddWithdrawal(req.Money, req.Address)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}

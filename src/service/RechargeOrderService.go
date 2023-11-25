@@ -26,15 +26,12 @@ func (_self *RechargeOrderService) GetTypes() *[]PayType {
 }
 
 // AddRechargeOrder 添加充值订单
-func (_self *RechargeOrderService) AddRechargeOrder(tp int, value float64) (string, *utils.Error) {
+func (_self *RechargeOrderService) AddRechargeOrder(tp int, value string) (string, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return "", utils.ERR_NOT_LOGIN
 	}
 	if tp == 0 {
 		return "", utils.ERR_SELECT_PAY_NETWORK_FAIL
-	}
-	if value <= 0 {
-		return "", utils.ERR_INPUT_PAY_MONEY_FAIL
 	}
 	// 先添加
 	resultDTO, err := Post("/api/recharge-order/add", map[string]interface{}{"type": tp, "value": value})

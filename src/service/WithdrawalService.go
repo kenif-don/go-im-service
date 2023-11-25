@@ -25,12 +25,9 @@ func (_self *WithdrawalService) GetWithdrawalFee() (string, *utils.Error) {
 }
 
 // AddWithdrawal 添加提现
-func (_self *WithdrawalService) AddWithdrawal(money float64, address string) *utils.Error {
+func (_self *WithdrawalService) AddWithdrawal(money, address string) *utils.Error {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return utils.ERR_NOT_LOGIN
-	}
-	if money <= 0 {
-		return utils.ERR_INPUT_WITHDRAWAL_MONEY_FAIL
 	}
 	if address == "" {
 		return utils.ERR_INPUT_WITHDRAWAL_WALLET_FAIL

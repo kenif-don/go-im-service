@@ -10,7 +10,7 @@ import (
 func TestAddRechargeOrder(t *testing.T) {
 	oldReq := &api.RechargeOrderReq{
 		Type:  1,
-		Value: 1,
+		Value: "7.7",
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := AddRechargeOrder(req)
@@ -24,7 +24,7 @@ func TestAddRechargeOrder(t *testing.T) {
 
 func TestAddWithdrawal(t *testing.T) {
 	oldReq := &api.WithdrawalReq{
-		Money:   1,
+		Money:   "1",
 		Address: "TGm6v1BFdCnfWygtvYU4wp2EXMRuWbWuYo",
 	}
 	req, _ := proto.Marshal(oldReq)

@@ -39,7 +39,7 @@ func AddRechargeOrder(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	result, err := service.NewRechargeOrderService().AddRechargeOrder(int(req.Type), float64(req.Value))
+	result, err := service.NewRechargeOrderService().AddRechargeOrder(int(req.Type), req.Value)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
