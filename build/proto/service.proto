@@ -12,6 +12,10 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message VersionReq{
+  int32 versionCode = 1;//数字版本 比如：123
+  int32 type = 2;//1-Android 2-IOS
+}
 /** 动态的回复请求对象 */
 message ReplyReq{
   uint64 moodId = 1;//哪条动态
