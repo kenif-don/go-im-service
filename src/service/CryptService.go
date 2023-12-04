@@ -58,13 +58,14 @@ func Decrypt(target uint64, tp, no, content string) (string, *utils.Error) {
 	if err != nil {
 		return "", err
 	}
-	data, e := util.DecryptAes(content, secret)
-	if e != nil {
+	data, err := util.DecryptAes(content, secret)
+	if err != nil {
 		msg := &entity.MessageData{
 			Type:    1,
 			Content: "解密失败",
 		}
-		data, e = util.Obj2Str(msg)
+		d, e := util.Obj2Str(msg)
+		data = d
 		if e != nil {
 			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
@@ -72,16 +73,17 @@ func Decrypt(target uint64, tp, no, content string) (string, *utils.Error) {
 	//有消息ID才需要解密动作
 	if no != "" && conf.Conf.ChatId == target {
 		//解密文件
-		data, e = DecryptFile(no, data, secret)
-		if e != nil {
+		data, err = DecryptFile(no, data, secret)
+		if err != nil {
 			msg := &entity.MessageData{
 				Type:    1,
 				Content: "文件解密失败",
 			}
-			data, e = util.Obj2Str(msg)
+			d, e := util.Obj2Str(msg)
 			if e != nil {
 				return "", log.WithError(utils.ERR_DECRYPT_FAIL)
 			}
+			data = d
 		}
 	}
 	return data, nil
@@ -102,8 +104,8 @@ func DecryptFile(no, data, secret string) (string, *utils.Error) {
 		//通过最后一根/获取文件后缀
 		paths := strings.Split(md.Content, "/")
 		path := conf.Base.BaseDir + "/configs/" + paths[len(paths)-1]
-		err := util.DownloadFile(md.Content, path)
-		if err != nil {
+		e := util.DownloadFile(md.Content, path)
+		if e != nil {
 			//通知文件解密失败
 			FileNotify(no, nil, -1, "", nil)
 			return

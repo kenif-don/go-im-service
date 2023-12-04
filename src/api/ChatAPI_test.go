@@ -63,6 +63,7 @@ func TestGetChats(t *testing.T) {
 func TestGetMsgs(t *testing.T) {
 	TestLogin(t)
 	time.Sleep(time.Second * 2)
+	TestOpenChat(t)
 	oldReq := &api.ChatReq{
 		Type:   "friend",
 		Target: 1,
@@ -75,6 +76,7 @@ func TestGetMsgs(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result.Body)
+	time.Sleep(time.Hour)
 }
 func TestDelChatMsg(t *testing.T) {
 	TestLogin(t)

@@ -130,7 +130,7 @@ func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Me
 	}
 	//循环解密
 	for i := 0; i < len(msgs); i++ {
-		data, err := Decrypt(target, tp, msgs[i].Data, msgs[i].No)
+		data, err := Decrypt(target, tp, msgs[i].No, msgs[i].Data)
 		if err != nil {
 			msgs[i].Data = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
 		} else {
@@ -281,7 +281,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			//如果发送者是当前用户打开的聊天目标
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
 				//解密
-				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data, message.No)
+				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.No, message.Data)
 				if err != nil {
 					return log.WithError(err)
 				}

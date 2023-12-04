@@ -120,7 +120,7 @@ func EncryptAes2(data []byte, key string) ([]byte, *utils.Error) {
 	}
 	return encrypted, nil
 }
-func DecryptAes(data, key string) (string, error) {
+func DecryptAes(data, key string) (string, *utils.Error) {
 	encrypted, _ := base64.StdEncoding.DecodeString(data)
 	res, err := DecryptAes2(encrypted, key)
 	if err != nil {
@@ -134,6 +134,9 @@ func DecryptAes2(data []byte, key string) ([]byte, *utils.Error) {
 	//
 	for bs, be := 0, cipher.BlockSize(); bs < len(data); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
 		if bs > be {
+			return nil, utils.ERR_ENCRYPT_FAIL
+		}
+		if be > len(data) {
 			return nil, utils.ERR_ENCRYPT_FAIL
 		}
 		cipher.Decrypt(decrypted[bs:be], data[bs:be])
