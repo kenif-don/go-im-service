@@ -13,7 +13,7 @@ import (
 var Listener MessageListener
 
 type MessageListener interface {
-	//OnFile 文件解密结果 FileDecryptResp模型
+	//OnFile 文件解密结果 FileDecryptResp模型  此事件也需要用户停留在聊天页才会触发
 	OnFile(data []byte)
 	//OnReceive 当前聊天接收到消息
 	OnReceive(data string)

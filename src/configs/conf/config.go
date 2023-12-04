@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"im-sdk/client"
 	"os"
+	"path/filepath"
 	"sync"
 )
 
@@ -44,17 +45,28 @@ type BaseConfig struct {
 func InitConfig(baseConfig *BaseConfig) {
 	//初始化日志
 	once.Do(func() {
+		//获取文件信息
+		path, err := filepath.Abs(baseConfig.BaseDir)
+		if err != nil {
+			return
+		}
+		log.InitLog(mkdirAndReturn(filepath.Join(path, "logs")), baseConfig.LogSwitch)
+		//删除临时文件
+		e := os.RemoveAll(mkdirAndReturn(filepath.Join(path, "configs", "temp")))
+		if e != nil {
+			log.Error(e)
+		}
+		//创建一个空文件夹
+		mkdirAndReturn(filepath.Join(path, "configs", "temp"))
 		Base = &BaseConfig{
-			BaseDir:    baseConfig.BaseDir,
+			BaseDir:    path,
 			ApiHost:    baseConfig.ApiHost,
 			WsHost:     baseConfig.WsHost,
 			DeviceType: baseConfig.DeviceType,
 		}
-		log.InitLog(mkdirAndReturn(baseConfig.BaseDir+"/logs"), baseConfig.LogSwitch)
 		//初始化数据库路径
-		DbPath = mkdirAndReturn(baseConfig.BaseDir+"/configs/db") + "/" + DbPath
-		log.Debug("数据库路径:", DbPath)
-		//读取yaml
+		DbPath = filepath.Join(mkdirAndReturn(filepath.Join(path, "configs", "db")), DbPath)
+		//初始化配置
 		Conf = &Config{
 			ExUris: []string{"/api/user/login", "/api/user/info", "/api/user/register", "/api/user/resetPublicKey", "/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe"},
 			Prime:  "262074f1e0e19618f0d2af786779d6ad9e814b",
@@ -78,33 +90,34 @@ func InitConfig(baseConfig *BaseConfig) {
 			//不需要输入二级密码
 			UpdateInputPwd2(-1)
 		}
+		log.Debug("配置初始化完成")
 	})
 }
 func ClearLoginInfo() {
 	LoginInfo = nil
-	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", &LoginInfoMode{})
+	WriteFile(filepath.Join(mkdirAndReturn(filepath.Join(Base.BaseDir, "configs")), "LoginInfo.json"), &LoginInfoMode{})
 }
 func GetLoginInfo() *LoginInfoMode {
 	if LoginInfo == nil {
 		LoginInfo = &LoginInfoMode{}
 	}
-	ReadFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
+	ReadFile(filepath.Join(mkdirAndReturn(filepath.Join(Base.BaseDir, "configs")), "LoginInfo.json"), LoginInfo)
 	return LoginInfo
 }
 func PutLoginInfo(user entity.User) {
 	LoginInfo = GetLoginInfo()
 	LoginInfo.User = &user
-	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
+	WriteFile(filepath.Join(mkdirAndReturn(filepath.Join(Base.BaseDir, "configs")), "LoginInfo.json"), LoginInfo)
 }
 func PutToken(token string) {
 	LoginInfo = GetLoginInfo()
 	LoginInfo.Token = token
-	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
+	WriteFile(filepath.Join(mkdirAndReturn(filepath.Join(Base.BaseDir, "configs")), "LoginInfo.json"), LoginInfo)
 }
 func UpdateInputPwd2(inputPwd2 int) {
 	LoginInfo = GetLoginInfo()
 	LoginInfo.InputPwd2 = inputPwd2
-	WriteFile(mkdirAndReturn(Base.BaseDir+"/configs")+"/LoginInfo.json", LoginInfo)
+	WriteFile(filepath.Join(mkdirAndReturn(filepath.Join(Base.BaseDir, "configs")), "LoginInfo.json"), LoginInfo)
 }
 func ReadFile(url string, data any) {
 	bytes, _ := os.ReadFile(url)

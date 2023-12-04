@@ -10,12 +10,13 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func FileNotify(no string, data []byte, state int32, ext string, ext2 []byte) {
+func FileNotify(no, path string, state, tp int32, ext string, ext2 []byte) {
 	if Listener != nil {
 		fr := &api.FileDecryptResp{
 			No:    no,
-			Data:  data,
+			Path:  path,
 			State: state,
+			Type:  tp,
 			Ext:   ext,
 			Ext2:  ext2,
 		}

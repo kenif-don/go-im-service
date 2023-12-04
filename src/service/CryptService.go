@@ -7,6 +7,7 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
 	"IM-Service/src/util"
+	"path/filepath"
 	"strings"
 )
 
@@ -103,22 +104,34 @@ func DecryptFile(no, data, secret string) (string, *utils.Error) {
 		//先下载文件
 		//通过最后一根/获取文件后缀
 		paths := strings.Split(md.Content, "/")
-		path := conf.Base.BaseDir + "/configs/" + paths[len(paths)-1]
+		filename := paths[len(paths)-1]
+		path := filepath.Join(conf.Base.BaseDir, "configs", filename)
 		e := util.DownloadFile(md.Content, path)
 		if e != nil {
+			log.Error(e)
 			//通知文件解密失败
-			FileNotify(no, nil, -1, "", nil)
+			FileNotify(no, "", -1, int32(md.Type), "", nil)
 			return
 		}
 		//解密文件
 		fileData, err := util.DecryptFile(path, secret)
 		if err != nil {
+			log.Error(err)
 			//通知文件解密失败
-			FileNotify(no, nil, -1, "", nil)
+			FileNotify(no, "", -1, int32(md.Type), "", nil)
+			return
+		}
+		//保存为临时文件
+		tempPath := filepath.Join(conf.Base.BaseDir, "configs", "temp", filename)
+		e = util.SaveTempFile(fileData, tempPath)
+		if e != nil {
+			log.Error(e)
+			//通知文件解密失败
+			FileNotify(no, tempPath, -1, int32(md.Type), "", nil)
 			return
 		}
 		//通知文件解密成功
-		FileNotify(no, fileData, 1, "", nil)
+		FileNotify(no, tempPath, 1, int32(md.Type), "", nil)
 	}()
 	msg := &entity.MessageData{
 		Type:    1,

@@ -216,3 +216,19 @@ func DecryptFile(path, secret string) ([]byte, *utils.Error) {
 	}
 	return RevertCoveredData(data, oldData, 3, 19, len(subEnData)), nil
 }
+func SaveTempFile(data []byte, path string) error {
+	// 判断文件是否存在
+	if _, err := os.Stat(path); err == nil {
+		return nil
+	}
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	_, err = file.Write(data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
