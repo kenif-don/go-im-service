@@ -3,7 +3,6 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 	"testing"
@@ -13,7 +12,7 @@ import (
 func TestOpenChat(t *testing.T) {
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 19999999,
+		Target: 1,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := OpenChat(req)
@@ -26,19 +25,20 @@ func TestOpenChat(t *testing.T) {
 }
 func TestSendMsg(t *testing.T) {
 	TestLogin(t)
-	TestGetChats(t)
+	time.Sleep(time.Second * 2)
+	//TestGetChats(t)
 	TestOpenChat(t)
+	time.Sleep(time.Second * 2)
 	TestGetMsgs(t)
-	contentObj := &entity.MessageData{
-		Type:    1,
-		Content: "111",
+	contentObj := &api.MessageData{
+		Type:    2,
+		Content: "C:\\Users\\Administrator\\Desktop\\logo.png",
 	}
-	content, _ := util.Obj2Str(contentObj)
 	oldReq := &api.ChatReq{
 		Type:    "friend",
 		Target:  1,
 		No:      util.Uint642Str(uint64(time.Now().UnixMilli())),
-		Content: content,
+		Content: contentObj,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := SendMsg(req)

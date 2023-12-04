@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/h2non/filetype"
 	"io"
 	"net/http"
 	"os"
@@ -100,40 +101,63 @@ func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))
 	return nil
 }
-func UploadData(data []byte, filename string) (string, *utils.Error) {
-	sess, err := session.NewSession(&aws.Config{
+func UploadData(data []byte) (string, *utils.Error) {
+	sess, e := session.NewSession(&aws.Config{
 		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
 		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
 		Region:           aws.String(conf.Conf.Aws.Region),
 		S3ForcePathStyle: aws.Bool(true),
 	})
-	if err != nil {
-		log.Debug(err)
+	if e != nil {
+		log.Debug(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
 	uploader := s3.New(sess)
 	//获取文件后缀
-	endWith := filename[strings.LastIndex(filename, ".")+1:]
+	endWith, err := GetFileType(data)
+	if err != nil {
+		log.Debug(err)
+		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+	}
 	//文件MD5作为文件名称
-	filename = MD5Bytes(data) + "." + endWith
-	_, err = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
+	filename := MD5Bytes(data) + "." + endWith
+	_, e = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
 		Key:    aws.String(filename),
 		Body:   bytes.NewReader(data),
 		ACL:    aws.String("public-read"),
 	})
-	if err != nil {
+	if e != nil {
 		log.Error(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
 	// 获取预览URL
 	return "https://" + conf.Conf.Aws.Endpoint + "/" + conf.Conf.Aws.Bucket + "/" + filename, nil
 }
-func Upload(filename string) (string, *utils.Error) {
-	data, err := os.ReadFile(filename)
+func Upload(path string) (string, *utils.Error) {
+	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	return UploadData(data, filename)
+	return UploadData(data)
+}
+func UploadFile(data []byte, path string) (string, *utils.Error) {
+	if data == nil {
+		return Upload(path)
+	}
+	return UploadData(data)
+}
+func GetFileType(data []byte) (string, *utils.Error) {
+	//取data的前261个
+	buffer := data[:261]
+	kind, _ := filetype.Match(buffer)
+	if kind == filetype.Unknown {
+		log.Debug("未知文件类型")
+		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+	}
+	//以斜杠分割 取最后一个
+	tp := kind.MIME.Value
+	tps := strings.Split(tp, "/")
+	return tps[len(tps)-1], nil
 }

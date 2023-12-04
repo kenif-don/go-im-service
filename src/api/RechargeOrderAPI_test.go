@@ -24,7 +24,7 @@ func TestAddRechargeOrder(t *testing.T) {
 
 func TestAddWithdrawal(t *testing.T) {
 	oldReq := &api.WithdrawalReq{
-		Money:   "1",
+		Money:   "100",
 		Address: "TGm6v1BFdCnfWygtvYU4wp2EXMRuWbWuYo",
 	}
 	req, _ := proto.Marshal(oldReq)

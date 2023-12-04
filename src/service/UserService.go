@@ -245,17 +245,19 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 	if util.Len(password) < 6 || util.Len(password) > 20 {
 		return log.WithError(utils.ERR_USER_PASSWORD_LENGTH)
 	}
-
-	params := &entity.UserReq{
-		Username: username,
-		Password: password,
+	//已经登录过 就不重复登录 但是需要重新获取用户信息 因为可能异地登录导致秘钥更换过
+	if conf.GetLoginInfo().Token == "" {
+		params := &entity.UserReq{
+			Username: username,
+			Password: password,
+		}
+		resultDTO, err := Post("/api/user/login", params)
+		if err != nil || resultDTO == nil || resultDTO.Data == nil {
+			return log.WithError(err)
+		}
+		//缓存登录token
+		conf.PutToken(resultDTO.Data.(string))
 	}
-	resultDTO, err := Post("/api/user/login", params)
-	if err != nil || resultDTO == nil || resultDTO.Data == nil {
-		return log.WithError(err)
-	}
-	//缓存登录token
-	conf.PutToken(resultDTO.Data.(string))
 	// 不知道是否需要输入
 	conf.UpdateInputPwd2(1)
 	//获取用户信息

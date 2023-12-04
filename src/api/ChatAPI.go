@@ -4,6 +4,7 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/configs/log"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
@@ -182,10 +183,17 @@ func SendMsg(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	msgService := service.NewMessageService()
-	err := msgService.SendMsg(req.Type, req.Target, req.No, req.Content)
-	if err != nil {
-		return SyncPutErr(utils.ERR_SEND_FAIL, resp)
-	}
+	go func() {
+		err := msgService.SendMsg(req.Type, req.Target, req.No, req.Content.Type, req.Content.Content, req.Content.Data)
+		if err != nil && service.Listener != nil {
+			res, e := util.Obj2Str(map[string]interface{}{"no": req.No, "send": -1})
+			if e != nil {
+				log.Error(e)
+				return
+			}
+			service.Listener.OnSendReceive(res)
+		}
+	}()
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)

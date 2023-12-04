@@ -3,7 +3,10 @@ package util
 import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
+	"IM-Service/src/entity"
+	"encoding/binary"
 	"encoding/json"
+	"math"
 	"sort"
 	"strconv"
 	"time"
@@ -52,6 +55,14 @@ func Str2Float64(s string) float64 {
 func Uint642Str(i uint64) string {
 	return strconv.FormatUint(i, 10)
 }
+func float322byte(fs []float32) []byte {
+	bytes := make([]byte, 4*len(fs))
+	for i, f := range fs {
+		bits := math.Float32bits(f)
+		binary.LittleEndian.PutUint32(bytes[i*4:(i+1)*4], bits)
+	}
+	return bytes
+}
 func GetErrMsg(err *utils.Error) string {
 	return err.MsgZh
 }
@@ -61,4 +72,11 @@ func Len(str string) int {
 func CurrentTime() uint64 {
 	// 获取当前时间戳
 	return uint64(time.Now().UnixNano() / 1e6)
+}
+func CoverMsgData(tp int, content string) (string, error) {
+	md := &entity.MessageData{
+		Type:    tp,
+		Content: content,
+	}
+	return Obj2Str(md)
 }

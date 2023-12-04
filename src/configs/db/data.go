@@ -7,11 +7,7 @@ import (
 	"context"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"log"
-	"os"
 	"sync"
-	"time"
 )
 
 var (
@@ -21,18 +17,18 @@ var (
 )
 
 func initDB() {
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold:             time.Second, // Slow SQL threshold
-			LogLevel:                  logger.Info, // Log level
-			IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
-			ParameterizedQueries:      false,       // Don't include params in the SQL log
-			Colorful:                  false,       // Disable color
-		},
-	)
+	//newLogger := logger.New(
+	//	log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+	//	logger.Config{
+	//		SlowThreshold:             time.Second, // Slow SQL threshold
+	//		LogLevel:                  logger.Info, // Log level
+	//		IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+	//		ParameterizedQueries:      false,       // Don't include params in the SQL log
+	//		Colorful:                  false,       // Disable color
+	//	},
+	//)
 	db, err := gorm.Open(sqlite.Open(conf.DbPath), &gorm.Config{
-		Logger: newLogger,
+		//Logger: newLogger,
 	})
 	if err != nil {
 		l.Error(err)

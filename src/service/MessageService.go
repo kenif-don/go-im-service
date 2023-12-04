@@ -319,9 +319,41 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 	return nil
 }
 
-func (_self *MessageService) SendMsg(tp string, target uint64, no, content string) *utils.Error {
+func (_self *MessageService) SendMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+	switch msgTp {
+	case 1: //文本消息
+		res, e := util.CoverMsgData(int(msgTp), msgData)
+		if e != nil {
+			return log.WithError(utils.ERR_SEND_FAIL)
+		}
+		return _self.realSend(tp, target, no, res)
+	case 2, 5: //图片消息/文件消息
+		return _self.SendImgAndFileMsg(tp, target, no, msgTp, msgData, data)
+	case 3: //语音消息
+		return _self.SendVoiceMsg(tp, target, no, msgData)
+	}
+	return nil
+}
+func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, data string) *utils.Error {
+	return nil
+}
+func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+	//上传文件
+	url, err := util.UploadFile(data, msgData)
+	if err != nil {
+		return log.WithError(err)
+	}
+	res, e := util.CoverMsgData(int(msgTp), url)
+	if e != nil {
+		return log.WithError(utils.ERR_SEND_FAIL)
+	}
+	return _self.realSend(tp, target, no, res)
+}
+
+// realSend 发送文本消息
+func (_self *MessageService) realSend(tp string, target uint64, no string, msgData string) *utils.Error {
 	//组装本地消息
-	message, err := _self.coverMessage(tp, target, no, content)
+	message, err := _self.coverMessage(tp, target, no, msgData)
 	if err != nil {
 		return log.WithError(err)
 	}
