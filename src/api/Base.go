@@ -8,11 +8,13 @@ import (
 )
 
 type MessageListener interface {
+	//OnFile 文件解密结果 FileDecryptResp模型
+	OnFile(data []byte)
 	//OnReceive 当前聊天接收到消息
 	OnReceive(data string)
 	//OnDelMsg 如果当前聊天是 对方如果在此时删除了,会触发此通知
 	OnDelMsg(data string)
-	//OnSendReceive 发送的消息状态 -某消息 发送成功、发送失败
+	//OnSendReceive 发送的消息状态 -某消息 1-发送成功、-1-发送失败
 	OnSendReceive(data string)
 	//OnDoChat 如果客户端停留在首页 如果有新消息进来,都会调用此接口更新最后消息和排序
 	OnDoChat(data string)

@@ -130,7 +130,7 @@ func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Me
 	}
 	//循环解密
 	for i := 0; i < len(msgs); i++ {
-		data, err := Decrypt(target, tp, msgs[i].Data)
+		data, err := Decrypt(target, tp, msgs[i].Data, msgs[i].No)
 		if err != nil {
 			msgs[i].Data = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
 		} else {
@@ -281,7 +281,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			//如果发送者是当前用户打开的聊天目标
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
 				//解密
-				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data)
+				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.Data, message.No)
 				if err != nil {
 					return log.WithError(err)
 				}
@@ -330,16 +330,51 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, msgTp 
 	case 2, 5: //图片消息/文件消息
 		return _self.SendImgAndFileMsg(tp, target, no, msgTp, msgData, data)
 	case 3: //语音消息
-		return _self.SendVoiceMsg(tp, target, no, msgData)
+		return _self.SendVoiceMsg(tp, target, no, msgTp, msgData, data)
+	case 4: //视频消息
+		return _self.SendVideoMsg(tp, target, no, msgTp, msgData, data)
 	}
 	return nil
 }
-func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, data string) *utils.Error {
-	return nil
+func (_self *MessageService) SendVideoMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+	secret, err := GetSecret(target, tp)
+	if err != nil {
+		return log.WithError(err)
+	}
+	//上传文件
+	url, err := util.UploadFile(data, msgData, secret)
+	if err != nil {
+		return log.WithError(err)
+	}
+	res, e := util.CoverMsgData(int(msgTp), url)
+	if e != nil {
+		return log.WithError(utils.ERR_SEND_FAIL)
+	}
+	return _self.realSend(tp, target, no, res)
+}
+func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+	secret, err := GetSecret(target, tp)
+	if err != nil {
+		return log.WithError(err)
+	}
+	//上传文件
+	url, err := util.UploadFile(data, msgData, secret)
+	if err != nil {
+		return log.WithError(err)
+	}
+	res, e := util.CoverMsgData(int(msgTp), url)
+	if e != nil {
+		return log.WithError(utils.ERR_SEND_FAIL)
+	}
+	return _self.realSend(tp, target, no, res)
 }
 func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+	secret, err := GetSecret(target, tp)
+	if err != nil {
+		return log.WithError(err)
+	}
 	//上传文件
-	url, err := util.UploadFile(data, msgData)
+	url, err := util.UploadFile(data, msgData, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -420,89 +455,4 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 }
 func (_self *MessageService) CurrentTime() uint64 {
 	return uint64(int64(util.CurrentTime()) + int64(conf.DiffTime))
-}
-
-// Encrypt 聊天内容加密
-func Encrypt(he uint64, tp, content string) (string, *utils.Error) {
-	key := tp + "_" + util.Uint642Str(he)
-	switch tp {
-	case "friend":
-		if Keys[key] == "" {
-			user, e := QueryUser(he, repository.NewUserRepo())
-			if e != nil {
-				return "", log.WithError(e)
-			}
-			if user == nil {
-				return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
-			}
-			secret := util.SharedAESKey(user.PublicKey, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
-			Keys[key] = secret
-		}
-		break
-	case "group":
-		break
-	}
-	data, e := util.EncryptAes(content, Keys[key])
-	if e != nil {
-		return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
-	}
-	return data, nil
-}
-
-// Decrypt 聊天内容解密
-func Decrypt(he uint64, tp, content string) (string, *utils.Error) {
-	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
-		return "", log.WithError(utils.ERR_NOT_LOGIN)
-	}
-	if content == "" {
-		return "", nil
-	}
-	key := tp + "_" + util.Uint642Str(he)
-	switch tp {
-	case "friend":
-		if Keys[key] == "" {
-			user, e := QueryUser(he, repository.NewUserRepo())
-			if e != nil {
-				return "", log.WithError(e)
-			}
-			if user == nil {
-				return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-			}
-			secret := util.SharedAESKey(user.PublicKey, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
-			Keys[key] = secret
-		}
-		break
-	case "group":
-		break
-	}
-	data, e := util.DecryptAes(content, Keys[key])
-	if e != nil {
-		msg := &entity.MessageData{
-			Type:    1,
-			Content: "解密失败",
-		}
-		data, e = util.Obj2Str(msg)
-		if e != nil {
-			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-	}
-	return data, nil
-}
-func DelMsgNotify(tp string, target uint64) *utils.Error {
-	if conf.Conf.ChatId != target {
-		return nil
-	}
-	if Listener != nil {
-		chat := &entity.Chat{
-			Type:     tp,
-			TargetId: target,
-		}
-		data, e := util.Obj2Str(chat)
-		if e != nil {
-			log.Error(e)
-			return log.WithError(utils.ERR_NOTIFY_FAIL)
-		}
-		Listener.OnDelMsg(data)
-	}
-	return nil
 }

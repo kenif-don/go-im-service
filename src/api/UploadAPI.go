@@ -17,7 +17,7 @@ func Upload(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	url, err := util.UploadFile(req.Data, req.Path)
+	url, err := util.UploadFile(req.Data, req.Path, "")
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}

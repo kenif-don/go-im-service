@@ -95,34 +95,48 @@ func SharedAESKey(publicKey, privateKey, prime string) string {
 }
 func EncryptAes(src, key string) (string, *utils.Error) {
 	origData := []byte(src)
+	data, err := EncryptAes2(origData, key)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(data), nil
+}
+func EncryptAes2(data []byte, key string) ([]byte, *utils.Error) {
 	cipher, _ := aes.NewCipher([]byte(key))
-	length := (len(origData) + aes.BlockSize) / aes.BlockSize
+	length := (len(data) + aes.BlockSize) / aes.BlockSize
 	plain := make([]byte, length*aes.BlockSize)
-	copy(plain, origData)
-	pad := byte(len(plain) - len(origData))
-	for i := len(origData); i < len(plain); i++ {
+	copy(plain, data)
+	pad := byte(len(plain) - len(data))
+	for i := len(data); i < len(plain); i++ {
 		plain[i] = pad
 	}
 	encrypted := make([]byte, len(plain))
 	// 分组分块加密
-	for bs, be := 0, cipher.BlockSize(); bs <= len(origData); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
+	for bs, be := 0, cipher.BlockSize(); bs <= len(data); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
 		if bs > be {
-			return "", utils.ERR_ENCRYPT_FAIL
+			return nil, utils.ERR_ENCRYPT_FAIL
 		}
 		cipher.Encrypt(encrypted[bs:be], plain[bs:be])
 	}
-	return base64.StdEncoding.EncodeToString(encrypted), nil
+	return encrypted, nil
 }
 func DecryptAes(data, key string) (string, error) {
 	encrypted, _ := base64.StdEncoding.DecodeString(data)
+	res, err := DecryptAes2(encrypted, key)
+	if err != nil {
+		return "", err
+	}
+	return string(res), nil
+}
+func DecryptAes2(data []byte, key string) ([]byte, *utils.Error) {
 	cipher, _ := aes.NewCipher([]byte(key))
-	decrypted := make([]byte, len(encrypted))
+	decrypted := make([]byte, len(data))
 	//
-	for bs, be := 0, cipher.BlockSize(); bs < len(encrypted); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
+	for bs, be := 0, cipher.BlockSize(); bs < len(data); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
 		if bs > be {
-			return "", utils.ERR_ENCRYPT_FAIL
+			return nil, utils.ERR_ENCRYPT_FAIL
 		}
-		cipher.Decrypt(decrypted[bs:be], encrypted[bs:be])
+		cipher.Decrypt(decrypted[bs:be], data[bs:be])
 	}
 
 	trim := 0
@@ -130,10 +144,10 @@ func DecryptAes(data, key string) (string, error) {
 		trim = len(decrypted) - int(decrypted[len(decrypted)-1])
 	}
 	if trim < 0 || trim > len(decrypted) {
-		return "", utils.ERR_ENCRYPT_FAIL
+		return nil, utils.ERR_ENCRYPT_FAIL
 	}
 	if !utf8.Valid(decrypted[:trim]) {
-		return "", utils.ERR_DECRYPT_FAIL
+		return nil, utils.ERR_DECRYPT_FAIL
 	}
-	return string(decrypted[:trim]), nil
+	return decrypted[:trim], nil
 }

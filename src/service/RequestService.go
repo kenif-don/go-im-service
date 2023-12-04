@@ -13,6 +13,8 @@ import (
 var Listener MessageListener
 
 type MessageListener interface {
+	//OnFile 文件解密结果 FileDecryptResp模型
+	OnFile(data []byte)
 	//OnReceive 当前聊天接收到消息
 	OnReceive(data string)
 	//OnDelMsg 如果当前聊天是 对方如果在此时删除了,会触发此通知

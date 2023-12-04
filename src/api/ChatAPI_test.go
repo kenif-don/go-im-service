@@ -62,9 +62,10 @@ func TestGetChats(t *testing.T) {
 
 func TestGetMsgs(t *testing.T) {
 	TestLogin(t)
+	time.Sleep(time.Second * 2)
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 999991,
+		Target: 1,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := GetMsgs(req)

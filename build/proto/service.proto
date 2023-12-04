@@ -58,6 +58,13 @@ message ChatReq{
   string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
   MessageData content = 4; // 聊天内容 仅发生消息时传
 }
+message FileDecryptResp{
+  string no = 1;//消息ID
+  bytes data = 2;//文件路径
+  int32 state = 3;//1-成功 -1-失败 为1时data有值
+  string ext = 4;//如果消息类型为2-图片 没有值 为3-语音 代表语音秒数 为4-视频时长 为5-文件 没有值
+  bytes ext2 = 5;//如果为4-视频 此属性才有值 为预览图二进制数据
+}
 /** 消息内容 */
 message MessageData{
   int32 type = 1;//1-文本 2-图片 3-语音 4-视频 5-文件

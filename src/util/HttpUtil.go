@@ -101,7 +101,7 @@ func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))
 	return nil
 }
-func UploadData(data []byte) (string, *utils.Error) {
+func UploadData(data []byte, secret string) (string, *utils.Error) {
 	sess, e := session.NewSession(&aws.Config{
 		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
 		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
@@ -121,6 +121,13 @@ func UploadData(data []byte) (string, *utils.Error) {
 	}
 	//文件MD5作为文件名称
 	filename := MD5Bytes(data) + "." + endWith
+	//将data 加密
+	subData := data[3:19]
+	subEnData, err := EncryptAes2(subData, secret)
+	if err != nil {
+		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+	}
+	data = CoverSrcData2EnDate(data, subEnData, 3, 19)
 	_, e = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
 		Key:    aws.String(filename),
@@ -134,19 +141,19 @@ func UploadData(data []byte) (string, *utils.Error) {
 	// 获取预览URL
 	return "https://" + conf.Conf.Aws.Endpoint + "/" + conf.Conf.Aws.Bucket + "/" + filename, nil
 }
-func Upload(path string) (string, *utils.Error) {
+func Upload(path string, secret string) (string, *utils.Error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	return UploadData(data)
+	return UploadData(data, secret)
 }
-func UploadFile(data []byte, path string) (string, *utils.Error) {
+func UploadFile(data []byte, path string, secret string) (string, *utils.Error) {
 	if data == nil {
-		return Upload(path)
+		return Upload(path, secret)
 	}
-	return UploadData(data)
+	return UploadData(data, secret)
 }
 func GetFileType(data []byte) (string, *utils.Error) {
 	//取data的前261个
@@ -160,4 +167,52 @@ func GetFileType(data []byte) (string, *utils.Error) {
 	tp := kind.MIME.Value
 	tps := strings.Split(tp, "/")
 	return tps[len(tps)-1], nil
+}
+func DownloadFile(url, path string) error {
+	// 判断文件是否存在
+	if _, err := os.Stat(path); err == nil {
+		return nil
+	}
+	// 创建一个 HTTP 客户端
+	client := &http.Client{}
+	// 创建一个 GET 请求
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	// 发送请求并获取响应
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	// 关闭响应体
+	defer resp.Body.Close()
+	// 创建一个文件，用于保存下载的文件
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	// 将响应体的内容写入文件
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return err
+	}
+	// 关闭文件
+	file.Close()
+	return nil
+}
+func DecryptFile(path, secret string) ([]byte, *utils.Error) {
+	//读取文件
+	data, e := os.ReadFile(path)
+	if e != nil {
+		log.Debug(e)
+		return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	//解密
+	subEnData := data[3:35]
+	oldData, err := DecryptAes2(subEnData, secret)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
+	return RevertCoveredData(data, oldData, 3, 19, len(subEnData)), nil
 }

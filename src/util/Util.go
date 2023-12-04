@@ -80,3 +80,21 @@ func CoverMsgData(tp int, content string) (string, error) {
 	}
 	return Obj2Str(md)
 }
+func CoverSrcData2EnDate(src, dist []byte, beginIndex, endIndex int) []byte {
+	diff := endIndex - beginIndex
+	res := make([]byte, len(src)-diff+len(dist))
+	copy(res[0:beginIndex], src[0:beginIndex])
+	copy(res[beginIndex:len(dist)+beginIndex], dist)
+	copy(res[len(dist)+beginIndex:], src[endIndex:])
+	return res
+}
+func RevertCoveredData(enData []byte, oldData []byte, beginIndex, endIndex, diff int) []byte {
+	res := make([]byte, len(enData)-diff+(endIndex-beginIndex))
+	// 将原始数据的前半部分复制到结果中
+	copy(res[0:beginIndex], enData[0:beginIndex])
+	// 将原始的被替换部分复制到结果中
+	copy(res[beginIndex:beginIndex+len(oldData)], oldData)
+	// 将原始数据的后半部分复制到结果中
+	copy(res[beginIndex+len(oldData):], enData[beginIndex+diff:])
+	return res
+}
