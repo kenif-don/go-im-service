@@ -76,7 +76,6 @@ func TestGetMsgs(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result.Body)
-	time.Sleep(time.Hour)
 }
 func TestDelChatMsg(t *testing.T) {
 	TestLogin(t)

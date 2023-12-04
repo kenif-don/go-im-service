@@ -96,7 +96,7 @@ func DecryptFile(no, data, secret string) (string, *utils.Error) {
 	if e != nil {
 		return "", utils.ERR_DECRYPT_FAIL
 	}
-	if md.Type < 2 && md.Type > 5 {
+	if md.Type < 2 || md.Type > 5 {
 		return data, nil
 	}
 	//如果是文件 进入解密
