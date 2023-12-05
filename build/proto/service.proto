@@ -51,13 +51,7 @@ message MsgPageReq{
   uint64 target = 2;//聊天目标 用户ID或群ID
   uint64 time = 3;//消息发送时间 查询此时间之前的消息
 }
-
-message ChatReq{
-  string type = 1; // 聊天类型 friend, group
-  uint64 target = 2; // 聊天目标 用户ID或群ID
-  string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
-  MessageData content = 4; // 聊天内容 仅发生消息时传
-}
+/** 文件异步回调 */
 message FileDecryptResp{
   string no = 1;//消息ID
   string path = 2;//文件路径
@@ -65,6 +59,13 @@ message FileDecryptResp{
   int32 type = 4;//1-文本 2-图片 3-语音 4-视频 5-文件 因为异步处理解密 在第一次返回的数据中默认都是1,解密完成后才会显示真正的类型
   string ext = 5;//如果消息类型为2-图片 没有值 为3-语音 代表语音秒数 为4-视频时长 为5-文件 没有值
   bytes ext2 = 6;//如果为4-视频 此属性才有值 为预览图二进制数据
+}
+
+message ChatReq{
+  string type = 1; // 聊天类型 friend, group
+  uint64 target = 2; // 聊天目标 用户ID或群ID
+  string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
+  MessageData content = 4; // 聊天内容 仅发生消息时传
 }
 /** 消息内容 */
 message MessageData{
