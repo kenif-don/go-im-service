@@ -296,9 +296,6 @@ func UpdateNickname(data []byte) []byte {
 // Info 获取登录者信息
 func Info() []byte {
 	resp := &api.ResultDTOResp{}
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
-	}
 	if conf.GetLoginInfo() == nil || conf.GetLoginInfo().User == nil {
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		resp.Msg = "success"
