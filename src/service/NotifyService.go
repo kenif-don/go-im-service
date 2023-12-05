@@ -45,3 +45,30 @@ func DelMsgNotify(tp string, target uint64) *utils.Error {
 	}
 	return nil
 }
+
+// ChatNotify 通知客户端更新聊天列表
+func (_self *ChatService) ChatNotify(chat *entity.Chat) *utils.Error {
+	err := _self.coverLastMsg(chat)
+	if err != nil {
+		return log.WithError(err)
+	}
+	if Listener != nil {
+		res, e := util.Obj2Str(chat)
+		if e != nil {
+			return log.WithError(e)
+		}
+		Listener.OnDoChat(res)
+	}
+	return nil
+}
+
+func (_self *ChatService) VoiceNotify(message *entity.Message) *utils.Error {
+	if Listener != nil {
+		res, e := util.Obj2Str(message)
+		if e != nil {
+			return log.WithError(e)
+		}
+		Listener.OnDoVoice(res)
+	}
+	return nil
+}

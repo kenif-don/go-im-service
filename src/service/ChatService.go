@@ -55,25 +55,23 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 		if err != nil {
 			return nil, log.WithError(err)
 		}
-		//再根据最新user 更新一次聊天信息
+		//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
 		c, err := _self.CoverChat(tp, target)
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 		chat = c
+		//清除秘钥缓存
+		Keys["friend"+"_"+util.Uint642Str(target)] = ""
 		break
 	case "group":
 		break
-	}
-	err := _self.coverLastMsg(chat)
-	if err != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	//记录当前聊天ID
 	conf.Conf.ChatId = chat.TargetId
 	//如果是PC的话 需要通知客户端更新聊天列表
 	if conf.Base.DeviceType == conf.PC {
-		err = _self.ChatNotify(chat)
+		err := _self.ChatNotify(chat)
 		if err != nil {
 			return nil, log.WithError(err)
 		}
@@ -233,33 +231,6 @@ func (_self *ChatService) DelAllChat() *utils.Error {
 	e := _self.repo.Delete(chat)
 	if e != nil {
 		return log.WithError(utils.ERR_DEL_FAIL)
-	}
-	return nil
-}
-
-// ChatNotify 通知客户端更新聊天列表
-func (_self *ChatService) ChatNotify(chat *entity.Chat) *utils.Error {
-	err := _self.coverLastMsg(chat)
-	if err != nil {
-		return log.WithError(err)
-	}
-	if Listener != nil {
-		res, e := util.Obj2Str(chat)
-		if e != nil {
-			return log.WithError(e)
-		}
-		Listener.OnDoChat(res)
-	}
-	return nil
-}
-
-func (_self *ChatService) VoiceNotify(message *entity.Message) *utils.Error {
-	if Listener != nil {
-		res, e := util.Obj2Str(message)
-		if e != nil {
-			return log.WithError(e)
-		}
-		Listener.OnDoVoice(res)
 	}
 	return nil
 }

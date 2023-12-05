@@ -26,7 +26,9 @@ func main() {
 	////将data写入wav文件
 	//output.Write(data)
 	beginIndex, endIndex := 0, 7
+	//原数组
 	d1 := []byte{1, 2, 3, 4, 5, 6, 7}
+	//加密后的数组
 	d2 := []byte{9, 9, 9}
 	res := util.CoverSrcData2EnDate(d1, d2, beginIndex, endIndex)
 	fmt.Println(res)
