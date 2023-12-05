@@ -296,6 +296,9 @@ func UpdateNickname(data []byte) []byte {
 // Info 获取登录者信息
 func Info() []byte {
 	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
 	if conf.GetLoginInfo() == nil || conf.GetLoginInfo().User == nil {
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		resp.Msg = "success"
@@ -318,14 +321,11 @@ func Info() []byte {
 	}
 	return res
 }
-func Login(data []byte) []byte {
-	req := &api.UserReq{}
+
+// AutoLogin 自动登录
+func AutoLogin() []byte {
 	resp := &api.ResultDTOResp{}
-	if err := proto.Unmarshal(data, req); err != nil {
-		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
-	}
-	//用户没有传账号密码 直接通过缓存登录
-	if req.Username == "" && conf.GetLoginInfo().Token != "" {
+	if conf.GetLoginInfo().Token != "" && conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Id != 0 {
 		//判断是否需要输入二级密码
 		if conf.GetLoginInfo().InputPwd2 == 1 {
 			//需要输入二级密码
@@ -333,12 +333,26 @@ func Login(data []byte) []byte {
 		} else {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		}
-		resp.Msg = "success"
-		res, e := proto.Marshal(resp)
-		if e != nil {
-			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		//已经登录
+		//登录IM
+		err := loginIM()
+		if err != nil {
+			return SyncPutErr(err, resp)
 		}
-		return res
+	} else {
+		resp.Code = uint32(api.ResultDTOCode_TO_LOGIN)
+	}
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+	}
+	return res
+}
+func Login(data []byte) []byte {
+	req := &api.UserReq{}
+	resp := &api.ResultDTOResp{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	// 需要登录
 	userService := service.NewUserService()
@@ -436,9 +450,8 @@ func loginIM() *utils.Error {
 	if conf.Conf.LoginIM {
 		return nil
 	}
-	conf.Conf.LoginIM = true
-	//获取登录者 组装登录IM请求参数
 	loginInfo := &model.LoginInfo{
+		//获取登录者 组装登录IM请求参数
 		Id:     strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
 		Device: conf.Base.DeviceType,
 		Token:  conf.GetLoginInfo().Token,
@@ -448,5 +461,6 @@ func loginIM() *utils.Error {
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogin(loginInfo)
+	conf.Conf.LoginIM = true
 	return nil
 }
