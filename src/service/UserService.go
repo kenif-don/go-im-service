@@ -256,8 +256,8 @@ func (_self *UserService) Login(username, password string) *utils.Error {
 		//缓存登录token
 		conf.PutToken(resultDTO.Data.(string))
 	}
-	// 不知道是否需要输入
-	conf.UpdateInputPwd2(1)
+	// 这里标记不需要输入二级密码
+	conf.UpdateInputPwd2(-1)
 	//获取用户信息
 	return _self.LoginInfo()
 }
@@ -308,6 +308,8 @@ func (_self *UserService) Logout() *utils.Error {
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogout()
+	//将二级密码的标记清除
+	conf.UpdateInputPwd2(-1)
 	//通知前往登录页面
 	if Listener != nil {
 		Listener.OnLogin()
