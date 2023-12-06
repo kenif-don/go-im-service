@@ -34,6 +34,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
+	github.com/krig/go-sox v0.0.0-20180617124112-7d2f8ae31981 // indirect
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	golang.org/x/mobile v0.0.0-20231127183840-76ac6878050a // indirect
