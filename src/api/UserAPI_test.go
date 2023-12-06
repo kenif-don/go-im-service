@@ -56,7 +56,12 @@ func TestLogin(t *testing.T) {
 	proto.Unmarshal(resp, result)
 	log.Debug(result)
 }
-
+func TestAutoLogin(t *testing.T) {
+	resp := AutoLogin()
+	result := &api.ResultDTOResp{}
+	proto.Unmarshal(resp, result)
+	log.Debug(result)
+}
 func TestInfo(t *testing.T) {
 	resp := Info()
 	result := &api.ResultDTOResp{}
