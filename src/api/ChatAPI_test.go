@@ -31,8 +31,9 @@ func TestSendMsg(t *testing.T) {
 	time.Sleep(time.Second * 2)
 	TestGetMsgs(t)
 	contentObj := &api.MessageData{
-		Type:    2,
-		Content: "C:\\Users\\Administrator\\Desktop\\logo.png",
+		Type: 2,
+		//Content: "C:\\Users\\Administrator\\Desktop\\logo.png",
+		Content: "C:\\Users\\Administrator\\Desktop\\b_be930378be7919df8057ce403e1b4d3e.gif",
 		//Type:    1,
 		//Content: "成交价啊山莨菪碱扫",
 	}

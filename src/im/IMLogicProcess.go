@@ -2,6 +2,7 @@ package im
 
 import (
 	"IM-Service/src/configs/conf"
+	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/repository"
@@ -11,6 +12,7 @@ import (
 	"im-sdk/handler"
 	"im-sdk/model"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -29,7 +31,11 @@ func StartIM() {
 			conf.Conf.Client = client.New(conf.Base.WsHost)
 			e := conf.Conf.Client.Startup(GetLogicProcess())
 			if e != nil {
-				_ = log.WithError(e, "启动长连接失败，准备重启")
+				if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
+					log.Error(utils.ERR_NET_FAIL)
+				} else {
+					log.Error(e)
+				}
 				conf.Conf.Connected = false
 			}
 			if conf.Conf.Connected {

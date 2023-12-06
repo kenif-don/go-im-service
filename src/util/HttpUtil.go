@@ -24,31 +24,34 @@ import (
 // Post 发起POST json请求
 func Post(url string, body interface{}) (*dto.ResultDTO, *utils.Error) {
 	data, _ := json.Marshal(body)
-	req, err := http.NewRequest("POST", conf.Base.ApiHost+url, nil)
-	if err != nil {
-		return nil, log.WithError(err)
+	req, e := http.NewRequest("POST", conf.Base.ApiHost+url, nil)
+	if e != nil {
+		return nil, log.WithError(e)
 	}
 	//添加请求头和body
-	err = addContent(req, data)
-	if err != nil {
-		return nil, log.WithError(err)
+	e = addContent(req, data)
+	if e != nil {
+		return nil, log.WithError(e)
 	}
 	client := &http.Client{
 		Timeout: time.Second * 60,
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, log.WithError(err)
+	resp, e := client.Do(req)
+	if e != nil {
+		if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
+			return nil, log.WithError(utils.ERR_NET_FAIL)
+		}
+		return nil, log.WithError(e)
 	}
 	defer resp.Body.Close()
-	result, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, log.WithError(err)
+	result, e := io.ReadAll(resp.Body)
+	if e != nil {
+		return nil, log.WithError(e)
 	}
 	var resultDTO dto.ResultDTO
-	err = json.Unmarshal(result, &resultDTO)
-	if err != nil {
-		return nil, log.WithError(err)
+	e = json.Unmarshal(result, &resultDTO)
+	if e != nil {
+		return nil, log.WithError(e)
 	}
 	if resultDTO.Code != 200 {
 		return &resultDTO, nil
@@ -129,9 +132,14 @@ func UploadData(data []byte, secret string) (string, *utils.Error) {
 		if err != nil {
 			return "", log.WithError(utils.ERR_UPLOAD_FILE)
 		}
+		log.Debug("原数据：", data[0:50])
+		log.Debug("原加密分片：", subData)
+		log.Debug("加密后分片：", subEnData)
+		log.Debug("加密后长度：", len(subEnData))
 		data = CoverSrcData2EnDate(data, subEnData, beginIndex, endIndex)
 		//如果是加密方式 需要保证文件名唯一,不然多人给自己发同一张图 都会出现解密失败
 		filename = MD5Bytes(append(data, []byte(time.Now().String())...)) + "." + endWith
+		log.Debug("加密后文件名：", filename)
 	}
 	_, e = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
