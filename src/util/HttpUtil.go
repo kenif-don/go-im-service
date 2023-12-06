@@ -119,8 +119,8 @@ func UploadData(data []byte, secret string) (string, *utils.Error) {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	//文件MD5作为文件名称--这里需要保证文件名唯一,不然多人给自己发同一张图 都会出现解密失败
-	filename := MD5Bytes(append(data, []byte(time.Now().String())...)) + "." + endWith
+	//文件MD5作为文件名称--没有加密 可以重复
+	filename := MD5Bytes(data) + "." + endWith
 	if secret != "" {
 		beginIndex, endIndex := 3, 19
 		//将data 加密
@@ -130,6 +130,8 @@ func UploadData(data []byte, secret string) (string, *utils.Error) {
 			return "", log.WithError(utils.ERR_UPLOAD_FILE)
 		}
 		data = CoverSrcData2EnDate(data, subEnData, beginIndex, endIndex)
+		//如果是加密方式 需要保证文件名唯一,不然多人给自己发同一张图 都会出现解密失败
+		filename = MD5Bytes(append(data, []byte(time.Now().String())...)) + "." + endWith
 	}
 	_, e = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
