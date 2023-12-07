@@ -3,11 +3,12 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
-	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
 type MessageListener interface {
+	//OnFile 文件解密结果
+	OnFile(data []byte)
 	//OnReceive 当前聊天接收到消息
 	OnReceive(data string)
 	//OnDelMsg 如果当前聊天是 对方如果在此时删除了,会触发此通知
@@ -31,7 +32,7 @@ type MessageListener interface {
 // SyncPutErr 同步导出
 func SyncPutErr(err *utils.Error, resp *api.ResultDTOResp) []byte {
 	resp.Code = uint32(api.ResultDTOCode_ERROR)
-	resp.Msg = util.GetErrMsg(err)
+	resp.Msg = err.MsgZh
 	result, _ := proto.Marshal(resp)
 	return result
 }

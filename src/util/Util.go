@@ -63,8 +63,29 @@ func float322byte(fs []float32) []byte {
 	}
 	return bytes
 }
-func GetErrMsg(err *utils.Error) string {
-	return err.MsgZh
+
+// GetErrMsg 统一封装的解密失败消息
+func GetErrMsg() string {
+	msg := &entity.MessageData{
+		Type:    1,
+		Content: utils.ERR_DECRYPT_FAIL.MsgZh,
+	}
+	data, e := Obj2Str(msg)
+	if e != nil {
+		log.Error(utils.ERR_DECRYPT_FAIL)
+	}
+	return data
+}
+func GetDecryptingMsg() string {
+	msg := &entity.MessageData{
+		Type:    1,
+		Content: "文件解密中",
+	}
+	data, e := Obj2Str(msg)
+	if e != nil {
+		log.Error(utils.ERR_DECRYPT_FAIL)
+	}
+	return data
 }
 func Len(str string) int {
 	return len([]rune(str))

@@ -149,9 +149,9 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 	}
 	if lastMsg != nil {
 		//解密
-		data, err := Decrypt(chat.TargetId, chat.Type, "", lastMsg.Data)
+		data, err := Decrypt(chat.Type, chat.TargetId, "", lastMsg.Data)
 		if err != nil {
-			chat.LastMsg = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
+			chat.LastMsg = util.GetErrMsg()
 		} else {
 			chat.LastMsg = data
 		}

@@ -1,13 +1,33 @@
 package service
 
 import (
+	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/util"
+	"google.golang.org/protobuf/proto"
 )
 
+func FileNotify(target uint64, no, content string) *utils.Error {
+	if conf.Conf.ChatId != target {
+		return nil
+	}
+	if Listener != nil {
+		resp := &api.FileDecryptResp{
+			No:      no,
+			Content: content,
+		}
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_NOTIFY_FAIL)
+		}
+		Listener.OnFile(res)
+	}
+	return nil
+}
 func DelMsgNotify(tp string, target uint64) *utils.Error {
 	if conf.Conf.ChatId != target {
 		return nil

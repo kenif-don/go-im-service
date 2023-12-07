@@ -80,6 +80,8 @@ func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *ut
 	}
 	return nil
 }
+
+// UpdateUser 从服务器查询单个 再更新到数据库
 func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
 	resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
 	if err != nil {

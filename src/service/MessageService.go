@@ -135,9 +135,9 @@ func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Me
 	}
 	//循环解密
 	for i := 0; i < len(msgs); i++ {
-		data, err := Decrypt(target, tp, msgs[i].No, msgs[i].Data)
+		data, err := Decrypt(tp, target, msgs[i].No, msgs[i].Data)
 		if err != nil {
-			msgs[i].Data = util.GetErrMsg(utils.ERR_DECRYPT_FAIL)
+			msgs[i].Data = util.GetErrMsg()
 		} else {
 			msgs[i].Data = data
 		}
@@ -233,6 +233,13 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 		break
+	case 201: // 系统指令 去服务器拉去群成员
+		gId := util.Str2Uint64(protocol.Data.(string))
+		_, err := NewGroupMemberService().selectMembers(gId)
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
 	case 301: // 被好友删除
 		err := NewFriendService().DelLocalFriend(&entity.Friend{He: util.Str2Uint64(protocol.From), Me: util.Str2Uint64(protocol.To)})
 		if err != nil {
@@ -271,9 +278,9 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			//如果发送者是当前用户打开的聊天目标
 			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
 				//解密
-				data, err := Decrypt(util.Str2Uint64(protocol.From), message.Type, message.No, message.Data)
+				data, err := Decrypt(message.Type, util.Str2Uint64(protocol.From), message.No, message.Data)
 				if err != nil {
-					return log.WithError(err)
+					data = util.GetErrMsg()
 				}
 				message.Data = data
 				if Listener != nil {

@@ -51,7 +51,7 @@ func Encrypt(target uint64, tp, content string) (string, *utils.Error) {
 }
 
 // Decrypt 聊天内容解密
-func Decrypt(target uint64, tp, no, content string) (string, *utils.Error) {
+func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error) {
 	if content == "" {
 		return "", nil
 	}
@@ -60,85 +60,66 @@ func Decrypt(target uint64, tp, no, content string) (string, *utils.Error) {
 		return "", err
 	}
 	data, err := util.DecryptAes(content, secret)
+	//解密失败 直接返回解密失败
 	if err != nil {
-		msg := &entity.MessageData{
-			Type:    1,
-			Content: "解密失败",
-		}
-		d, e := util.Obj2Str(msg)
-		data = d
+		return "", log.WithError(err)
+	}
+	//否则判断是否在聊天中
+	if no != "" && conf.Conf.ChatId == target {
+		//转换为messageData
+		md := &entity.MessageData{}
+		e := util.Str2Obj(data, md)
 		if e != nil {
 			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
-	}
-	//有消息ID才需要解密动作
-	if no != "" && conf.Conf.ChatId == target {
-		//解密文件
-		data, err = DecryptFile(no, data, secret)
-		if err != nil {
-			msg := &entity.MessageData{
-				Type:    1,
-				Content: "文件解密失败",
-			}
-			d, e := util.Obj2Str(msg)
-			if e != nil {
-				return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-			}
-			data = d
+		//无需解密文件
+		if md.Type < 2 || md.Type > 5 {
+			return data, nil
 		}
+		//需要解密文件
+		DecryptFile(target, no, md, secret)
+		return util.GetDecryptingMsg(), nil
 	}
 	return data, nil
 }
-func DecryptFile(no, data, secret string) (string, *utils.Error) {
-	//转换为messageData
-	md := &entity.MessageData{}
-	e := util.Str2Obj(data, md)
-	if e != nil {
-		return "", utils.ERR_DECRYPT_FAIL
-	}
-	if md.Type < 2 || md.Type > 5 {
-		return data, nil
-	}
-	//定义失败模型
-	msg := &entity.MessageData{
-		Type:    1,
-		Content: "文件解密失败",
-	}
-	data, e = util.Obj2Str(msg)
-	if e != nil {
-		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-	}
-	//如果是文件 进入解密
-	//通过最后一根/获取文件后缀
-	paths := strings.Split(md.Content, "/")
-	filename := paths[len(paths)-1]
-	path := filepath.Join(conf.Base.BaseDir, "configs", filename)
-	//先下载文件
-	e = util.DownloadFile(md.Content, path)
-	if e != nil {
-		log.Error(e)
-		return data, nil
-	}
-	//解密文件
-	fileData, err := util.DecryptFile(path, secret)
-	if err != nil {
-		log.Error(err)
-		return data, nil
-	}
-	//保存为临时文件
-	tempPath := filepath.Join(conf.Base.BaseDir, "configs", "temp", filename)
-	e = util.SaveTempFile(fileData, tempPath)
-	if e != nil {
-		log.Error(e)
-		return data, nil
-	}
-	okMsg := &entity.MessageData{
-		Type:    2,
-		Content: tempPath,
-	}
-	data, e = util.Obj2Str(okMsg)
-	if e != nil {
-		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-	}
-	return data, nil
+func DecryptFile(target uint64, no string, md *entity.MessageData, secret string) {
+	go func() {
+		//通过最后一根/获取文件后缀
+		paths := strings.Split(md.Content, "/")
+		filename := paths[len(paths)-1]
+		path := filepath.Join(conf.Base.BaseDir, "configs", filename)
+		//先下载文件
+		e := util.DownloadFile(md.Content, path)
+		if e != nil {
+			log.Error(e)
+			FileNotify(target, no, util.GetErrMsg())
+			return
+		}
+		//解密文件
+		fileData, err := util.DecryptFile(path, secret)
+		if err != nil {
+			log.Error(err)
+			FileNotify(target, no, util.GetErrMsg())
+			return
+		}
+		//保存为临时文件
+		tempPath := filepath.Join(conf.Base.BaseDir, "configs", "temp", filename)
+		e = util.SaveTempFile(fileData, tempPath)
+		if e != nil {
+			log.Error(e)
+			FileNotify(target, no, util.GetErrMsg())
+			return
+		}
+		okMsg := &entity.MessageData{
+			Type:    2,
+			Content: tempPath,
+		}
+		data, e := util.Obj2Str(okMsg)
+		if e != nil {
+			log.Error(e)
+			FileNotify(target, no, util.GetErrMsg())
+			return
+		}
+		FileNotify(target, no, data)
+	}()
 }

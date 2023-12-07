@@ -37,16 +37,17 @@ func QueryFriendAll(repo IFriendRepo) ([]entity.Friend, error) {
 	return repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
 }
 
+// updateOne 从服务器查询单个 然后同步到数据库
 func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Error) {
-	var req = make(map[string]uint64)
-	req["he"] = he
-	req["me"] = me
-	resultDTO, err := Post("/api/friend/selectOne", req)
+	resultDTO, err := Post("/api/friend/selectOne", map[string]uint64{"from": he, "to": me})
 	if err != nil {
 		return nil, log.WithError(err)
 	}
 	var fa entity.Friend
-	_ = util.Str2Obj(resultDTO.Data.(string), &fa)
+	e := util.Str2Obj(resultDTO.Data.(string), &fa)
+	if e != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
 	if fa.Id != 0 {
 		//保存到数据库
 		e := _self.repo.Save(&fa)
@@ -228,7 +229,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
-			if sysUser != nil {
+			if sysUser != nil && sysUser.Id != 0 {
 				continue
 			}
 			e = userService.Save(v.HeUser)

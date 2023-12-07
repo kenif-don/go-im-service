@@ -59,11 +59,8 @@ func (_self *FriendApplyService) updateReject(from, to uint64) *utils.Error {
 
 // updateOne 查询单个 然后同步到数据库
 func (_self *FriendApplyService) updateOne(from, to uint64) *utils.Error {
-	var req = make(map[string]uint64)
-	req["from"] = from
-	req["to"] = to
 	//拉取请求
-	resultDTO, err := Post("/api/friend-apply/selectOne", req)
+	resultDTO, err := Post("/api/friend-apply/selectOne", map[string]uint64{"from": from, "to": to})
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -143,7 +140,7 @@ func (_self *FriendApplyService) SelectAll() ([]entity.FriendApply, *utils.Error
 			if e != nil {
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
-			if sysUser != nil {
+			if sysUser != nil && sysUser.Id != 0 {
 				continue
 			}
 			e = userService.Save(v.FromUser)
