@@ -9,6 +9,7 @@ import (
 	"IM-Service/src/util"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // GetSecret 获取密钥
@@ -84,6 +85,8 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 }
 func DecryptFile(target uint64, no string, md *entity.MessageData, secret string) {
 	go func() {
+		//延迟2秒
+		time.Sleep(2 * time.Second)
 		//通过最后一根/获取文件后缀
 		paths := strings.Split(md.Content, "/")
 		filename := paths[len(paths)-1]
