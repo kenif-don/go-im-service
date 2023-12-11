@@ -5,13 +5,11 @@ import (
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
+	"IM-Service/src/im"
 	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
-	"im-sdk/handler"
-	"im-sdk/model"
-	"strconv"
 )
 
 // ValidatePwd2 判断是否需要输入2级密码 这个接口会清空2级密码的输入状态
@@ -333,12 +331,7 @@ func AutoLogin() []byte {
 		} else {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 		}
-		//已经登录
-		//登录IM
-		err := loginIM()
-		if err != nil {
-			return SyncPutErr(err, resp)
-		}
+		//已经登录--如果已经登录 再链接长连接成功后 会进行一次登录 这里不处理
 	} else {
 		resp.Code = uint32(api.ResultDTOCode_TO_LOGIN)
 	}
@@ -396,7 +389,7 @@ func Login(data []byte) []byte {
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	}
 	//登录IM
-	err = loginIM()
+	err = im.LoginIm()
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -443,24 +436,4 @@ func Register(data []byte) []byte {
 		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
 	}
 	return res
-}
-
-// loginIM 如果已经存在登录者 直接登录 否则走完整登录流程 然后再登录IM
-func loginIM() *utils.Error {
-	if conf.Conf.LoginIM {
-		return nil
-	}
-	loginInfo := &model.LoginInfo{
-		//获取登录者 组装登录IM请求参数
-		Id:     strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
-		Device: conf.Base.DeviceType,
-		Token:  conf.GetLoginInfo().Token,
-	}
-	mgr := handler.GetClientHandler().GetMessageManager()
-	if mgr == nil {
-		return log.WithError(utils.ERR_NET_FAIL)
-	}
-	mgr.SendLogin(loginInfo)
-	conf.Conf.LoginIM = true
-	return nil
 }

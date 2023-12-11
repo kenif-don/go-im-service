@@ -45,17 +45,32 @@ func StartIM() {
 		}
 	}()
 }
-func (_self *LogicProcess) Connected() {
+
+// LoginIm 长连接登录
+func LoginIm() *utils.Error {
+	//未登录直接返回
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
-		return
+		return nil
 	}
-	//获取登录者 组装登录IM请求参数
 	loginInfo := &model.LoginInfo{
+		//获取登录者 组装登录IM请求参数
 		Id:     strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
 		Device: conf.Base.DeviceType,
 		Token:  conf.GetLoginInfo().Token,
 	}
-	handler.GetClientHandler().GetMessageManager().SendLogin(loginInfo)
+	mgr := handler.GetClientHandler().GetMessageManager()
+	if mgr == nil {
+		return log.WithError(utils.ERR_NET_FAIL)
+	}
+	mgr.SendLogin(loginInfo)
+	return nil
+}
+func (_self *LogicProcess) Connected() {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return
+	}
+	//链接成功之后登录
+	LoginIm()
 	if service.Listener != nil {
 		service.Listener.OnConnectChange("1")
 	}
@@ -116,15 +131,12 @@ func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 
 // LoginOk 登录成功的回调
 func (_self *LogicProcess) LoginOk(protocol *model.Protocol) {
-	conf.Conf.LoginIM = true
 	conf.DiffTime = int(util.Str2Uint64(protocol.Data.(string)) - util.CurrentTime())
 	log.Debugf("登录成功！时差:%v", conf.DiffTime)
-	//获取一次通讯录
-	_, e := service.NewFriendService().SelectAll()
 	//获取离线消息
-	e = service.NewMessageService().GetOfflineMessage()
-	if e != nil {
-		log.Error(e)
+	err := service.NewMessageService().GetOfflineMessage()
+	if err != nil {
+		log.Error(err)
 	}
 }
 
@@ -136,7 +148,6 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 // Logout 客户端正常退出
 func (_self *LogicProcess) Logout() {
 	//进行重连
-	conf.Conf.LoginIM = false
 	go func() {
 		err := conf.Conf.Client.Reconnect()
 		if err != nil {
