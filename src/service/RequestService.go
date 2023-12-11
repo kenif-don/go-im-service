@@ -41,9 +41,13 @@ func SetListener(listener MessageListener) {
 		Keys = make(map[string]string)
 	})
 }
+
+// NotPwdUris 排除输入2级密码的URI
+var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll"}
+
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 	//排除输入2级密码的URI和需要放行的URI
-	if url != "/api/user/loginPwd2" && util.IndexOfString(url, conf.Conf.ExUris) == -1 && !ValidatePwd2() {
+	if util.IndexOfString(url, NotPwdUris) == -1 && util.IndexOfString(url, conf.Conf.ExUris) == -1 && !ValidatePwd2() {
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
 	resultDTO, e := util.Post(url, req)
