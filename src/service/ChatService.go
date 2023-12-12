@@ -79,9 +79,18 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	return chat, nil
 }
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
-	friend, err := NewFriendService().QueryFriend2(target)
-	if err != nil || friend == nil {
+	friendService := NewFriendService()
+	friend, err := friendService.QueryFriend2(target)
+	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	//本地查不到好友--但是服务器可能有
+	if friend == nil {
+		f, err := friendService.updateOne(target, conf.GetLoginInfo().User.Id)
+		if err != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		friend = f
 	}
 	var name string
 	if friend.Name != "" {
