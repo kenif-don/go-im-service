@@ -46,6 +46,8 @@ var (
 	ERR_GET_WITHDRAWAL_FEE_FAIL      = NewError(1038, "get withdrawal fee fail", "获取提现手续费失败")
 	ERR_INPUT_WITHDRAWAL_MONEY_FAIL  = NewError(1039, "please input withdrawal money", "请输入提现金额")
 	ERR_INPUT_WITHDRAWAL_WALLET_FAIL = NewError(1040, "please input withdrawal wallet", "请输入提现钱包地址")
+	ERR_FRIEND_NOT_EXIST             = NewError(1041, "friend not exist", "好友不存在")
+	ERR_FRIEND_GET_FAIL              = NewError(1042, "friend get fail", "获取好友失败")
 )
 
 type Error struct {

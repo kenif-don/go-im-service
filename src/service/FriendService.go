@@ -43,6 +43,10 @@ func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Err
 	if err != nil {
 		return nil, log.WithError(err)
 	}
+	//如果服务器获取失败
+	if resultDTO.Data == nil {
+		return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+	}
 	var fa entity.Friend
 	e := util.Str2Obj(resultDTO.Data.(string), &fa)
 	if e != nil {
@@ -151,6 +155,13 @@ func (_self *FriendService) SelectOne(he uint64) (*entity.Friend, *utils.Error) 
 	friend, e := QueryFriend(&entity.Friend{He: he, Me: conf.GetLoginInfo().User.Id}, _self.repo)
 	if e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	if friend == nil {
+		f, err := _self.updateOne(he, conf.GetLoginInfo().User.Id)
+		if err != nil {
+			return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+		}
+		friend = f
 	}
 	if friend != nil {
 		userService := NewUserService()

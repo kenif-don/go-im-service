@@ -29,6 +29,7 @@ func ValidatePwd2() []byte {
 	if e != nil {
 		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
 	}
+
 	return res
 }
 

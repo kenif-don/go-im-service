@@ -317,6 +317,27 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 }
 
 func (_self *MessageService) SendMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+	//判断好友或者群是否存在
+	switch tp {
+	case "friend":
+		//先本地查
+		friend, err := QueryFriend(&entity.Friend{He: target, Me: conf.GetLoginInfo().User.Id}, repository.NewFriendRepo())
+		if err != nil {
+			return log.WithError(utils.ERR_FRIEND_GET_FAIL)
+		}
+		//查不到
+		if friend == nil {
+			//去服务器获取一次
+			_, err := NewFriendService().updateOne(target, conf.GetLoginInfo().User.Id)
+			if err != nil {
+				return log.WithError(utils.ERR_FRIEND_GET_FAIL)
+			}
+		}
+		break
+	case "group":
+		//先本地查
+
+	}
 	switch msgTp {
 	case 1: //文本消息
 		res, e := util.CoverMsgData(int(msgTp), msgData)
