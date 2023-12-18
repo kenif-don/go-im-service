@@ -78,8 +78,8 @@ func GetErrMsg() string {
 }
 func GetDecryptingMsg() string {
 	msg := &entity.MessageData{
-		Type:    1,
-		Content: "文件解密中",
+		Type:    2,
+		Content: "", //返回一个 "解密中" 默认的图片
 	}
 	data, e := Obj2Str(msg)
 	if e != nil {

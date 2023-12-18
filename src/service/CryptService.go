@@ -5,7 +5,6 @@ import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
-	"IM-Service/src/repository"
 	"IM-Service/src/util"
 	"path/filepath"
 	"strings"
@@ -21,7 +20,7 @@ func GetSecret(target uint64, tp string) (string, *utils.Error) {
 	switch tp {
 	case "friend":
 		if Keys[key] == "" {
-			user, e := QueryUser(target, repository.NewUserRepo())
+			user, e := NewUserService().SelectOne(target, false)
 			if e != nil {
 				return "", log.WithError(e)
 			}

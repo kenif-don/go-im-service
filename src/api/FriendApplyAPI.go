@@ -29,7 +29,7 @@ func UpdateFriendApply(data []byte) []byte {
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -97,7 +97,7 @@ func AddFriend(data []byte) []byte {
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }

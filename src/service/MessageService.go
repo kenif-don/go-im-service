@@ -228,7 +228,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		friendAppluService.FriendApplyNotify()
 		break
 	case 102: //当to同意好友申请后，更新好友数据
-		_, err := NewFriendService().updateOne(util.Str2Uint64(protocol.From), util.Str2Uint64(protocol.To))
+		_, err := NewFriendService().SelectOne(util.Str2Uint64(protocol.From), false)
 		if err != nil {
 			return log.WithError(err)
 		}
@@ -321,17 +321,9 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, msgTp 
 	switch tp {
 	case "friend":
 		//先本地查
-		friend, err := QueryFriend(&entity.Friend{He: target, Me: conf.GetLoginInfo().User.Id}, repository.NewFriendRepo())
-		if err != nil {
+		friend, err := NewFriendService().SelectOne(target, false)
+		if err != nil || friend == nil {
 			return log.WithError(utils.ERR_FRIEND_GET_FAIL)
-		}
-		//查不到
-		if friend == nil {
-			//去服务器获取一次
-			_, err := NewFriendService().updateOne(target, conf.GetLoginInfo().User.Id)
-			if err != nil {
-				return log.WithError(utils.ERR_FRIEND_GET_FAIL)
-			}
 		}
 		break
 	case "group":

@@ -31,11 +31,33 @@ func NewUserService() *UserService {
 		repo: repository.NewUserRepo(),
 	}
 }
-func QueryUser(id uint64, repo IUserRepo) (*entity.User, error) {
-	return repo.Query(&entity.User{Id: id})
-}
 func (_self *UserService) Save(obj *entity.User) error {
 	return _self.repo.Save(obj)
+}
+
+// SelectOne 先从本地获取 获取失败或需要刷新 就从服务器获取
+func (_self *UserService) SelectOne(id uint64, refresh bool) (*entity.User, *utils.Error) {
+	//忽略数据库错误，如果出现错误 那么user应该为nil 直接从服务器获取即可
+	user, _ := _self.repo.Query(&entity.User{Id: id})
+	if user == nil || refresh {
+		resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
+		if err != nil {
+			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
+		}
+		user = &entity.User{}
+		if resultDTO.Data == nil {
+			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
+		}
+		e := util.Str2Obj(resultDTO.Data.(string), user)
+		if e != nil {
+			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
+		}
+		e = _self.repo.Save(user)
+		if e != nil {
+			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
+		}
+	}
+	return user, nil
 }
 func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 	if keyword == "" {
@@ -62,8 +84,8 @@ func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *ut
 		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
 	//查找到数据库中存的私钥--设置到服务器返回的对象中
-	sysUser, e := QueryUser(conf.GetLoginInfo().User.Id, _self.repo)
-	if e != nil || user == nil {
+	sysUser, err := _self.SelectOne(conf.GetLoginInfo().User.Id, false)
+	if err != nil {
 		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
 	user.PrivateKey = sysUser.PrivateKey
@@ -81,37 +103,17 @@ func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *ut
 	return nil
 }
 
-// UpdateUser 从服务器查询单个 再更新到数据库
-func (_self *UserService) UpdateUser(id uint64) (*entity.User, *utils.Error) {
-	resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
-	if err != nil {
-		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
-	}
-	var user = &entity.User{}
-	if resultDTO.Data == nil {
-		return nil, log.WithError(utils.ERR_USER_NOT_EXIST)
-	}
-	e := util.Str2Obj(resultDTO.Data.(string), user)
-	if e != nil {
-		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
-	}
-	e = _self.repo.Save(user)
-	if e != nil {
-		return nil, log.WithError(utils.ERR_USER_UPDATE_FAIL)
-	}
-	return user, nil
-}
 func (_self *UserService) UpdateHeadImg(id uint64, headImg string) *utils.Error {
-	user, err := QueryUser(id, _self.repo)
-	if err != nil || user == nil {
+	user, err := _self.SelectOne(id, false)
+	if err != nil {
 		return log.WithError(utils.ERR_HEADIMG_UPDATE_FAIL)
 	}
 	user.HeadImg = headImg
 	return _self.Update(user)
 }
 func (_self *UserService) UpdateEmail(id uint64, email string) *utils.Error {
-	user, err := QueryUser(id, _self.repo)
-	if err != nil || user == nil {
+	user, err := _self.SelectOne(id, false)
+	if err != nil {
 		return log.WithError(utils.ERR_EMAIL_UPDATE_FAIL)
 	}
 	user.Email = email
@@ -121,8 +123,8 @@ func (_self *UserService) UpdateIntro(id uint64, intro string) *utils.Error {
 	if util.Len(intro) < 1 || util.Len(intro) > 30 {
 		return log.WithError(utils.ERR_INTRO_VALIDATE_FAIL)
 	}
-	user, err := QueryUser(id, _self.repo)
-	if err != nil || user == nil {
+	user, err := _self.SelectOne(id, false)
+	if err != nil {
 		return log.WithError(utils.ERR_INTRO_UPDATE_FAIL)
 	}
 	user.Intro = intro
@@ -132,8 +134,8 @@ func (_self *UserService) UpdateNickname(id uint64, nickname string) *utils.Erro
 	if util.Len(nickname) < 1 || util.Len(nickname) > 10 {
 		return log.WithError(utils.ERR_NICKNAME_VALIDATE_FAIL)
 	}
-	user, err := QueryUser(id, _self.repo)
-	if err != nil || user == nil {
+	user, err := _self.SelectOne(id, false)
+	if err != nil {
 		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
 	}
 	user.Nickname = nickname
@@ -176,11 +178,8 @@ func (_self *UserService) Update(obj *entity.User) *utils.Error {
 
 // UpdateLoginUserKeys 修改公私钥
 func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Error {
-	obj, e := QueryUser(conf.LoginInfo.User.Id, _self.repo)
-	if e != nil {
-		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
-	}
-	if obj == nil {
+	obj, err := _self.SelectOne(conf.LoginInfo.User.Id, false)
+	if err != nil {
 		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
 	obj.PublicKey = keys.PublicKey
@@ -194,14 +193,14 @@ func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Erro
 			tx.Rollback()
 		}
 	}()
-	err := func() *utils.Error {
+	err = func() *utils.Error {
 		//发起请求修改后台用户信息
 		_, err := Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
 		if err != nil {
 			return log.WithError(err)
 		}
 		//修改本地信息
-		e = _self.repo.Save(obj)
+		e := _self.repo.Save(obj)
 		if e != nil {
 			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 		}
@@ -329,12 +328,12 @@ func (_self *UserService) LoginInfo() *utils.Error {
 	var user entity.User
 	e := util.Obj2Obj(resultDTO.Data, &user)
 	if e != nil {
-		return log.WithError(utils.ERR_GET_USER_INFO)
+		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 	}
 	//数据库不存在 就添加 这里不做修改
-	sysUser, e := QueryUser(user.Id, _self.repo)
+	sysUser, e := _self.SelectOne(user.Id, false)
 	if e != nil {
-		return log.WithError(utils.ERR_GET_USER_INFO)
+		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 	}
 	//数据存在--需要把数据库中的私钥封装到登录者中
 	if sysUser != nil {
@@ -342,7 +341,7 @@ func (_self *UserService) LoginInfo() *utils.Error {
 	} else {
 		e = _self.Save(&user)
 		if e != nil {
-			return log.WithError(utils.ERR_GET_USER_INFO)
+			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 		}
 	}
 	//存到文件--如果没有 会重新生成公私钥

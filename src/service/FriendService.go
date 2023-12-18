@@ -27,48 +27,122 @@ func NewFriendService() *FriendService {
 		repo: repository.NewFriendRepo(),
 	}
 }
-func QueryFriend(obj *entity.Friend, repo IFriendRepo) (*entity.Friend, error) {
-	return repo.Query(obj)
-}
-func QueryFriendAll(repo IFriendRepo) ([]entity.Friend, error) {
-	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
-		return []entity.Friend{}, nil
-	}
-	return repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
-}
 
-// updateOne 从服务器查询单个 然后同步到数据库
-func (_self *FriendService) updateOne(he, me uint64) (*entity.Friend, *utils.Error) {
-	resultDTO, err := Post("/api/friend/selectOne", map[string]uint64{"from": he, "to": me})
-	if err != nil {
-		return nil, log.WithError(err)
+// SelectOne 获取好友 逻辑： 先从本地获取 获取失败或需要刷新 则从远程获取
+func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
-	//如果服务器获取失败
-	if resultDTO.Data == nil {
+	me := conf.GetLoginInfo().User.Id
+	//先从本地获取
+	friend, e := _self.repo.Query(&entity.Friend{He: he, Me: me})
+	if e != nil {
 		return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
 	}
-	var fa entity.Friend
-	e := util.Str2Obj(resultDTO.Data.(string), &fa)
+	//没有获取到 或者需要刷新好友数据
+	if friend == nil || refresh {
+		resultDTO, err := Post("/api/friend/selectOne", map[string]uint64{"from": he, "to": me})
+		if err != nil {
+			return nil, log.WithError(err)
+		}
+		//如果服务器获取失败
+		if resultDTO.Data == nil {
+			return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+		}
+		var fa entity.Friend
+		e := util.Str2Obj(resultDTO.Data.(string), &fa)
+		if e != nil {
+			return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+		}
+		if fa.Id != 0 {
+			//保存到数据库
+			e := _self.repo.Save(&fa)
+			if e != nil {
+				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+			}
+			if fa.HeUser == nil {
+				return nil, nil
+			}
+			//再保存好友用户
+			user, err := NewUserService().SelectOne(fa.He, refresh)
+			if err != nil {
+				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+			}
+			fa.HeUser = user
+		}
+		return &fa, nil
+	}
+	//获取到了 组装heUser
+	if friend != nil {
+		user, err := NewUserService().SelectOne(friend.He, false)
+		if err != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		friend.HeUser = user
+	}
+	return friend, nil
+}
+func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
+	friends, e := _self.repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
 	if e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
-	if fa.Id != 0 {
-		//保存到数据库
-		e := _self.repo.Save(&fa)
-		if e != nil {
-			return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+	if len(friends) != 0 {
+		//封装好友信息
+		for i := 0; i < len(friends); i++ {
+			user, err := NewUserService().SelectOne(friends[i].He, false)
+			if err != nil {
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+			friends[i].HeUser = user
+			if friends[i].Name == "" {
+				friends[i].Name = user.Nickname
+			}
 		}
-		if fa.HeUser == nil {
-			return nil, nil
-		}
-		//再保存好友用户
-		userService := NewUserService()
-		e = userService.Save(fa.HeUser)
-		if e != nil {
-			return nil, log.WithError(utils.ERR_OPERATION_FAIL)
-		}
+		return friends, nil
 	}
-	return &fa, nil
+	//没查到 就从后台查一次
+	resultDTO, err := Post("/api/friend/selectAll", nil)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
+	var fs []entity.Friend
+	e = util.Str2Obj(resultDTO.Data.(string), &fs)
+	if e != nil || fs == nil {
+		return []entity.Friend{}, nil
+	}
+	tx := _self.repo.BeginTx()
+	if e := tx.Error; e != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	r, err := func() ([]entity.Friend, *utils.Error) {
+		// 保存到数据库
+		for _, v := range fs {
+			e := _self.repo.Save(&v)
+			if e != nil {
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+			//保存对应的用户信息
+			_, err := NewUserService().SelectOne(v.He, false)
+			if err != nil {
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+		}
+		e = tx.Commit().Error
+		if e != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		return fs, nil
+	}()
+	if err != nil {
+		tx.Rollback()
+	}
+	return r, err
 }
 
 // DelFriend 删除双方好友
@@ -133,144 +207,19 @@ func (_self *FriendService) DelLocalFriend(friend *entity.Friend) *utils.Error {
 	}
 	return err
 }
-func (_self *FriendService) QueryFriend2(he uint64) (*entity.Friend, *utils.Error) {
-	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
-		return nil, log.WithError(utils.ERR_NOT_LOGIN)
-	}
-	friend, e := _self.repo.Query(&entity.Friend{He: he, Me: conf.GetLoginInfo().User.Id})
-	if e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	if friend != nil {
-		userService := NewUserService()
-		user, e := QueryUser(friend.He, userService.repo)
-		if e != nil || user == nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		friend.HeUser = user
-	}
-	return friend, nil
-}
-func (_self *FriendService) SelectOne(he uint64) (*entity.Friend, *utils.Error) {
-	friend, e := QueryFriend(&entity.Friend{He: he, Me: conf.GetLoginInfo().User.Id}, _self.repo)
-	if e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	if friend == nil {
-		f, err := _self.updateOne(he, conf.GetLoginInfo().User.Id)
-		if err != nil {
-			return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
-		}
-		friend = f
-	}
-	if friend != nil {
-		userService := NewUserService()
-		user, e := QueryUser(friend.He, userService.repo)
-		if e != nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		if user == nil {
-			f, err := _self.updateOne(friend.He, friend.Me)
-			if err != nil {
-				return nil, log.WithError(err)
-			}
-			user = f.HeUser
-		}
-		friend.HeUser = user
-	}
-	return friend, nil
-}
-func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
-	friends, e := QueryFriendAll(_self.repo)
-	if e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	if len(friends) != 0 {
-		//封装好友信息
-		for i := 0; i < len(friends); i++ {
-			userService := NewUserService()
-			user, e := QueryUser(friends[i].He, userService.repo)
-			if e != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			if user == nil {
-				f, err := _self.updateOne(friends[i].He, friends[i].Me)
-				if err != nil {
-					return nil, log.WithError(err)
-				}
-				user = f.HeUser
-			}
-			friends[i].HeUser = user
-			if friends[i].Name == "" {
-				friends[i].Name = user.Nickname
-			}
-		}
-		return friends, nil
-	}
-	//没查到 就从后台查一次
-	resultDTO, err := Post("/api/friend/selectAll", nil)
+
+func (_self *FriendService) UpdateName(he uint64, name string) *utils.Error {
+	friend, err := _self.SelectOne(he, false)
 	if err != nil {
-		return nil, log.WithError(err)
-	}
-	var fs []entity.Friend
-	e = util.Str2Obj(resultDTO.Data.(string), &fs)
-	if e != nil || fs == nil {
-		return []entity.Friend{}, nil
-	}
-	tx := _self.repo.BeginTx()
-	if e := tx.Error; e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	r, err := func() ([]entity.Friend, *utils.Error) {
-		// 保存到数据库
-		for _, v := range fs {
-			e := _self.repo.Save(&v)
-			if e != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			//先查询 是否存在 存在就不添加了
-			//保存对应的用户信息
-			userService := NewUserService()
-			sysUser, e := QueryUser(v.He, userService.repo)
-			if e != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			if sysUser != nil && sysUser.Id != 0 {
-				continue
-			}
-			e = userService.Save(v.HeUser)
-			if e != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-		}
-		e = tx.Commit().Error
-		if e != nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		return fs, nil
-	}()
-	if err != nil {
-		tx.Rollback()
-	}
-	return r, err
-}
-func (_self *FriendService) UpdateName(id uint64, name string) *utils.Error {
-	friend, e := QueryFriend(&entity.Friend{He: id, Me: conf.GetLoginInfo().User.Id}, _self.repo)
-	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
 	friend.Name = name
 	//服务器修改
-	_, err := Post("/api/friend/edit", friend)
+	_, err = Post("/api/friend/edit", friend)
 	if err != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}
-	e = _self.repo.Save(friend)
+	e := _self.repo.Save(friend)
 	if e != nil {
 		return log.WithError(utils.ERR_OPERATION_FAIL)
 	}

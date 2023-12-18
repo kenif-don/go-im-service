@@ -50,16 +50,8 @@ func (_self *GroupMemberService) selectMembers(gId uint64) ([]entity.GroupMember
 			continue
 		}
 		//先查询 是否存在 存在就不添加了
-		userService := NewUserService()
-		sysUser, e := QueryUser(members[i].UserId, userService.repo)
-		if e != nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		if sysUser != nil && sysUser.Id != 0 {
-			continue
-		}
-		e = userService.Save(members[i].User)
-		if e != nil {
+		_, err := NewUserService().SelectOne(members[i].UserId, false)
+		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 	}

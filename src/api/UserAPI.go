@@ -6,7 +6,6 @@ import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
 	"IM-Service/src/im"
-	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
@@ -39,15 +38,15 @@ func SelectOneUser(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UserReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	user, err := service.QueryUser(req.Id, repository.NewUserRepo())
+	user, err := service.NewUserService().SelectOne(req.Id, false)
 	if err != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
 	}
-	result, err := util.Obj2Str(user)
-	if err != nil {
+	result, e := util.Obj2Str(user)
+	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
@@ -55,7 +54,7 @@ func SelectOneUser(data []byte) []byte {
 	resp.Body = result
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 
@@ -73,7 +72,7 @@ func Logout() []byte {
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -97,7 +96,7 @@ func Search(data []byte) []byte {
 	resp.Body = users
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -117,14 +116,14 @@ func UpdateBurstPwd(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -144,14 +143,14 @@ func UpdatePwd2(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -171,14 +170,14 @@ func UpdatePwd(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -198,14 +197,14 @@ func UpdateHeadImg(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -225,14 +224,14 @@ func UpdateEmail(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -252,14 +251,14 @@ func UpdateIntro(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -279,7 +278,7 @@ func UpdateNickname(data []byte) []byte {
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
@@ -287,7 +286,7 @@ func UpdateNickname(data []byte) []byte {
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -303,20 +302,20 @@ func Info() []byte {
 		resp.Msg = "success"
 		res, err := proto.Marshal(resp)
 		if err != nil {
-			return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+			return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 		}
 		return res
 	}
 	user, err := util.Obj2Str(conf.GetLoginInfo().User)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = user
 	res, err := proto.Marshal(resp)
 	if err != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -365,8 +364,8 @@ func Login(data []byte) []byte {
 		log.Debug("没有私钥，创建私钥")
 	}
 	//公钥是否和本地一致
-	sysUser, e := service.QueryUser(conf.GetLoginInfo().User.Id, repository.NewUserRepo())
-	if e != nil {
+	sysUser, err := userService.SelectOne(conf.GetLoginInfo().User.Id, false)
+	if err != nil {
 		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
 	}
 	if sysUser.PublicKey != conf.GetLoginInfo().User.PublicKey || sysUser.PrivateKey != conf.GetLoginInfo().User.PrivateKey {

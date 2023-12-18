@@ -12,7 +12,7 @@ var (
 	ERR_USER_NOT_EXIST               = NewError(1004, "user not exist", "用户不存在")
 	ERR_UPLOAD_FILE                  = NewError(1005, "upload file error", "上传文件失败")
 	ERR_PARAM_PARSE                  = NewError(1006, "param parse error", "参数解析失败")
-	ERR_GET_USER_INFO                = NewError(1007, "get user info error", "获取用户信息失败")
+	ERR_GET_USER_INFO_FAIL           = NewError(1007, "get user info error", "获取用户信息失败")
 	ERR_LOGIN_FAIL                   = NewError(1008, "login fail", "登录失败,请刷新失败")
 	ERR_REGISTER_FAIL                = NewError(1009, "register fail", "注册失败")
 	ERR_SECRET_UPDATE_FAIL           = NewError(1010, "secret update fail", "秘钥修改失败")
@@ -46,8 +46,8 @@ var (
 	ERR_GET_WITHDRAWAL_FEE_FAIL      = NewError(1038, "get withdrawal fee fail", "获取提现手续费失败")
 	ERR_INPUT_WITHDRAWAL_MONEY_FAIL  = NewError(1039, "please input withdrawal money", "请输入提现金额")
 	ERR_INPUT_WITHDRAWAL_WALLET_FAIL = NewError(1040, "please input withdrawal wallet", "请输入提现钱包地址")
-	ERR_FRIEND_NOT_EXIST             = NewError(1041, "friend not exist", "好友不存在")
-	ERR_FRIEND_GET_FAIL              = NewError(1042, "friend get fail", "获取好友失败")
+	ERR_FRIEND_GET_FAIL              = NewError(1041, "friend get fail", "获取好友失败")
+	ERR_GET_USER_FAIL                = NewError(1042, "get user fail", "获取用户失败")
 )
 
 type Error struct {

@@ -18,7 +18,7 @@ func IsFriend(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	friendService := service.NewFriendService()
-	friend, err := friendService.QueryFriend2(req.Id)
+	friend, err := friendService.SelectOne(req.Id, false)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -31,7 +31,7 @@ func IsFriend(data []byte) []byte {
 	}
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -54,7 +54,7 @@ func DelFriend(data []byte) []byte {
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
@@ -68,7 +68,7 @@ func SelectOneFriend(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	friendService := service.NewFriendService()
-	f, err := friendService.SelectOne(req.Id)
+	f, err := friendService.SelectOne(req.Id, false)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -126,7 +126,7 @@ func UpdateFriendName(data []byte) []byte {
 	resp.Msg = "success"
 	res, e := proto.Marshal(resp)
 	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO, resp)
+		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
 	}
 	return res
 }
