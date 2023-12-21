@@ -43,7 +43,7 @@ func SetListener(listener MessageListener) {
 }
 
 // NotPwdUris 排除输入2级密码的URI
-var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll"}
+var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll", "/api/offline-bill/dels"}
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 	//排除输入2级密码的URI和需要放行的URI
