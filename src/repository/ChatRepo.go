@@ -41,11 +41,18 @@ func (_self *ChatRepo) Save(obj *entity.Chat) error {
 	if e != nil {
 		return e
 	}
+	if chat == nil {
+		tx := _self.Data.Db.Create(obj)
+		if tx.Error != nil {
+			return tx.Error
+		}
+		return nil
+	}
 	chat.Name = obj.Name
 	chat.HeadImg = obj.HeadImg
 	chat.UnReadNo = obj.UnReadNo
 	chat.Top = obj.Top
-	tx := _self.Data.Db.Model(&entity.Chat{}).Where(obj.Id).Save(obj)
+	tx := _self.Data.Db.Model(&entity.Chat{}).Where(chat.Id).Save(chat)
 	if tx.Error != nil {
 		return tx.Error
 	}

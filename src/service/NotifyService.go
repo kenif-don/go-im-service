@@ -11,6 +11,7 @@ import (
 )
 
 func FileNotify(target uint64, no, content string) *utils.Error {
+	log.Debugf("开始通知target=%d", target)
 	if conf.Conf.ChatId != target {
 		log.Debugf("往聊天通知文件解密后路径,目标不是已打开的聊天，target=%d", target)
 		return nil
@@ -27,6 +28,7 @@ func FileNotify(target uint64, no, content string) *utils.Error {
 		}
 		Listener.OnFile(res)
 	}
+	log.Debugf("完成通知target=%d", target)
 	return nil
 }
 func DelMsgNotify(tp string, target uint64) *utils.Error {
