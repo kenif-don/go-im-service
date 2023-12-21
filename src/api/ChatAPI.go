@@ -157,11 +157,11 @@ func OpenChat(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	chatService := service.NewChatService()
-	chats, err := chatService.OpenChat(req.Type, req.Target)
+	chat, err := chatService.OpenChat(req.Type, req.Target)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(chats)
+	result, e := util.Obj2Str(chat)
 	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
 	}

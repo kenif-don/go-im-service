@@ -24,16 +24,28 @@ func (_self *ChatRepo) Query(obj *entity.Chat) (*entity.Chat, error) {
 	}
 	return obj, nil
 }
-func (_self *ChatRepo) QueryAll(obj *entity.Chat) ([]entity.Chat, error) {
+func (_self *ChatRepo) QueryAll(userId uint64) ([]entity.Chat, error) {
 	objs := &[]entity.Chat{}
-	tx := _self.Data.Db.Where(obj).Find(objs)
+	tx := _self.Data.Db.Where("user_id = ?", userId).Find(objs)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 	return *objs, nil
 }
 func (_self *ChatRepo) Save(obj *entity.Chat) error {
-	tx := _self.Data.Db.Where("`type` = ? and target_id = ? and user_id = ?", obj.Type, obj.TargetId, obj.UserId).Save(obj)
+	chat, e := _self.Query(&entity.Chat{
+		Type:     obj.Type,
+		TargetId: obj.TargetId,
+		UserId:   obj.UserId,
+	})
+	if e != nil {
+		return e
+	}
+	chat.Name = obj.Name
+	chat.HeadImg = obj.HeadImg
+	chat.UnReadNo = obj.UnReadNo
+	chat.Top = obj.Top
+	tx := _self.Data.Db.Model(&entity.Chat{}).Where(obj.Id).Save(obj)
 	if tx.Error != nil {
 		return tx.Error
 	}

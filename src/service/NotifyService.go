@@ -12,6 +12,7 @@ import (
 
 func FileNotify(target uint64, no, content string) *utils.Error {
 	if conf.Conf.ChatId != target {
+		log.Debugf("往聊天通知文件解密后路径,目标不是已打开的聊天，target=%d", target)
 		return nil
 	}
 	if Listener != nil {

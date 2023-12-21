@@ -74,7 +74,7 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 	}
 	//获取到了 组装heUser
 	if friend != nil {
-		user, err := NewUserService().SelectOne(friend.He, false)
+		user, err := NewUserService().SelectOne(he, false)
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}

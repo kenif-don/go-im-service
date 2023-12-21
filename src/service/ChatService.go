@@ -22,7 +22,7 @@ var (
 
 type IChatRepo interface {
 	Query(obj *entity.Chat) (*entity.Chat, error)
-	QueryAll(obj *entity.Chat) ([]entity.Chat, error)
+	QueryAll(userId uint64) ([]entity.Chat, error)
 	Save(obj *entity.Chat) error
 	Delete(obj *entity.Chat) error
 	BeginTx() *gorm.DB
@@ -43,10 +43,7 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	return repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
 }
 func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
-	chat, e := QueryChat(tp, target, _self.repo)
-	if e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
+	var chat *entity.Chat
 	//根据类型查询数据
 	switch tp {
 	case "friend":
@@ -56,11 +53,10 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 			return nil, log.WithError(err)
 		}
 		//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
-		c, err := _self.CoverChat(tp, target)
+		chat, err = _self.CoverChat(tp, target)
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
-		chat = c
 		//清除秘钥缓存
 		Keys["friend"+"_"+util.Uint642Str(target)] = ""
 		break
@@ -78,7 +74,10 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	}
 	return chat, nil
 }
+
+// CoverChat 封装聊天
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
+	//获取好友信息
 	friend, err := NewFriendService().SelectOne(target, false)
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
@@ -97,15 +96,7 @@ func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *ut
 		HeadImg:  friend.HeUser.HeadImg,
 		UnReadNo: 0,
 	}
-	c, e := QueryChat(tp, target, _self.repo)
-	if e != nil {
-		log.Error(e)
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	if c != nil {
-		chat.Id = c.Id
-	}
-	e = _self.repo.Save(chat)
+	e := _self.repo.Save(chat)
 	if e != nil {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
@@ -116,9 +107,7 @@ func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
-	chats, err := _self.repo.QueryAll(&entity.Chat{
-		UserId: conf.GetLoginInfo().User.Id,
-	})
+	chats, err := _self.repo.QueryAll(conf.GetLoginInfo().User.Id)
 	if err != nil {
 		return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
 	}
