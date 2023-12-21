@@ -229,6 +229,7 @@ func SaveTempFile(data []byte, path string) error {
 	if _, err := os.Stat(path); err == nil {
 		return nil
 	}
+	log.Debug("保存文件:" + path)
 	file, err := os.Create(path)
 	if err != nil {
 		return err
