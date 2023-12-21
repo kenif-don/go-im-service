@@ -61,6 +61,7 @@ func LoginIm() *utils.Error {
 	}
 	mgr := handler.GetClientHandler().GetMessageManager()
 	if mgr == nil {
+		log.Error(utils.ERR_NET_FAIL)
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogin(loginInfo)
@@ -71,7 +72,11 @@ func (_self *LogicProcess) Connected() {
 		return
 	}
 	//链接成功之后登录
-	LoginIm()
+	err := LoginIm()
+	if err != nil {
+		log.Error(err)
+		return
+	}
 	if service.Listener != nil {
 		service.Listener.OnConnectChange("1")
 	}

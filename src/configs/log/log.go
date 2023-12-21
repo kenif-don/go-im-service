@@ -42,7 +42,6 @@ type UTCFormatter struct {
 }
 
 func (u UTCFormatter) Format(e *logrus.Entry) ([]byte, error) {
-
 	e.Time = e.Time.In(time.UTC)
 	return u.Formatter.Format(e)
 }

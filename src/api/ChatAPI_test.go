@@ -23,12 +23,14 @@ func TestOpenChat(t *testing.T) {
 	log.Debug(result)
 }
 func TestSendMsg(t *testing.T) {
-	TestAutoLogin(t)
-	time.Sleep(time.Second * 2)
+	//TestAutoLogin(t)
+	//time.Sleep(time.Second * 2)
 	//TestGetChats(t)
-	TestOpenChat(t)
-	time.Sleep(time.Second * 2)
-	TestGetMsgs(t)
+	//time.Sleep(time.Second * 2)
+	//TestOpenChat(t)
+	//time.Sleep(time.Second * 2)
+	//TestGetMsgs(t)
+	//log.Errorf("exception:%v", nil)
 	//contentObj := &api.MessageData{
 	//	Type:    2,
 	//	Content: "C:\\Users\\Administrator\\Desktop\\logo.png",

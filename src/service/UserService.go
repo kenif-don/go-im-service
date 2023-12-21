@@ -309,8 +309,6 @@ func (_self *UserService) Logout() *utils.Error {
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogout()
-	//将二级密码的标记清除
-	conf.UpdateInputPwd2(-1)
 	//通知前往登录页面
 	if Listener != nil {
 		Listener.OnLogin()
