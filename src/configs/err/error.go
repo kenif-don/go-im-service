@@ -48,6 +48,8 @@ var (
 	ERR_INPUT_WITHDRAWAL_WALLET_FAIL = NewError(1040, "please input withdrawal wallet", "请输入提现钱包地址")
 	ERR_FRIEND_GET_FAIL              = NewError(1041, "friend get fail", "获取好友失败")
 	ERR_GET_USER_FAIL                = NewError(1042, "get user fail", "获取用户失败")
+	ERR_MESSAGE_NOT_FOUND            = NewError(1043, "message not found", "消息不存在")
+	ERR_MESSAGE_UPDATE_FAIL          = NewError(1044, "message update fail", "消息更新失败")
 )
 
 type Error struct {

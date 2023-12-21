@@ -8,7 +8,7 @@ import (
 	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
-	"github.com/go-netty/go-netty/transport/tcp"
+	"github.com/go-netty/go-netty-transport/websocket"
 	"im-sdk/client"
 	"im-sdk/handler"
 	"im-sdk/model"
@@ -30,7 +30,7 @@ func StartIM() {
 			//启动长连接
 			conf.Conf.Connected = true
 			conf.Conf.Client = client.New(conf.Base.WsHost)
-			e := conf.Conf.Client.Startup(GetLogicProcess(), tcp.New())
+			e := conf.Conf.Client.Startup(GetLogicProcess(), websocket.New())
 			if e != nil {
 				if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
 					log.Error(utils.ERR_NET_FAIL)
@@ -82,15 +82,14 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 	messageService := service.NewMessageService()
 	messageService.UpdateReaded(protocol, 2)
 	if service.Listener != nil && (protocol.Type == 1 || protocol.Type == 8) {
-		res, e := util.Obj2Str(map[string]interface{}{"no": protocol.No, "send": 2})
-		if e != nil {
-			log.Error(e)
+		//消息状态通知
+		err := service.NotifySendReceive(protocol.No, 2)
+		if err != nil {
+			log.Error(err)
 			return
 		}
-		//消息状态通知
-		service.Listener.OnSendReceive(res)
 		var message = &entity.Message{}
-		e = util.Str2Obj(protocol.Data.(string), message)
+		e := util.Str2Obj(protocol.Data.(string), message)
 		if e != nil {
 			log.Error(e)
 			return
@@ -109,7 +108,7 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 			}
 		}
 		// 通知聊天列表更新
-		err := service.NewChatService().ChatNotify(chat)
+		err = service.NewChatService().ChatNotify(chat)
 		if err != nil {
 			log.Error(err)
 			return
@@ -150,7 +149,7 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 func (_self *LogicProcess) Logout() {
 	//进行重连
 	go func() {
-		err := conf.Conf.Client.Reconnect(tcp.New())
+		err := conf.Conf.Client.Reconnect(websocket.New())
 		if err != nil {
 			log.Error(err)
 		}
@@ -174,7 +173,7 @@ func (_self *LogicProcess) Exception(msg string) {
 	log.Debug("服务器断开连接,进行重连")
 	go func() {
 		for {
-			err := conf.Conf.Client.Reconnect(tcp.New())
+			err := conf.Conf.Client.Reconnect(websocket.New())
 			if err == nil {
 				return
 			}

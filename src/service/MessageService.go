@@ -22,6 +22,20 @@ func NewMessageService() *MessageService {
 		repo: repository.NewMessageRepo(),
 	}
 }
+func (_self *MessageService) SelectOne(obj *entity.Message) (*entity.Message, *utils.Error) {
+	msg, e := _self.repo.Query(obj)
+	if e != nil {
+		return nil, utils.ERR_MESSAGE_NOT_FOUND
+	}
+	return msg, nil
+}
+func (_self *MessageService) Update(obj *entity.Message) *utils.Error {
+	e := _self.repo.Save(obj)
+	if e != nil {
+		return utils.ERR_MESSAGE_UPDATE_FAIL
+	}
+	return nil
+}
 
 // DelChatMsg 删除双方聊天记录
 func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
@@ -407,15 +421,15 @@ func (_self *MessageService) realSend(tp string, target uint64, no string, msgDa
 	if err != nil {
 		return log.WithError(err)
 	}
-	//发送消息
-	err = Send(protocol)
-	if err != nil {
-		return log.WithError(err)
-	}
-	//保存消息到数据库
+	//先保存消息到数据库
 	e := _self.repo.Save(message)
 	if e != nil {
 		return log.WithError(utils.ERR_SEND_FAIL)
+	}
+	//再发送消息
+	err = Send(protocol)
+	if err != nil {
+		return log.WithError(err)
 	}
 	return nil
 }
@@ -459,7 +473,7 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	}
 	message.Data = data
 	message.Time = _self.CurrentTime()
-	message.Send = 1 // 发送中
+	message.Send = 1 // 1-发送中 2-发送成功 -1-发送失败
 	message.Read = 2 // 自己发的 肯定是已读
 	return message, nil
 }

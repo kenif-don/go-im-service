@@ -186,12 +186,11 @@ func SendMsg(data []byte) []byte {
 	go func() {
 		err := msgService.SendMsg(req.Type, req.Target, req.No, req.Content.Type, req.Content.Content, req.Content.Data)
 		if err != nil && service.Listener != nil {
-			res, e := util.Obj2Str(map[string]interface{}{"no": req.No, "send": -1})
-			if e != nil {
-				log.Error(e)
-				return
+			//通知消息发送失败
+			err = service.NotifySendReceive(req.No, -1)
+			if err != nil {
+				log.Error(err)
 			}
-			service.Listener.OnSendReceive(res)
 		}
 	}()
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)

@@ -73,3 +73,29 @@ func (_self *ChatService) VoiceNotify(message *entity.Message) *utils.Error {
 	}
 	return nil
 }
+
+// NotifySendReceive 通知消息是否发生成功
+func NotifySendReceive(no string, send int) *utils.Error {
+	res, e := util.Obj2Str(map[string]interface{}{"no": no, "send": send})
+	if e != nil {
+		log.Error(e)
+		return log.WithError(e)
+	}
+	//根据No获取消息记录
+	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
+	if err != nil {
+		return log.WithError(err)
+	}
+	//修改消息状态
+	if message != nil {
+		message.Send = send
+		err := NewMessageService().Update(message)
+		if err != nil {
+			return log.WithError(err)
+		}
+	}
+	if Listener != nil {
+		Listener.OnSendReceive(res)
+	}
+	return nil
+}
