@@ -201,6 +201,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		}
 		var req = make(map[string]interface{})
 		req["ids"] = ids
+		log.Debug("被删除的消息ID：", ids)
 		_, err = Post("/api/offline-bill/dels", req)
 		if err != nil {
 			return log.WithError(err)
