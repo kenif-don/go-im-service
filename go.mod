@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.47.4
 	github.com/go-audio/audio v1.0.0
 	github.com/go-audio/wav v1.0.0
+	github.com/go-netty/go-netty-transport v1.7.6
 	github.com/google/uuid v1.4.0
 	github.com/h2non/filetype v1.1.3
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
@@ -25,7 +26,6 @@ replace im-sdk => github.com/don764372409/im-sdk v0.4.0
 require (
 	github.com/go-audio/riff v1.0.0 // indirect
 	github.com/go-netty/go-netty v1.6.4 // indirect
-	github.com/go-netty/go-netty-transport v1.7.6 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.3.0 // indirect
