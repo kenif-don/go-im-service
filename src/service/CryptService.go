@@ -78,7 +78,7 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 		}
 		//需要解密文件
 		DecryptFile(target, no, md, secret)
-		return util.GetDecryptingMsg(), nil
+		return util.GetDecryptingMsg(md.Type), nil
 	}
 	return data, nil
 }
@@ -94,14 +94,14 @@ func DecryptFile(target uint64, no string, md *entity.MessageData, secret string
 		e := util.DownloadFile(md.Content, path)
 		if e != nil {
 			log.Error(e)
-			FileNotify(target, no, util.GetErrMsg())
+			FileNotify(target, no, util.GetErrMsg(md.Type))
 			return
 		}
 		//解密文件
 		fileData, err := util.DecryptFile(path, secret)
 		if err != nil {
 			log.Error(err)
-			FileNotify(target, no, util.GetErrMsg())
+			FileNotify(target, no, util.GetErrMsg(md.Type))
 			return
 		}
 		//保存为临时文件
@@ -109,7 +109,7 @@ func DecryptFile(target uint64, no string, md *entity.MessageData, secret string
 		e = util.SaveTempFile(fileData, tempPath)
 		if e != nil {
 			log.Error(e)
-			FileNotify(target, no, util.GetErrMsg())
+			FileNotify(target, no, util.GetErrMsg(md.Type))
 			return
 		}
 		okMsg := &entity.MessageData{
@@ -119,7 +119,7 @@ func DecryptFile(target uint64, no string, md *entity.MessageData, secret string
 		data, e := util.Obj2Str(okMsg)
 		if e != nil {
 			log.Error(e)
-			FileNotify(target, no, util.GetErrMsg())
+			FileNotify(target, no, util.GetErrMsg(md.Type))
 			return
 		}
 		FileNotify(target, no, data)

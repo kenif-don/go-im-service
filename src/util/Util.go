@@ -65,9 +65,9 @@ func float322byte(fs []float32) []byte {
 }
 
 // GetErrMsg 统一封装的解密失败消息
-func GetErrMsg() string {
+func GetErrMsg(msgType int) string {
 	msg := &entity.MessageData{
-		Type:    1,
+		Type:    msgType,
 		Content: utils.ERR_DECRYPT_FAIL.MsgZh,
 	}
 	data, e := Obj2Str(msg)
@@ -76,10 +76,10 @@ func GetErrMsg() string {
 	}
 	return data
 }
-func GetDecryptingMsg() string {
+func GetDecryptingMsg(msgType int) string {
 	msg := &entity.MessageData{
-		Type:    2,
-		Content: "", //返回一个 "解密中" 默认的图片
+		Type:    msgType,
+		Content: "文件解密中",
 	}
 	data, e := Obj2Str(msg)
 	if e != nil {
