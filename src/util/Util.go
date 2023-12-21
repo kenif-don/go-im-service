@@ -76,12 +76,9 @@ func GetErrMsg(msgType int) string {
 	}
 	return data
 }
-func GetDecryptingMsg(msgType int) string {
-	msg := &entity.MessageData{
-		Type:    msgType,
-		Content: "文件解密中",
-	}
-	data, e := Obj2Str(msg)
+func GetDecryptingMsg(msgData *entity.MessageData) string {
+	msgData.Content = "文件解密中"
+	data, e := Obj2Str(msgData)
 	if e != nil {
 		log.Error(utils.ERR_DECRYPT_FAIL)
 	}

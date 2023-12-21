@@ -5,6 +5,7 @@ import (
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
+	"IM-Service/src/entity"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
@@ -184,7 +185,10 @@ func SendMsg(data []byte) []byte {
 	}
 	msgService := service.NewMessageService()
 	go func() {
-		err := msgService.SendMsg(req.Type, req.Target, req.No, req.Content.Type, req.Content.Content, req.Content.Data)
+		err := msgService.SendMsg(req.Type, req.Target, req.No, &entity.MessageData{
+			Type:    int(req.Content.Type),
+			Content: req.Content.Content,
+		}, req.Content.Data)
 		if err != nil && service.Listener != nil {
 			//通知消息发送失败
 			err = service.NotifySendReceive(req.No, -1)

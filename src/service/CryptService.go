@@ -55,30 +55,35 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	if content == "" {
 		return "", nil
 	}
+	//字符串转换为消息体
+	md := &entity.MessageData{}
+	e := util.Str2Obj(content, md)
+	if e != nil {
+		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	//如果是文件消息 需要解密
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return "", err
 	}
-	data, err := util.DecryptAes(content, secret)
+	md.Content, err = util.DecryptAes(md.Content, secret)
+	data, e := util.Obj2Str(md)
+	if e != nil {
+		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
 	//解密失败 直接返回解密失败
 	if err != nil {
 		return "", log.WithError(err)
 	}
 	//否则判断是否在聊天中
 	if no != "" && conf.Conf.ChatId == target {
-		//转换为messageData
-		md := &entity.MessageData{}
-		e := util.Str2Obj(data, md)
-		if e != nil {
-			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
 		//无需解密文件
 		if md.Type < 2 || md.Type > 5 {
 			return data, nil
 		}
 		//需要解密文件
 		DecryptFile(target, no, md, secret)
-		return util.GetDecryptingMsg(md.Type), nil
+		return util.GetDecryptingMsg(md), nil
 	}
 	return data, nil
 }

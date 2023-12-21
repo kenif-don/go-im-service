@@ -330,7 +330,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 	return nil
 }
 
-func (_self *MessageService) SendMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
 	//判断好友或者群是否存在
 	switch tp {
 	case "friend":
@@ -344,75 +344,62 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, msgTp 
 		//先本地查
 
 	}
-	switch msgTp {
+	switch dataContent.Type {
 	case 1: //文本消息
-		res, e := util.CoverMsgData(int(msgTp), msgData)
-		if e != nil {
-			return log.WithError(utils.ERR_SEND_FAIL)
-		}
-		return _self.realSend(tp, target, no, res)
+		return _self.realSend(tp, target, no, dataContent)
 	case 2, 5: //图片消息/文件消息
-		return _self.SendImgAndFileMsg(tp, target, no, msgTp, msgData, data)
+		return _self.SendImgAndFileMsg(tp, target, no, dataContent, data)
 	case 3: //语音消息
-		return _self.SendVoiceMsg(tp, target, no, msgTp, msgData, data)
+		return _self.SendVoiceMsg(tp, target, no, dataContent, data)
 	case 4: //视频消息
-		return _self.SendVideoMsg(tp, target, no, msgTp, msgData, data)
+		return _self.SendVideoMsg(tp, target, no, dataContent, data)
 	}
 	return nil
 }
-func (_self *MessageService) SendVideoMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+func (_self *MessageService) SendVideoMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)
 	}
 	//上传文件
-	url, err := util.UploadFile(data, msgData, secret)
+	url, err := util.UploadFile(data, dataContent.Content, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
-	res, e := util.CoverMsgData(int(msgTp), url)
-	if e != nil {
-		return log.WithError(utils.ERR_SEND_FAIL)
-	}
-	return _self.realSend(tp, target, no, res)
+	dataContent.Content = url
+	return _self.realSend(tp, target, no, dataContent)
 }
-func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)
 	}
 	//上传文件
-	url, err := util.UploadFile(data, msgData, secret)
+	url, err := util.UploadFile(data, dataContent.Content, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
-	res, e := util.CoverMsgData(int(msgTp), url)
-	if e != nil {
-		return log.WithError(utils.ERR_SEND_FAIL)
-	}
-	return _self.realSend(tp, target, no, res)
+	dataContent.Content = url
+	return _self.realSend(tp, target, no, dataContent)
 }
-func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, msgTp int32, msgData string, data []byte) *utils.Error {
+func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)
 	}
 	//上传文件
-	url, err := util.UploadFile(data, msgData, secret)
+	url, err := util.UploadFile(data, dataContent.Content, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
-	res, e := util.CoverMsgData(int(msgTp), url)
-	if e != nil {
-		return log.WithError(utils.ERR_SEND_FAIL)
-	}
-	return _self.realSend(tp, target, no, res)
+	dataContent.Content = url
+	return _self.realSend(tp, target, no, dataContent)
 }
 
 // realSend 发送文本消息
-func (_self *MessageService) realSend(tp string, target uint64, no string, msgData string) *utils.Error {
+func (_self *MessageService) realSend(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
 	//组装本地消息
-	message, err := _self.coverMessage(tp, target, no, msgData)
+	message, err := _self.coverMessage(tp, target, no, dataContent)
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -456,7 +443,7 @@ func (_self *MessageService) coverProtocol(message *entity.Message) (*model.Prot
 	protocol.No = message.No
 	return protocol, nil
 }
-func (_self *MessageService) coverMessage(tp string, target uint64, no, content string) (*entity.Message, *utils.Error) {
+func (_self *MessageService) coverMessage(tp string, target uint64, no string, dataContent *entity.MessageData) (*entity.Message, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
@@ -467,11 +454,18 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no, content 
 	message.UserId = conf.GetLoginInfo().User.Id
 	message.From = strconv.FormatUint(conf.GetLoginInfo().User.Id, 10)
 	//加密
-	data, err := Encrypt(message.TargetId, tp, content)
+	data, err := Encrypt(message.TargetId, tp, dataContent.Content)
 	if err != nil {
-		return nil, log.WithError(err)
+		log.Error(err)
+		return nil, log.WithError(utils.ERR_SEND_FAIL)
 	}
-	message.Data = data
+	dataContent.Content = data
+	encryptData, e := util.Obj2Str(dataContent)
+	if e != nil {
+		log.Error(e)
+		return nil, log.WithError(utils.ERR_SEND_FAIL)
+	}
+	message.Data = encryptData
 	message.Time = _self.CurrentTime()
 	message.Send = 1 // 1-发送中 2-发送成功 -1-发送失败
 	message.Read = 2 // 自己发的 肯定是已读
