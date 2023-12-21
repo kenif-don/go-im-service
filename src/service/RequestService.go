@@ -46,18 +46,15 @@ func SetListener(listener MessageListener) {
 var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll", "/api/offline-bill/dels"}
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
-	log.Debug("111111111111111111111111111")
 	//排除输入2级密码的URI和需要放行的URI
 	if util.IndexOfString(url, NotPwdUris) == -1 && util.IndexOfString(url, conf.Conf.ExUris) == -1 && !ValidatePwd2() {
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
-	log.Debug("222222222222222222222222222222222")
 	resultDTO, e := util.Post(url, req)
 	if e != nil {
 		return nil, log.WithError(e)
 	}
 	if resultDTO.Code == 401 {
-		log.Debug("33333333333333333333333333")
 		//退出登录
 		err := NewUserService().Logout()
 		if err != nil {
@@ -65,9 +62,7 @@ func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 		}
 		return nil, utils.NewError(resultDTO.Code, resultDTO.Msg, resultDTO.Msg)
 	}
-	log.Debug("44444444444444444444444444444444444")
 	if resultDTO.Code == 500 {
-		log.Debug("55555555555555555555555555555555555555")
 		if resultDTO.Msg == "0x99999" {
 			return nil, utils.ERR_NET_FAIL
 		}

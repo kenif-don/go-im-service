@@ -79,7 +79,7 @@ func handlerResult(req *http.Request, resultDTO *dto.ResultDTO) (interface{}, er
 func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("Content-Type", "application/json")
 	if conf.GetLoginInfo().Token != "" {
-		req.Header.Add("v-token", conf.LoginInfo.Token)
+		req.Header.Add("v-token", conf.GetLoginInfo().Token)
 	}
 	//添加签名
 	timestamp, sign := GetSign()

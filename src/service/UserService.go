@@ -329,8 +329,9 @@ func (_self *UserService) LoginInfo() *utils.Error {
 		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 	}
 	//数据库不存在 就添加 这里不做修改
-	sysUser, e := _self.SelectOne(user.Id, false)
-	if e != nil {
+	sysUser, err := _self.SelectOne(user.Id, false)
+	if err != nil {
+		log.Error(err)
 		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 	}
 	//数据存在--需要把数据库中的私钥封装到登录者中
