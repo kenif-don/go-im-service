@@ -7,6 +7,7 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/don764372409/im-sdk v0.3.9 h1:nX9Fpnamma7n95YQVABIlJmREM0AqM7UNpD2t0EBCMk=
 github.com/don764372409/im-sdk v0.3.9/go.mod h1:HdFPASyhMCEFNBCDr5epkZ5c3G6l3wB2ZkJkByYZAFk=
+github.com/don764372409/im-sdk v0.4.0/go.mod h1:HdFPASyhMCEFNBCDr5epkZ5c3G6l3wB2ZkJkByYZAFk=
 github.com/go-audio/audio v1.0.0 h1:zS9vebldgbQqktK4H0lUqWrG8P0NxCJVqcj7ZpNnwd4=
 github.com/go-audio/audio v1.0.0/go.mod h1:6uAu0+H2lHkwdGsAY+j2wHPNPpPoeg5AaEFh9FlA+Zs=
 github.com/go-audio/riff v1.0.0 h1:d8iCGbDvox9BfLagY94fBynxSPHO80LmZCaOsmKxokA=

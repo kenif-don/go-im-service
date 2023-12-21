@@ -8,6 +8,7 @@ import (
 	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
+	"github.com/go-netty/go-netty/transport/tcp"
 	"im-sdk/client"
 	"im-sdk/handler"
 	"im-sdk/model"
@@ -29,7 +30,7 @@ func StartIM() {
 			//启动长连接
 			conf.Conf.Connected = true
 			conf.Conf.Client = client.New(conf.Base.WsHost)
-			e := conf.Conf.Client.Startup(GetLogicProcess())
+			e := conf.Conf.Client.Startup(GetLogicProcess(), tcp.New())
 			if e != nil {
 				if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
 					log.Error(utils.ERR_NET_FAIL)
@@ -149,7 +150,7 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 func (_self *LogicProcess) Logout() {
 	//进行重连
 	go func() {
-		err := conf.Conf.Client.Reconnect()
+		err := conf.Conf.Client.Reconnect(tcp.New())
 		if err != nil {
 			log.Error(err)
 		}
@@ -173,7 +174,7 @@ func (_self *LogicProcess) Exception(msg string) {
 	log.Debug("服务器断开连接,进行重连")
 	go func() {
 		for {
-			err := conf.Conf.Client.Reconnect()
+			err := conf.Conf.Client.Reconnect(tcp.New())
 			if err == nil {
 				return
 			}

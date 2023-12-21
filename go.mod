@@ -20,7 +20,7 @@ require (
 	im-sdk v0.0.0-00010101000000-000000000000
 )
 
-replace im-sdk => github.com/don764372409/im-sdk v0.3.9
+replace im-sdk => github.com/don764372409/im-sdk v0.4.0
 
 require (
 	github.com/go-audio/riff v1.0.0 // indirect
