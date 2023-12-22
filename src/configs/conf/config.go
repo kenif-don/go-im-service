@@ -141,7 +141,7 @@ func mkdirAndReturn(path string) string {
 type Config struct {
 	ExUris    []string
 	Prime     string
-	Pk        string
+	Pk        string //服务器公钥
 	Aws       *Aws
 	Key       string // 与服务器交互的key
 	Client    *client.WSClient

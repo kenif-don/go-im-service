@@ -8,6 +8,7 @@ import (
 	"IM-Service/src/repository"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
+	"github.com/go-netty/go-netty"
 	"github.com/go-netty/go-netty-transport/websocket"
 	"im-sdk/client"
 	"im-sdk/handler"
@@ -138,11 +139,21 @@ func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 func (_self *LogicProcess) LoginOk(protocol *model.Protocol) {
 	conf.DiffTime = int(util.Str2Uint64(protocol.Data.(string)) - util.CurrentTime())
 	log.Debugf("登录成功！时差:%v", conf.DiffTime)
-	//获取离线消息
-	err := service.NewMessageService().GetOfflineMessage()
-	if err != nil {
-		log.Error(err)
-	}
+	go func() {
+		for {
+			//如果没有私钥 就下一次循环
+			if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.PrivateKey == "" {
+				time.Sleep(time.Second * 1)
+				continue
+			}
+			//获取离线消息
+			err := service.NewMessageService().GetOfflineMessage()
+			if err != nil {
+				log.Error(err)
+			}
+			return
+		}
+	}()
 }
 
 // LoginFail 登录失败的回调
@@ -168,11 +179,11 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 		log.Errorf("解析服务器IM消息失败:%v", err)
 	}
 }
-func (_self *LogicProcess) Exception(err error) {
+func (_self *LogicProcess) Exception(ctx netty.ExceptionContext, e netty.Exception) {
 	if service.Listener != nil {
 		service.Listener.OnConnectChange("0")
 	}
-	log.Error(err)
+	log.Error(e)
 	conf.Conf.Connected = false
 	log.Debug("服务器断开连接,进行重连")
 	go func() {
@@ -185,4 +196,9 @@ func (_self *LogicProcess) Exception(err error) {
 			time.Sleep(5 * time.Second)
 		}
 	}()
+}
+
+// HandleEvent 处理事件
+func (_self *LogicProcess) HandleEvent(ctx netty.EventContext, event netty.Event) {
+	log.Debug(event)
 }
