@@ -23,8 +23,8 @@ func TestOpenChat(t *testing.T) {
 	log.Debug(result)
 }
 func TestSendMsg(t *testing.T) {
-	//TestAutoLogin(t)
-	TestLogin(t)
+	TestAutoLogin(t)
+	//TestLogin(t)
 	time.Sleep(time.Second * 2)
 	TestGetChats(t)
 	time.Sleep(time.Second * 2)
@@ -55,7 +55,6 @@ func TestSendMsg(t *testing.T) {
 	time.Sleep(time.Hour)
 }
 func TestGetChats(t *testing.T) {
-	TestAutoLogin(t)
 	resp := GetChats()
 	result := &api.ResultDTOResp{}
 	err := proto.Unmarshal(resp, result)

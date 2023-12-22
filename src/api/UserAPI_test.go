@@ -45,8 +45,10 @@ func TestRegister(t *testing.T) {
 }
 func TestLogin(t *testing.T) {
 	user := &api.UserReq{
-		Username: "test123",
-		Password: "123456",
+		//Username: "test123",
+		//Password: "123456",
+		Username: "nanjing30",
+		Password: "666666",
 		//Username: "123456",
 		//Password: "123456",
 	}
@@ -55,6 +57,7 @@ func TestLogin(t *testing.T) {
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debug(result)
+	time.Sleep(time.Hour)
 }
 func TestAutoLogin(t *testing.T) {
 	resp := AutoLogin()

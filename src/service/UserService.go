@@ -38,7 +38,11 @@ func (_self *UserService) Save(obj *entity.User) error {
 // SelectOne 先从本地获取 获取失败或需要刷新 就从服务器获取
 func (_self *UserService) SelectOne(id uint64, refresh bool) (*entity.User, *utils.Error) {
 	//忽略数据库错误，如果出现错误 那么user应该为nil 直接从服务器获取即可
-	user, _ := _self.repo.Query(&entity.User{Id: id})
+	user, e := _self.repo.Query(&entity.User{Id: id})
+	if e != nil {
+		log.Error(e)
+		return nil, log.WithError(utils.ERR_GET_USER_FAIL)
+	}
 	if user == nil || refresh {
 		resultDTO, err := Post("/api/user/selectOne", map[string]interface{}{"id": id})
 		if err != nil {
@@ -309,6 +313,7 @@ func (_self *UserService) Logout() *utils.Error {
 		return log.WithError(utils.ERR_NET_FAIL)
 	}
 	mgr.SendLogout()
+	conf.UpdateInputPwd2(-1)
 	//通知前往登录页面
 	if Listener != nil {
 		Listener.OnLogin()
@@ -329,9 +334,9 @@ func (_self *UserService) LoginInfo() *utils.Error {
 		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 	}
 	//数据库不存在 就添加 这里不做修改
-	sysUser, err := _self.SelectOne(user.Id, false)
-	if err != nil {
-		log.Error(err)
+	sysUser, e := _self.repo.Query(&entity.User{Id: user.Id})
+	if e != nil {
+		log.Error(e)
 		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 	}
 	//数据存在--需要把数据库中的私钥封装到登录者中
@@ -343,7 +348,7 @@ func (_self *UserService) LoginInfo() *utils.Error {
 			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 		}
 	}
-	//存到文件--如果没有 会重新生成公私钥
+	//覆盖私钥
 	conf.PutLoginInfo(user)
 	return nil
 }

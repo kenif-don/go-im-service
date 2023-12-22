@@ -163,17 +163,16 @@ func (_self *LogicProcess) Logout() {
 
 // ReceivedMessage 接收到消息
 func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
-	log.Debugf("接收到服务器IM消息:%v", protocol)
 	err := service.NewMessageService().Handler(protocol)
 	if err != nil {
 		log.Errorf("解析服务器IM消息失败:%v", err)
 	}
 }
-func (_self *LogicProcess) Exception(msg string) {
+func (_self *LogicProcess) Exception(err error) {
 	if service.Listener != nil {
 		service.Listener.OnConnectChange("0")
 	}
-	log.Errorf("exception:%v", msg)
+	log.Error(err)
 	conf.Conf.Connected = false
 	log.Debug("服务器断开连接,进行重连")
 	go func() {

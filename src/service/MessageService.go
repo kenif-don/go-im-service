@@ -183,7 +183,6 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		return log.WithError(err)
 	}
 	var offlineBills = &[]entity.OfflineBill{}
-	log.Debug("获取服务器离线消息")
 	e := util.Str2Obj(resultDTO.Data.(string), offlineBills)
 	if e != nil {
 		return log.WithError(utils.ERR_QUERY_FAIL)
@@ -198,7 +197,6 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		}
 	}()
 	err = func() *utils.Error {
-		log.Debug("删除离线消息")
 		var ids = make([]int64, len(*offlineBills))
 		for i, bill := range *offlineBills {
 			var protocol = &model.Protocol{}
@@ -225,7 +223,6 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		log.Debug("删除离线消息完成")
 		return nil
 	}()
 	if err != nil {
