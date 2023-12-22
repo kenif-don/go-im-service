@@ -55,13 +55,11 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 			return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
 		}
 		if fa.Id != 0 {
-			//保存到数据库
+			//修改好友信息
 			e := _self.repo.Save(&fa)
 			if e != nil {
+				log.Error(e)
 				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
-			}
-			if fa.HeUser == nil {
-				return nil, nil
 			}
 			//再保存好友用户
 			user, err := NewUserService().SelectOne(fa.He, refresh)
