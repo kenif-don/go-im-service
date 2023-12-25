@@ -151,7 +151,7 @@ func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Me
 	for i := 0; i < len(msgs); i++ {
 		data, err := Decrypt(tp, target, msgs[i].No, msgs[i].Data)
 		if err != nil {
-			msgs[i].Data = util.GetErrMsg(1)
+			msgs[i].Data = util.GetTextErrMsg()
 		} else {
 			msgs[i].Data = data
 		}
@@ -300,7 +300,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				//解密
 				data, err := Decrypt(message.Type, util.Str2Uint64(protocol.From), message.No, message.Data)
 				if err != nil {
-					data = util.GetErrMsg(1)
+					data = util.GetTextErrMsg()
 				}
 				message.Data = data
 				if Listener != nil {

@@ -13,8 +13,8 @@ func TestDecrypt(t *testing.T) {
 	time.Sleep(time.Second * 2)
 	oldReq := &api.DecryptReq{
 		Type:   "friend",
-		Target: 30,
-		No:     "90ffb58f006d49b48367edc50b6d330e",
+		Target: 21,
+		No:     "1703499138761",
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := Decrypt(req)
@@ -29,7 +29,7 @@ func TestDecrypt(t *testing.T) {
 func TestOpenChat(t *testing.T) {
 	oldReq := &api.ChatReq{
 		Type:   "friend",
-		Target: 30,
+		Target: 21,
 	}
 	req, _ := proto.Marshal(oldReq)
 	resp := OpenChat(req)

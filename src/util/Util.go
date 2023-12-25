@@ -69,6 +69,20 @@ func GetErrMsg(msgType int) string {
 	msg := &entity.MessageData{
 		Type:    msgType,
 		Content: utils.ERR_DECRYPT_FAIL.MsgZh,
+		Status:  -1,
+	}
+	data, e := Obj2Str(msg)
+	if e != nil {
+		log.Error(utils.ERR_DECRYPT_FAIL)
+	}
+	return data
+}
+
+// GetTextErrMsg 如果是文本消息解密失败 不加状态
+func GetTextErrMsg() string {
+	msg := &entity.MessageData{
+		Type:    1,
+		Content: utils.ERR_DECRYPT_FAIL.MsgZh,
 	}
 	data, e := Obj2Str(msg)
 	if e != nil {
