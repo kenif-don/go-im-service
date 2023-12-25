@@ -11,10 +11,13 @@ import (
 )
 
 func FileNotify(target uint64, no, content string) *utils.Error {
+	log.Debug("解密文件：eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
 	if conf.Conf.ChatId != target {
 		return nil
 	}
+	log.Debug("解密文件：ffffffffffffffffffffffffffffff")
 	if Listener != nil {
+		log.Debug("解密文件：ggggggggggggggggggggggggggg")
 		resp := &api.FileDecryptResp{
 			No:      no,
 			Content: content,
@@ -24,6 +27,7 @@ func FileNotify(target uint64, no, content string) *utils.Error {
 			log.Error(e)
 			return log.WithError(utils.ERR_NOTIFY_FAIL)
 		}
+		log.Debug("解密文件：hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
 		Listener.OnFile(res)
 	}
 	return nil
