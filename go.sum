@@ -9,6 +9,12 @@ github.com/don764372409/im-sdk v0.4.3 h1:kY6/vjGf14L/dtEeiE4Lk582NlVdKZ0/NWRA0SP
 github.com/don764372409/im-sdk v0.4.3/go.mod h1:HdFPASyhMCEFNBCDr5epkZ5c3G6l3wB2ZkJkByYZAFk=
 github.com/don764372409/im-sdk v0.4.4 h1:w52uMdueJToqlqDPbDynVyMTJO7PFZyIy04ZooRpCmw=
 github.com/don764372409/im-sdk v0.4.4/go.mod h1:HdFPASyhMCEFNBCDr5epkZ5c3G6l3wB2ZkJkByYZAFk=
+github.com/go-audio/audio v1.0.0 h1:zS9vebldgbQqktK4H0lUqWrG8P0NxCJVqcj7ZpNnwd4=
+github.com/go-audio/audio v1.0.0/go.mod h1:6uAu0+H2lHkwdGsAY+j2wHPNPpPoeg5AaEFh9FlA+Zs=
+github.com/go-audio/riff v1.0.0 h1:d8iCGbDvox9BfLagY94fBynxSPHO80LmZCaOsmKxokA=
+github.com/go-audio/riff v1.0.0/go.mod h1:l3cQwc85y79NQFCRB7TiPoNiaijp6q8Z0Uv38rVG498=
+github.com/go-audio/wav v1.1.0 h1:jQgLtbqBzY7G+BM8fXF7AHUk1uHUviWS4X39d5rsL2g=
+github.com/go-audio/wav v1.1.0/go.mod h1:mpe9qfwbScEbkd8uybLuIpTgHyrISw/OTuvjUW2iGtE=
 github.com/go-netty/go-netty v1.6.4 h1:ZTGdOC0HFkd98Pq4CQG8YIfFXvWxzebVzetjtzn7rb0=
 github.com/go-netty/go-netty v1.6.4/go.mod h1:vSbL7RzFTO5bHXhxzZsAW0iStVz1qnenR90UVF6e1HA=
 github.com/go-netty/go-netty-transport v1.7.6 h1:k6Qau0xQtfGE449YK2IXIgiWAEH4Irg3d/kmHdKz0To=

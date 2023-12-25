@@ -6,6 +6,9 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/util"
+	"bytes"
+	"github.com/go-audio/wav"
+	"image"
 	"path/filepath"
 	"strings"
 )
@@ -113,6 +116,12 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		return err
 	}
 	go func() {
+		md.Content, err = util.DecryptAes(md.Content, secret)
+		if err != nil {
+			log.Error(err)
+			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
+			return
+		}
 		//通过最后一根/获取文件后缀
 		paths := strings.Split(md.Content, "/")
 		filename := paths[len(paths)-1]
@@ -139,9 +148,12 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		okMsg := &entity.MessageData{
-			Type:    2,
-			Content: tempPath,
+		//组装成各种类型
+		okMsg, err := coverMessageData(md, fileData, tempPath)
+		if err != nil {
+			log.Error(err)
+			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
+			return
 		}
 		data, e := util.Obj2Str(okMsg)
 		if e != nil {
@@ -152,4 +164,46 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		FileNotify(chat.TargetId, no, data)
 	}()
 	return nil
+}
+
+func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity.MessageData, *utils.Error) {
+	switch md.Type {
+	case 2: //图片
+		c, _, e := image.DecodeConfig(bytes.NewReader(data))
+		if e != nil {
+			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
+		}
+		return &entity.MessageData{
+			Type:    md.Type,
+			Content: path,
+			Width:   c.Width,
+			Height:  c.Height,
+		}, nil
+	case 3: //语音
+		decoder := wav.NewDecoder(bytes.NewReader(data))
+		if decoder == nil {
+			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
+		}
+		duration, e := decoder.Duration()
+		if e != nil {
+			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
+		}
+		return &entity.MessageData{
+			Type:     md.Type,
+			Content:  path,
+			Duration: duration.Seconds(),
+		}, nil
+	case 4: //视频
+		return &entity.MessageData{
+			Type:    md.Type,
+			Content: path,
+		}, nil
+	case 5: //文件
+		return &entity.MessageData{
+			Type:    md.Type,
+			Content: path,
+			Size:    len(data),
+		}, nil
+	}
+	return nil, nil
 }
