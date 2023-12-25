@@ -174,7 +174,14 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity.MessageData, *utils.Error) {
 	switch md.Type {
 	case 2: //图片
-		c, e := DecodeImageWidthHeight(data, strings.Split(path, ".")[1])
+		//获取文件后缀
+		endWidth, err := util.GetFileType(data)
+		if err != nil {
+			log.Error(err)
+			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
+		}
+		log.Debugf("图片后缀：%s", endWidth)
+		c, e := DecodeImageWidthHeight(data, endWidth)
 		if e != nil {
 			log.Error(e)
 			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
@@ -182,7 +189,7 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 		return &entity.MessageData{
 			Type:    md.Type,
 			Content: path,
-			Status:  1,
+			Status:  2,
 			Width:   c.Width,
 			Height:  c.Height,
 		}, nil

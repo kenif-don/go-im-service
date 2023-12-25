@@ -94,6 +94,7 @@ func GetDecryptingMsg(msgData *entity.MessageData) string {
 	data, e := Obj2Str(&entity.MessageData{
 		Type:    msgData.Type,
 		Content: "文件解密中",
+		Status:  1,
 	})
 	if e != nil {
 		log.Error(utils.ERR_DECRYPT_FAIL)

@@ -24,5 +24,5 @@ type MessageData struct {
 	Height   int    `json:"height"`   //图片高
 	Size     int    `json:"size"`     //文件大小
 	Duration int    `json:"duration"` //语音时长
-	Status   int    `json:"status"`   //解密状态 1-解密成功 -1-解密失败
+	Status   int    `json:"status"`   //解密状态 1-文件解密中 2-解密成功 -1-解密失败
 }
