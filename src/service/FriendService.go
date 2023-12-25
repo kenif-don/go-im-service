@@ -61,6 +61,8 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 				log.Error(e)
 				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 			}
+			log.Debugf("好友ID:%d", fa.He)
+			log.Debugf("好友数据:%v", fa.HeUser)
 			//再保存好友用户
 			user, err := NewUserService().SelectOne(fa.He, refresh)
 			if err != nil {

@@ -23,14 +23,14 @@ func TestOpenChat(t *testing.T) {
 	log.Debug(result)
 }
 func TestSendMsg(t *testing.T) {
-	TestAutoLogin(t)
-	//TestLogin(t)
+	//TestAutoLogin(t)
+	TestLogin(t)
 	time.Sleep(time.Second * 2)
-	TestGetChats(t)
-	time.Sleep(time.Second * 2)
+	//TestGetChats(t)
+	//time.Sleep(time.Second * 2)
 	TestOpenChat(t)
-	time.Sleep(time.Second * 2)
-	TestGetMsgs(t)
+	//time.Sleep(time.Second * 2)
+	//TestGetMsgs(t)
 	//log.Errorf("exception:%v", nil)
 	//contentObj := &api.MessageData{
 	//	Type:    2,

@@ -48,6 +48,7 @@ func (_self *UserService) SelectOne(id uint64, refresh bool) (*entity.User, *uti
 		if err != nil {
 			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
 		}
+		log.Debug("根据好友id获取用户信息:", resultDTO.Data)
 		user = &entity.User{}
 		if resultDTO.Data == nil {
 			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
