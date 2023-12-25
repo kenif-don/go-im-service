@@ -7,8 +7,12 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/util"
 	"bytes"
+	"fmt"
 	"github.com/go-audio/wav"
 	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
 	"path/filepath"
 	"strings"
 )
@@ -169,10 +173,12 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity.MessageData, *utils.Error) {
 	switch md.Type {
 	case 2: //图片
-		c, _, e := image.DecodeConfig(bytes.NewReader(data))
+		c, e := DecodeImageWidthHeight(data, strings.Split(path, ".")[1])
 		if e != nil {
+			log.Error(e)
 			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
+		fmt.Println(c)
 		return &entity.MessageData{
 			Type:    md.Type,
 			Content: path,
@@ -191,7 +197,7 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 		return &entity.MessageData{
 			Type:     md.Type,
 			Content:  path,
-			Duration: duration.Seconds(),
+			Duration: int(duration.Seconds()),
 		}, nil
 	case 4: //视频
 		return &entity.MessageData{
@@ -206,4 +212,23 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 		}, nil
 	}
 	return nil, nil
+}
+
+// DecodeImageWidthHeight 解析图片的宽高信息
+func DecodeImageWidthHeight(imgBytes []byte, fileType string) (image.Config, error) {
+	switch strings.ToLower(fileType) {
+	case "jpg", "jpeg":
+		return jpeg.DecodeConfig(bytes.NewReader(imgBytes))
+	//case "webp":
+	//	imgConf, err = webp.DecodeConfig(bytes.NewReader(imgBytes))
+	case "png":
+		return png.DecodeConfig(bytes.NewReader(imgBytes))
+	//case "tif", "tiff":
+	//	imgConf, err = tiff.DecodeConfig(bytes.NewReader(imgBytes))
+	case "gif":
+		return gif.DecodeConfig(bytes.NewReader(imgBytes))
+		//case "bmp":
+		//	imgConf, err = bmp.DecodeConfig(bytes.NewReader(imgBytes))
+	}
+	return image.Config{}, nil
 }
