@@ -77,6 +77,9 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	}
 	//否则判断是否在聊天中
 	if no != "" && conf.Conf.ChatId == target {
+		if md.Type < 2 || md.Type > 5 {
+			return data, nil
+		}
 		return util.GetDecryptingMsg(md), nil
 	}
 	return data, nil
