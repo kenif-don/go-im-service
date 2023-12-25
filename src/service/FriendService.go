@@ -41,7 +41,7 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 	}
 	//没有获取到 或者需要刷新好友数据
 	if friend == nil || refresh {
-		resultDTO, err := Post("/api/friend/selectOne", map[string]uint64{"from": he, "to": me})
+		resultDTO, err := Post("/api/friend/selectOne", map[string]uint64{"he": he, "me": me})
 		if err != nil {
 			return nil, log.WithError(err)
 		}
@@ -61,16 +61,13 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 				log.Error(e)
 				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 			}
-			log.Debugf("好友ID:%d", fa.He)
-			log.Debugf("好友数据:%v", fa.HeUser)
-			//再保存好友用户
-			user, err := NewUserService().SelectOne(fa.He, refresh)
-			if err != nil {
+			//保存用户信息 -- 这里也是返回服务器最新的用户信息 不用再去调用userService中的selectOne进行更新
+			e = NewUserService().Save(fa.HeUser)
+			if e != nil {
+				log.Error(e)
 				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 			}
-			fa.HeUser = user
 		}
-		log.Debugf("获取服务器好友数据, 好友公钥:%s", fa.HeUser.PublicKey)
 		return &fa, nil
 	}
 	//获取到了 组装heUser
