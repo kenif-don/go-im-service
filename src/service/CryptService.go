@@ -7,7 +7,6 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/util"
 	"bytes"
-	"fmt"
 	"github.com/go-audio/wav"
 	"image"
 	"image/gif"
@@ -91,6 +90,7 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	return data, nil
 }
 func DecryptFile(tp string, target uint64, no string) *utils.Error {
+	log.Debugf("DecryptFile tp:%s target:%d no:%s ===================================================>", tp, target, no)
 	//如果当前聊天不是正在聊天的 就不解密了
 	if conf.Conf.ChatId != target {
 		return nil
@@ -154,6 +154,7 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		}
 		//组装成各种类型
 		okMsg, err := coverMessageData(md, fileData, tempPath)
+		log.Debugf("DecryptFile okMsg:%+v", okMsg)
 		if err != nil {
 			log.Error(err)
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
@@ -178,7 +179,6 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 			log.Error(e)
 			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
-		fmt.Println(c)
 		return &entity.MessageData{
 			Type:    md.Type,
 			Content: path,
