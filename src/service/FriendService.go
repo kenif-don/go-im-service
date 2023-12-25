@@ -68,6 +68,7 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 			}
 			fa.HeUser = user
 		}
+		log.Debugf("获取服务器好友数据, 好友公钥:%s", fa.HeUser.PublicKey)
 		return &fa, nil
 	}
 	//获取到了 组装heUser

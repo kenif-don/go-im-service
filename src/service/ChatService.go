@@ -47,18 +47,15 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 	//根据类型查询数据
 	switch tp {
 	case "friend":
-		//更新一次好友信息
-		_, err := NewFriendService().SelectOne(target, true)
-		if err != nil {
-			return nil, log.WithError(err)
-		}
 		//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
-		chat, err = _self.CoverChat(tp, target)
+		c, err := _self.CoverChat(tp, target)
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 		//清除秘钥缓存
 		Keys["friend"+"_"+util.Uint642Str(target)] = ""
+		chat = c
+		log.Debug("更新好友聊天信息")
 		break
 	case "group":
 		break
@@ -78,7 +75,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 // CoverChat 封装聊天
 func (_self *ChatService) CoverChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
 	//获取好友信息
-	friend, err := NewFriendService().SelectOne(target, false)
+	friend, err := NewFriendService().SelectOne(target, true)
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
