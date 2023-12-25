@@ -77,17 +77,39 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	}
 	//否则判断是否在聊天中
 	if no != "" && conf.Conf.ChatId == target {
-		//无需解密文件
-		if md.Type < 2 || md.Type > 5 {
-			return data, nil
-		}
-		//需要解密文件
-		DecryptFile(target, no, md, secret)
 		return util.GetDecryptingMsg(md), nil
 	}
 	return data, nil
 }
-func DecryptFile(target uint64, no string, md *entity.MessageData, secret string) {
+func DecryptFile(chatId uint64, no string) *utils.Error {
+	//如果当前聊天不是正在聊天的 就不解密了
+	if conf.Conf.ChatId != chatId {
+		return nil
+	}
+	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
+	if err != nil || message == nil {
+		log.Error(err)
+		return log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	var md = &entity.MessageData{}
+	e := util.Str2Obj(message.Data, md)
+	if e != nil {
+		return log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	chat, e := NewChatService().repo.Query(&entity.Chat{Id: chatId})
+	if e != nil || chat == nil {
+		log.Error(e)
+		return log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	//无需解密文件
+	if md.Type < 2 || md.Type > 5 {
+		return nil
+	}
+	//如果是文件消息 需要解密
+	secret, err := GetSecret(chat.TargetId, chat.Type)
+	if err != nil {
+		return err
+	}
 	go func() {
 		//延迟2秒
 		time.Sleep(2 * time.Second)
@@ -99,14 +121,14 @@ func DecryptFile(target uint64, no string, md *entity.MessageData, secret string
 		e := util.DownloadFile(md.Content, path)
 		if e != nil {
 			log.Error(e)
-			FileNotify(target, no, util.GetErrMsg(md.Type))
+			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
 		//解密文件
 		fileData, err := util.DecryptFile(path, secret)
 		if err != nil {
 			log.Error(err)
-			FileNotify(target, no, util.GetErrMsg(md.Type))
+			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
 		//保存为临时文件
@@ -114,7 +136,7 @@ func DecryptFile(target uint64, no string, md *entity.MessageData, secret string
 		e = util.SaveTempFile(fileData, tempPath)
 		if e != nil {
 			log.Error(e)
-			FileNotify(target, no, util.GetErrMsg(md.Type))
+			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
 		okMsg := &entity.MessageData{
@@ -124,9 +146,10 @@ func DecryptFile(target uint64, no string, md *entity.MessageData, secret string
 		data, e := util.Obj2Str(okMsg)
 		if e != nil {
 			log.Error(e)
-			FileNotify(target, no, util.GetErrMsg(md.Type))
+			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		FileNotify(target, no, data)
+		FileNotify(chat.TargetId, no, data)
 	}()
+	return nil
 }

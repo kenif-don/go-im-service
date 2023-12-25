@@ -45,12 +45,10 @@ func TestRegister(t *testing.T) {
 }
 func TestLogin(t *testing.T) {
 	user := &api.UserReq{
-		//Username: "test123",
-		//Password: "123456",
+		Username: "test123",
+		Password: "123456",
 		//Username: "123456",
 		//Password: "123456",
-		Username: "666666",
-		Password: "666666",
 	}
 	req, _ := proto.Marshal(user)
 	resp := Login(req)
@@ -125,8 +123,6 @@ func TestSearch(t *testing.T) {
 	log.Debug(result)
 }
 func TestLogout(t *testing.T) {
-	TestLogin(t)
-	time.Sleep(time.Second * 3)
 	resp := Logout()
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)

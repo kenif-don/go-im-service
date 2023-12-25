@@ -11,6 +11,28 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func Decrypt(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.DecryptReq{}
+	if err := proto.Unmarshal(data, req); err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.DecryptFile(req.ChatId, req.No)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}
+
 // DelChatMsg 删除双方聊天消息
 func DelChatMsg(data []byte) []byte {
 	resp := &api.ResultDTOResp{}

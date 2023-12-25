@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
 	"IM-Service/src/im"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
@@ -323,7 +322,13 @@ func Info() []byte {
 // AutoLogin 自动登录
 func AutoLogin() []byte {
 	resp := &api.ResultDTOResp{}
+	//存在登录者
 	if conf.GetLoginInfo().Token != "" && conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Id != 0 {
+		//通过info去检查公私钥
+		err := service.NewUserService().LoginInfo()
+		if err != nil {
+			return SyncPutErr(err, resp)
+		}
 		//判断是否需要输入二级密码
 		if conf.GetLoginInfo().InputPwd2 == 1 {
 			//需要输入二级密码
@@ -352,30 +357,6 @@ func Login(data []byte) []byte {
 	err := userService.Login(req.GetUsername(), req.GetPassword())
 	if err != nil {
 		return SyncPutErr(err, resp)
-	}
-	// 判断是否存在公钥
-	if conf.LoginInfo.User.PublicKey == "" || conf.LoginInfo.User.PrivateKey == "" {
-		//没有公钥 创建公私钥
-		keys := util.CreateDHKey(conf.Conf.Prime, "02")
-		err = userService.UpdateLoginUserKeys(keys)
-		if err != nil {
-			return SyncPutErr(err, resp)
-		}
-		log.Debug("没有私钥，创建私钥")
-	}
-	//公钥是否和本地一致
-	sysUser, err := userService.SelectOne(conf.GetLoginInfo().User.Id, false)
-	if err != nil {
-		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
-	}
-	if sysUser.PublicKey != conf.GetLoginInfo().User.PublicKey || sysUser.PrivateKey != conf.GetLoginInfo().User.PrivateKey {
-		//没有公钥 创建公私钥
-		keys := util.CreateDHKey(conf.Conf.Prime, "02")
-		err = userService.UpdateLoginUserKeys(keys)
-		if err != nil {
-			return SyncPutErr(err, resp)
-		}
-		log.Debug("有私钥，但是私钥不一致，更换私钥")
 	}
 	// 判断是否存在二级密码
 	if conf.LoginInfo.User.Password2 != "" {

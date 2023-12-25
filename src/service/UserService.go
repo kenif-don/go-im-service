@@ -181,45 +181,17 @@ func (_self *UserService) Update(obj *entity.User) *utils.Error {
 }
 
 // UpdateLoginUserKeys 修改公私钥
-func (_self *UserService) UpdateLoginUserKeys(keys util.EncryptKeys) *utils.Error {
-	obj, err := _self.SelectOne(conf.LoginInfo.User.Id, false)
+func (_self *UserService) UpdateLoginUserKeys(user *entity.User) *utils.Error {
+	//没有公钥 创建公私钥
+	keys := util.CreateDHKey(conf.Conf.Prime, "02")
+	//发起请求修改后台用户信息
+	_, err := Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
 	if err != nil {
-		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
+		return log.WithError(err)
 	}
-	obj.PublicKey = keys.PublicKey
-	obj.PrivateKey = keys.PrivateKey
-	tx := _self.repo.BeginTx()
-	if e := tx.Error; e != nil {
-		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	err = func() *utils.Error {
-		//发起请求修改后台用户信息
-		_, err := Post("/api/user/resetPublicKey", &entity.User{PublicKey: keys.PublicKey})
-		if err != nil {
-			return log.WithError(err)
-		}
-		//修改本地信息
-		e := _self.repo.Save(obj)
-		if e != nil {
-			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
-		}
-		//修改登录者
-		conf.PutLoginInfo(*obj)
-		e = tx.Commit().Error
-		if e != nil {
-			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
-		}
-		return nil
-	}()
-	if err != nil {
-		tx.Rollback()
-	}
-	return err
+	user.PublicKey = keys.PublicKey
+	user.PrivateKey = keys.PrivateKey
+	return nil
 }
 
 // Register 用户注册
@@ -323,32 +295,70 @@ func (_self *UserService) Logout() *utils.Error {
 
 // LoginInfo 获取用户信息
 func (_self *UserService) LoginInfo() *utils.Error {
-	resultDTO, err := Post("/api/user/info", nil)
-	if err != nil || resultDTO == nil || resultDTO.Data == nil {
-		return log.WithError(err)
+	tx := _self.repo.BeginTx()
+	if e := tx.Error; e != nil {
+		return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
 	}
-	//缓存用户信息
-	var user entity.User
-	e := util.Obj2Obj(resultDTO.Data, &user)
-	if e != nil {
-		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
-	}
-	//数据库不存在 就添加 这里不做修改
-	sysUser, e := _self.repo.Query(&entity.User{Id: user.Id})
-	if e != nil {
-		log.Error(e)
-		return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
-	}
-	//数据存在--需要把数据库中的私钥封装到登录者中
-	if sysUser != nil {
-		user.PrivateKey = sysUser.PrivateKey
-	} else {
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		resultDTO, err := Post("/api/user/info", nil)
+		if err != nil || resultDTO == nil || resultDTO.Data == nil {
+			return log.WithError(err)
+		}
+		//缓存用户信息
+		var user entity.User
+		e := util.Obj2Obj(resultDTO.Data, &user)
+		if e != nil {
+			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
+		}
+
+		//服务器公钥是否存在
+		if user.PublicKey == "" { //不存在 就重新获取
+			err = _self.UpdateLoginUserKeys(&user)
+			if err != nil {
+				return log.WithError(err)
+			}
+			log.Debug("没有私钥，创建私钥")
+		}
+
+		//数据库不存在 就添加 这里不做修改
+		sysUser, e := _self.repo.Query(&entity.User{Id: user.Id})
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
+		}
+		//数据存在--需要把数据库中的私钥封装到登录者中
+		if sysUser != nil {
+			//公钥存在 但是不一样
+			if sysUser.PublicKey != user.PublicKey {
+				err = _self.UpdateLoginUserKeys(&user)
+				if err != nil {
+					return log.WithError(err)
+				}
+				log.Debug("有私钥，但是私钥不一致，更换私钥")
+			} else {
+				//都一致  就把数据库的复制给当前的
+				user.PrivateKey = sysUser.PrivateKey
+			}
+		}
 		e = _self.Save(&user)
 		if e != nil {
 			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 		}
+		//覆盖登录文件
+		conf.PutLoginInfo(user)
+		e = tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_SECRET_UPDATE_FAIL)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
 	}
-	//覆盖私钥
-	conf.PutLoginInfo(user)
-	return nil
+	return err
 }

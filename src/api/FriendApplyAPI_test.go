@@ -11,7 +11,7 @@ import (
 func TestAddFriend(t *testing.T) {
 	TestLogin(t)
 	oldReq := &api.FriendApplyReq{
-		Id:     1,
+		Id:     24,
 		Remark: "加我",
 	}
 	req, _ := proto.Marshal(oldReq)

@@ -260,6 +260,12 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 		break
+	case 403: // 客户端被T 直接退出登录
+		log.Debug("客户端被T 直接退出登录")
+		err := NewUserService().Logout()
+		if err != nil {
+			return log.WithError(err)
+		}
 	case 998: //被删除本地聊天记录
 		err := NewMessageService().DelLocalChatMsg(protocol.Data.(string), util.Str2Uint64(protocol.From))
 		if err != nil {
@@ -311,7 +317,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				c, err := NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
+				c, err := NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From), false)
 				if err != nil {
 					return log.WithError(err)
 				}

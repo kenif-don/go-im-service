@@ -14,6 +14,10 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message DecryptReq{
+  uint64 chatId = 1;//聊天ID
+  string no = 2;//消息ID
+}
 message VersionReq{
   int32 versionCode = 1;//数字版本 比如：123
   int32 type = 2;//1-Android 2-IOS

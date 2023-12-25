@@ -107,7 +107,7 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 			return
 		}
 		if chat == nil {
-			chat, e = service.NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From))
+			chat, e = service.NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From), false)
 			if e != nil {
 				log.Error(e)
 				return
