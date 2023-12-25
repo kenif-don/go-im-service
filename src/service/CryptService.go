@@ -8,7 +8,6 @@ import (
 	"IM-Service/src/util"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 // GetSecret 获取密钥
@@ -84,9 +83,9 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	}
 	return data, nil
 }
-func DecryptFile(chatId uint64, no string) *utils.Error {
+func DecryptFile(tp string, target uint64, no string) *utils.Error {
 	//如果当前聊天不是正在聊天的 就不解密了
-	if conf.Conf.ChatId != chatId {
+	if conf.Conf.ChatId != target {
 		return nil
 	}
 	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
@@ -99,7 +98,7 @@ func DecryptFile(chatId uint64, no string) *utils.Error {
 	if e != nil {
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	chat, e := NewChatService().repo.Query(&entity.Chat{Id: chatId})
+	chat, e := NewChatService().repo.Query(&entity.Chat{Type: tp, TargetId: target})
 	if e != nil || chat == nil {
 		log.Error(e)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
@@ -114,8 +113,6 @@ func DecryptFile(chatId uint64, no string) *utils.Error {
 		return err
 	}
 	go func() {
-		//延迟2秒
-		time.Sleep(2 * time.Second)
 		//通过最后一根/获取文件后缀
 		paths := strings.Split(md.Content, "/")
 		filename := paths[len(paths)-1]

@@ -20,7 +20,7 @@ func Decrypt(data []byte) []byte {
 	if err := proto.Unmarshal(data, req); err != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.DecryptFile(req.ChatId, req.No)
+	err := service.DecryptFile(req.Type, req.Target, req.No)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}

@@ -15,8 +15,9 @@ enum ResultDTOCode {
   TO_INPUT_PWD2 = 2000;
 }
 message DecryptReq{
-  uint64 chatId = 1;//聊天ID
-  string no = 2;//消息ID
+  string type = 1;
+  uint64 target = 2;//聊天目标
+  string no = 3;//消息ID
 }
 message VersionReq{
   int32 versionCode = 1;//数字版本 比如：123
