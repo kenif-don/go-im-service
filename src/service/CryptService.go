@@ -80,11 +80,12 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if md.Type < 2 || md.Type > 5 {
+		return data, nil
+	}
 	//否则判断是否在聊天中
+	log.Debugf("Decrypt tp:%s target:%d no:%s chatId:%d ====================================================>", tp, target, no, conf.Conf.ChatId)
 	if no != "" && conf.Conf.ChatId == target {
-		if md.Type < 2 || md.Type > 5 {
-			return data, nil
-		}
 		return util.GetDecryptingMsg(md), nil
 	}
 	return data, nil
@@ -175,7 +176,7 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 	switch md.Type {
 	case 2: //图片
 		//获取文件后缀
-		endWidth, err := util.GetFileType(data)
+		endWidth, err := util.GetFileType(path, data)
 		if err != nil {
 			log.Error(err)
 			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)

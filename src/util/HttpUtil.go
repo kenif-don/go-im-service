@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -104,7 +105,7 @@ func addContent(req *http.Request, data []byte) error {
 	req.Header.Add("sign", strings.ToUpper(MD5(sign+newData)))
 	return nil
 }
-func UploadData(data []byte, secret string) (string, *utils.Error) {
+func UploadData(path string, data []byte, secret string) (string, *utils.Error) {
 	sess, e := session.NewSession(&aws.Config{
 		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
 		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
@@ -117,7 +118,7 @@ func UploadData(data []byte, secret string) (string, *utils.Error) {
 	}
 	uploader := s3.New(sess)
 	//获取文件后缀
-	endWith, err := GetFileType(data)
+	endWith, err := GetFileType(path, data)
 	if err != nil {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
@@ -155,15 +156,18 @@ func Upload(path string, secret string) (string, *utils.Error) {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	return UploadData(data, secret)
+	return UploadData(path, data, secret)
 }
 func UploadFile(data []byte, path string, secret string) (string, *utils.Error) {
 	if data == nil {
 		return Upload(path, secret)
 	}
-	return UploadData(data, secret)
+	return UploadData(path, data, secret)
 }
-func GetFileType(data []byte) (string, *utils.Error) {
+func GetFileType(path string, data []byte) (string, *utils.Error) {
+	if len(data) < 261 {
+		return filepath.Ext(path), nil
+	}
 	//取data的前261个
 	buffer := data[:261]
 	kind, _ := filetype.Match(buffer)
