@@ -345,10 +345,17 @@ func (_self *UserService) LoginInfo() *utils.Error {
 				//都一致  就把数据库的复制给当前的
 				user.PrivateKey = sysUser.PrivateKey
 			}
-		}
-		e = _self.Save(&user)
-		if e != nil {
-			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
+		} else {
+			//数据库中不存在
+			err = _self.UpdateLoginUserKeys(&user)
+			if err != nil {
+				return log.WithError(err)
+			}
+			log.Debug("数据库不存在用户 创建私钥并保存数据库")
+			e = _self.Save(&user)
+			if e != nil {
+				return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
+			}
 		}
 		//覆盖登录文件
 		conf.PutLoginInfo(user)

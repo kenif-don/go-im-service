@@ -63,11 +63,11 @@ func Encrypt(target uint64, tp, content string) (string, *utils.Error) {
 
 // Decrypt 聊天内容解密
 func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error) {
+	if content == "" {
+		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
 	switch tp {
 	case "friend":
-		if content == "" {
-			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
 		//字符串转换为消息体
 		md := &entity.MessageData{}
 		e := util.Str2Obj(content, md)

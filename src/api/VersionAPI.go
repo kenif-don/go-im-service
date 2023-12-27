@@ -10,9 +10,6 @@ import (
 // GetVersion 获取版本
 func GetVersion(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
-	}
 	req := &api.VersionReq{}
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
