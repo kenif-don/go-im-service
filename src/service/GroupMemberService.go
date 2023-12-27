@@ -49,9 +49,15 @@ func (_self *GroupMemberService) selectMembers(gId uint64) ([]entity.GroupMember
 		if members[i].User == nil || members[i].User.Id == 0 {
 			continue
 		}
-		//先查询 是否存在 存在就不添加了
+		//从服务器拉去用户信息
 		_, err := NewUserService().SelectOne(members[i].UserId, false)
 		if err != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		// 保存群成员
+		e := _self.repo.Save(&members[i])
+		if e != nil {
+			log.Error(e)
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 	}
