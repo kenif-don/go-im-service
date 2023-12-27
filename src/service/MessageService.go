@@ -336,6 +336,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 	case 8: //群聊消息
 		messageService := NewMessageService()
 		var message = &entity.Message{}
+		log.Debug(protocol.Data)
 		e := util.Str2Obj(protocol.Data.(string), message)
 		if e != nil {
 			return log.WithError(e)

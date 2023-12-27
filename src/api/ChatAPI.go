@@ -8,6 +8,7 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
+	"github.com/go-netty/go-netty-transport/websocket"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -80,18 +81,17 @@ func DelLocalChatMsg(data []byte) []byte {
 	}
 	return res
 }
-func GetConnectState() []byte {
+func ImReConnect() []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
+	e := conf.Conf.Client.Reconnect(websocket.New())
+	if e == nil {
+		return SyncPutErr(utils.ERR_NET_FAIL, resp)
+	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	if conf.Conf.Connected {
-		resp.Body = "1"
-	} else {
-		resp.Body = "0"
-	}
 	res, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
