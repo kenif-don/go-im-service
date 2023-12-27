@@ -33,6 +33,21 @@ func (_self *GroupRepo) QueryAll(obj *entity.Group) ([]entity.Group, error) {
 	return *objs, nil
 }
 func (_self *GroupRepo) Save(obj *entity.Group) error {
+	group, e := _self.Query(&entity.Group{
+		Id: obj.Id,
+	})
+	if e != nil {
+		return e
+	}
+	//没有就保存
+	if group == nil {
+		tx := _self.Data.Db.Create(obj)
+		if tx.Error != nil {
+			return tx.Error
+		}
+		return nil
+	}
+	//有就修改
 	tx := _self.Data.Db.Model(&entity.Group{}).Where(obj.Id).Save(obj)
 	if tx.Error != nil {
 		return tx.Error
