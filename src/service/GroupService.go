@@ -49,7 +49,7 @@ func (_self *GroupService) Create(ids []uint64, tp int, password string) (*entit
 		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
 	//先从服务器创建
-	resultDTO, err := Post("/api/group/create", map[string]interface{}{"ids": ids, "tp": tp, "password": password})
+	resultDTO, err := Post("/api/group/create", map[string]interface{}{"ids": ids, "type": tp, "password": password})
 	if err != nil {
 		return nil, log.WithError(err)
 	}
