@@ -43,20 +43,19 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	return repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
 }
 func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
-	var chat *entity.Chat
+	//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
+	chat, err := _self.CoverChat(tp, target, true)
+	if err != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
 	//根据类型查询数据
 	switch tp {
 	case "friend":
-		//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
-		c, err := _self.CoverChat(tp, target, true)
-		if err != nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
 		//清除秘钥缓存
 		Keys["friend"+"_"+util.Uint642Str(target)] = ""
-		chat = c
 		break
 	case "group":
+		Keys["group"+"_"+util.Uint642Str(target)] = ""
 		break
 	}
 	//记录当前聊天ID
