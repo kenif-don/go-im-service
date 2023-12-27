@@ -14,7 +14,7 @@ func AddMood(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.MoodReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	err := service.NewMoodService().AddMood(int(req.Type), req.Content, req.Urls)
@@ -37,7 +37,7 @@ func DeleteMood(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.MoodReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	err := service.NewMoodService().DeleteMood(req.Id)
@@ -60,7 +60,7 @@ func SelectOneMood(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.MoodReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	result, err := service.NewMoodService().SelectOneMood(req.Id)
@@ -84,7 +84,7 @@ func PagingMood(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.MoodPageReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	result, err := service.NewMoodService().PagingMood(int(req.Page), int(req.PageSize), req.UserId)
@@ -108,7 +108,7 @@ func AddReply(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.ReplyReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	err := service.NewMoodService().AddReply(req.MoodId, req.ReplyUserId, req.Content)

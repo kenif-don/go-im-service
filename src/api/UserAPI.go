@@ -82,7 +82,7 @@ func Search(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.SearchReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -105,7 +105,7 @@ func UpdateBurstPwd(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdatePwdReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -132,7 +132,7 @@ func UpdatePwd2(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdatePwdReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -159,7 +159,7 @@ func UpdatePwd(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdatePwdReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -186,7 +186,7 @@ func UpdateHeadImg(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -213,7 +213,7 @@ func UpdateEmail(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -240,7 +240,7 @@ func UpdateIntro(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -267,7 +267,7 @@ func UpdateNickname(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.UpdateUserReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	userService := service.NewUserService()
@@ -349,7 +349,7 @@ func AutoLogin() []byte {
 func Login(data []byte) []byte {
 	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	// 需要登录
@@ -384,7 +384,7 @@ func Login(data []byte) []byte {
 func LoginPwd2(data []byte) []byte {
 	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	err := service.NewUserService().LoginPwd2(req.Password)
@@ -403,7 +403,7 @@ func LoginPwd2(data []byte) []byte {
 func Register(data []byte) []byte {
 	req := &api.UserReq{}
 	resp := &api.ResultDTOResp{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	err := service.NewUserServiceNoDB().Register(req.GetUsername(), req.GetPassword())

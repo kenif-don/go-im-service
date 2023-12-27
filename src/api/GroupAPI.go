@@ -8,47 +8,47 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// GetRechargeTypes 获取支付类型
-func GetRechargeTypes() []byte {
+// Create 创建群聊
+func Create(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
-	obj := service.NewRechargeOrderService().GetTypes()
-	result, e := util.Obj2Str(obj)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
-}
-
-// AddRechargeOrder 充值
-func AddRechargeOrder(data []byte) []byte {
-	resp := &api.ResultDTOResp{}
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
-	}
-	req := &api.RechargeOrderReq{}
+	req := &api.GroupReq{}
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	result, err := service.NewRechargeOrderService().AddRechargeOrder(int(req.Type), req.Value)
+	group, err := service.NewGroupService().Create(req.Ids, int(req.Type), req.Password)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	obj, e := util.Obj2Str(group)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = obj
+	res, _ := proto.Marshal(resp)
+	return res
+}
+
+// Invite 创建群聊
+func Invite(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().Invite(req.Id, req.Ids)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_RECHARGE_FAIL, resp)
-	}
+	res, _ := proto.Marshal(resp)
 	return res
 }

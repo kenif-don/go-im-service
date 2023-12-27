@@ -12,7 +12,7 @@ import (
 func InitConfig(data []byte, listener MessageListener) []byte {
 	req := &api.ConfigReq{}
 	resp := &api.ResultDTOResp{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	conf.InitConfig(&conf.BaseConfig{

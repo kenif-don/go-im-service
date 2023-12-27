@@ -30,8 +30,21 @@ func QueryGroup(obj *entity.Group, repo IGroupRepo) (*entity.Group, error) {
 	return repo.Query(obj)
 }
 
-// Save 创建群聊
-func (_self *GroupService) Save(ids []uint64, tp int, password string) (*entity.Group, *utils.Error) {
+// Invite 邀请好友进群 ids是用户ID
+func (_self *GroupService) Invite(id uint64, ids []uint64) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NOT_LOGIN)
+	}
+	//先从服务器创建
+	_, err := Post("/api/group/invite", map[string]interface{}{"ids": ids, "id": id})
+	if err != nil {
+		return log.WithError(err)
+	}
+	return nil
+}
+
+// Create 创建群聊
+func (_self *GroupService) Create(ids []uint64, tp int, password string) (*entity.Group, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}

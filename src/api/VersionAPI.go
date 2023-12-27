@@ -14,7 +14,7 @@ func GetVersion(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.VersionReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	result, err := service.NewVersionService().GetVersion(req.VersionCode, req.Type)

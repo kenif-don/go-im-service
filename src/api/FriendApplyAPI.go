@@ -17,7 +17,7 @@ func UpdateFriendApply(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.FriendApplyReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	friendApplyService := service.NewFriendApplyService()
@@ -85,7 +85,7 @@ func AddFriend(data []byte) []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	req := &api.FriendApplyReq{}
-	if err := proto.Unmarshal(data, req); err != nil {
+	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	friendApplyService := service.NewFriendApplyService()

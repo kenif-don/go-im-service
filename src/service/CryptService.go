@@ -84,14 +84,12 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 		return data, nil
 	}
 	//否则判断是否在聊天中
-	log.Debugf("Decrypt tp:%s target:%d no:%s chatId:%d ====================================================>", tp, target, no, conf.Conf.ChatId)
 	if no != "" && conf.Conf.ChatId == target {
 		return util.GetDecryptingMsg(md), nil
 	}
 	return data, nil
 }
 func DecryptFile(tp string, target uint64, no string) *utils.Error {
-	log.Debugf("DecryptFile tp:%s target:%d no:%s ===================================================>", tp, target, no)
 	//如果当前聊天不是正在聊天的 就不解密了
 	if conf.Conf.ChatId != target {
 		return nil
@@ -181,7 +179,6 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 			log.Error(err)
 			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
-		log.Debugf("图片后缀：%s", endWidth)
 		c, e := DecodeImageWidthHeight(data, endWidth)
 		if e != nil {
 			log.Error(e)

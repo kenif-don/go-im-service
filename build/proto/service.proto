@@ -14,6 +14,17 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message GroupReq{
+  uint64 id = 1;//群ID 邀请，修改，退出等需要此字段
+  int32 type = 2;//1-正常群  2-加密群
+  string password = 3;
+  repeated uint64 ids = 4;//邀请人用户ID
+  string name = 5;//群名称 修改时使用
+  string avatar = 6;//群头像 修改时使用
+  string notice = 7;//群公告 修改时使用
+  int32 status = 8;//群状态 1-正常 2-一级禁言 3-二级禁言
+}
+/** 文件解密请求对象 */
 message DecryptReq{
   string type = 1;
   uint64 target = 2;//聊天目标
