@@ -8,8 +8,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Create 创建群聊
-func Create(data []byte) []byte {
+// CreateGroup 创建群聊
+func CreateGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
@@ -33,8 +33,8 @@ func Create(data []byte) []byte {
 	return res
 }
 
-// Invite 创建群聊
-func Invite(data []byte) []byte {
+// InviteInGroup 邀请进群
+func InviteInGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
