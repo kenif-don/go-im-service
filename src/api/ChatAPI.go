@@ -83,9 +83,6 @@ func DelLocalChatMsg(data []byte) []byte {
 }
 func ImReConnect() []byte {
 	resp := &api.ResultDTOResp{}
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
-	}
 	e := conf.Conf.Client.Reconnect(websocket.New())
 	if e == nil {
 		return SyncPutErr(utils.ERR_NET_FAIL, resp)
