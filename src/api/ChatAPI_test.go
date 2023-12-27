@@ -44,12 +44,12 @@ func TestOpenChat(t *testing.T) {
 func TestSendMsg(t *testing.T) {
 	TestAutoLogin(t)
 	//TestLogin(t)
-	//time.Sleep(time.Second * 2)
-	//TestGetChats(t)
-	//time.Sleep(time.Second * 2)
-	TestOpenChat(t)
 	time.Sleep(time.Second * 2)
-	TestGetMsgs(t)
+	TestGetChats(t)
+	time.Sleep(time.Second * 2)
+	TestOpenChat(t)
+	//time.Sleep(time.Second * 2)
+	//TestGetMsgs(t)
 	contentObj := &api.MessageData{
 		//Type:    2,
 		//Content: "C:\\Users\\Administrator\\Desktop\\logo.png",
