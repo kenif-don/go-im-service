@@ -248,6 +248,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 201: // 系统指令 去服务器拉去群成员
+		log.Debugf("系统指令 去服务器拉去群成员 %s", protocol.Data)
 		gId := util.Str2Uint64(protocol.Data.(string))
 		_, err := NewGroupMemberService().selectMembers(gId)
 		if err != nil {
@@ -331,6 +332,9 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			// 通知语音播报
 			err = NewChatService().VoiceNotify(message)
 		}
+		break
+	case 8: //群聊消息
+		log.Debugf("群聊消息：%s", protocol.Data.(string))
 		break
 	}
 	return nil
