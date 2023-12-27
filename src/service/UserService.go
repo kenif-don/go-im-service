@@ -333,8 +333,9 @@ func (_self *UserService) LoginInfo() *utils.Error {
 		}
 		//数据存在--需要把数据库中的私钥封装到登录者中
 		if sysUser != nil {
-			//公钥存在 但是不一样
-			if sysUser.PublicKey != user.PublicKey {
+			log.Debugf("当前登陆者 服务器公钥:%s 本地公钥:%s 私钥: %s", user.PublicKey, sysUser.PublicKey, sysUser.PrivateKey)
+			//公钥存在 但是不一样 或者 数据库里没有私钥
+			if sysUser.PublicKey != user.PublicKey || sysUser.PrivateKey == "" {
 				err = _self.UpdateLoginUserKeys(&user)
 				if err != nil {
 					return log.WithError(err)
