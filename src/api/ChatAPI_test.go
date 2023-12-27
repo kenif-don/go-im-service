@@ -45,7 +45,7 @@ func TestSendMsg(t *testing.T) {
 	TestAutoLogin(t)
 	//TestLogin(t)
 	time.Sleep(time.Second * 2)
-	TestGetChats(t)
+	//TestGetChats(t)
 	time.Sleep(time.Second * 2)
 	TestOpenChat(t)
 	//time.Sleep(time.Second * 2)
