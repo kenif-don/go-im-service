@@ -44,15 +44,21 @@ func GetSecret(target uint64, tp string) (string, *utils.Error) {
 
 // Encrypt 聊天内容加密
 func Encrypt(target uint64, tp, content string) (string, *utils.Error) {
-	secret, err := GetSecret(target, tp)
-	if err != nil {
-		return "", err
+	switch tp {
+	case "friend":
+		secret, err := GetSecret(target, tp)
+		if err != nil {
+			return "", err
+		}
+		data, e := util.EncryptAes(content, secret)
+		if e != nil {
+			return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
+		}
+		return data, nil
+	case "group": //如果是加密群聊 处理  否则返回原文
+		return content, nil
 	}
-	data, e := util.EncryptAes(content, secret)
-	if e != nil {
-		return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
-	}
-	return data, nil
+	return content, nil
 }
 
 // Decrypt 聊天内容解密

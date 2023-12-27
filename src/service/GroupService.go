@@ -67,11 +67,11 @@ func (_self *GroupService) Create(ids []uint64, tp int, password string) (*entit
 	}
 	return &group, nil
 }
-func (_self *GroupService) QueryAll() ([]entity.Group, error) {
+func (_self *GroupService) SelectAll() ([]entity.Group, error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return []entity.Group{}, nil
 	}
-	return _self.repo.QueryAll(&entity.Group{Owner: conf.GetLoginInfo().User.Id})
+	return _self.repo.QueryAll(&entity.Group{UserId: conf.GetLoginInfo().User.Id})
 }
 
 func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group, *utils.Error) {
@@ -95,6 +95,7 @@ func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group
 		}
 		if g.Id != 0 {
 			//保存到数据库
+			g.UserId = conf.GetLoginInfo().User.Id
 			e := _self.repo.Save(&g)
 			if e != nil {
 				return nil, log.WithError(utils.ERR_OPERATION_FAIL)

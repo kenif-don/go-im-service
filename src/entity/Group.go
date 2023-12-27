@@ -9,6 +9,7 @@ type Group struct {
 	State    int    `json:"state"`
 	Type     int    `json:"type"`
 	Password string `json:"password"`
+	UserId   uint64 `json:"userId"`
 
 	HeUser *User `gorm:"-" json:"heUser"`
 }

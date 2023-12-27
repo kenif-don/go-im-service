@@ -401,7 +401,10 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataCo
 		break
 	case "group":
 		//先本地查
-
+		friend, err := NewGroupService().SelectOne(target, false)
+		if err != nil || friend == nil {
+			return log.WithError(utils.ERR_FRIEND_GET_FAIL)
+		}
 	}
 	switch dataContent.Type {
 	case 1: //文本消息

@@ -8,6 +8,27 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// GetGroups 获取群
+func GetGroups() []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	groups, e := service.NewGroupService().SelectAll()
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	obj, e := util.Obj2Str(groups)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = obj
+	res, _ := proto.Marshal(resp)
+	return res
+}
+
 // CreateGroup 创建群聊
 func CreateGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
