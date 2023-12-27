@@ -138,7 +138,6 @@ func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 // LoginOk 登录成功的回调
 func (_self *LogicProcess) LoginOk(protocol *model.Protocol) {
 	conf.DiffTime = int(util.Str2Uint64(protocol.Data.(string)) - util.CurrentTime())
-	log.Debugf("登录成功！时差:%v", conf.DiffTime)
 	go func() {
 		for {
 			//如果没有私钥 就下一次循环

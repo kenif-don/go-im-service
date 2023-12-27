@@ -165,7 +165,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		}
 		//组装成各种类型
 		okMsg, err := coverMessageData(md, fileData, tempPath)
-		log.Debugf("DecryptFile okMsg:%+v", okMsg)
 		if err != nil {
 			log.Error(err)
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))

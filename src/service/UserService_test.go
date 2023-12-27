@@ -23,7 +23,3 @@ func TestUserService_Register(t *testing.T) {
 		log.Debug(err)
 	}
 }
-
-func TestUserService_UpdateUser(t *testing.T) {
-	NewUserService().UpdateUser(7)
-}

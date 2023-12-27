@@ -322,7 +322,6 @@ func (_self *UserService) LoginInfo() *utils.Error {
 			if err != nil {
 				return log.WithError(err)
 			}
-			log.Debug("没有私钥，创建私钥")
 		}
 
 		//数据库不存在 就添加 这里不做修改
@@ -333,14 +332,12 @@ func (_self *UserService) LoginInfo() *utils.Error {
 		}
 		//数据存在--需要把数据库中的私钥封装到登录者中
 		if sysUser != nil {
-			log.Debugf("当前登陆者 服务器公钥:%s 本地公钥:%s 私钥: %s", user.PublicKey, sysUser.PublicKey, sysUser.PrivateKey)
 			//公钥存在 但是不一样 或者 数据库里没有私钥
 			if sysUser.PublicKey != user.PublicKey || sysUser.PrivateKey == "" {
 				err = _self.UpdateLoginUserKeys(&user)
 				if err != nil {
 					return log.WithError(err)
 				}
-				log.Debug("有私钥，但是私钥不一致，更换私钥")
 			} else {
 				//都一致  就把数据库的复制给当前的
 				user.PrivateKey = sysUser.PrivateKey
@@ -351,7 +348,6 @@ func (_self *UserService) LoginInfo() *utils.Error {
 			if err != nil {
 				return log.WithError(err)
 			}
-			log.Debug("数据库不存在用户 创建私钥并保存数据库")
 			e = _self.Save(&user)
 			if e != nil {
 				return log.WithError(utils.ERR_GET_USER_INFO_FAIL)

@@ -94,7 +94,6 @@ func addContent(req *http.Request, data []byte) error {
 	if conf.GetLoginInfo().User == nil {
 		return utils.ERR_NOT_LOGIN
 	}
-	log.Debugf("addContent:接口 %s  %+v", req.URL, conf.GetLoginInfo().User)
 	//参数加密 服务器公钥+自己的私钥 协商出来共享秘钥加密参数
 	conf.Conf.Key = SharedAESKey(conf.Conf.Pk, conf.GetLoginInfo().User.PrivateKey, conf.Conf.Prime)
 	newData, e := EncryptAes(string(data), conf.Conf.Key)

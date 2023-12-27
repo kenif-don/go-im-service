@@ -248,7 +248,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 201: // 系统指令 去服务器拉去群成员
-		log.Debugf("系统指令 去服务器拉去群成员 %s", protocol.Data)
 		gId := util.Str2Uint64(protocol.Data.(string))
 		_, err := NewGroupMemberService().selectMembers(gId)
 		if err != nil {
@@ -399,7 +398,6 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataCo
 		if err != nil || friend == nil {
 			return log.WithError(utils.ERR_FRIEND_GET_FAIL)
 		}
-		log.Debug("发送消息：111111111111111111")
 		break
 	case "group":
 		//先本地查
@@ -462,31 +460,26 @@ func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no stri
 
 // realSend 发送文本消息
 func (_self *MessageService) realSend(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
-	log.Debug("发送消息：2222222222222222222222")
 	//组装本地消息
 	message, err := _self.coverMessage(tp, target, no, dataContent)
 	if err != nil {
 		return log.WithError(err)
 	}
-	log.Debug("发送消息：3333333333333333333333")
 	//组装长连接protocol
 	protocol, err := _self.coverProtocol(message)
 	if err != nil {
 		return log.WithError(err)
 	}
-	log.Debug("发送消息：44444444444444444444444")
 	//先保存消息到数据库
 	e := _self.repo.Save(message)
 	if e != nil {
 		return log.WithError(utils.ERR_SEND_FAIL)
 	}
-	log.Debug("发送消息：555555555555555555555555")
 	//再发送消息
 	err = Send(protocol)
 	if err != nil {
 		return log.WithError(err)
 	}
-	log.Debug("发送消息：66666666666666666666666")
 	return nil
 }
 func (_self *MessageService) coverProtocol(message *entity.Message) (*model.Protocol, *utils.Error) {
