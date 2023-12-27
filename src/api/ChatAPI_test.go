@@ -50,7 +50,6 @@ func TestSendMsg(t *testing.T) {
 	TestOpenChat(t)
 	time.Sleep(time.Second * 2)
 	TestGetMsgs(t)
-	log.Errorf("exception:%v", nil)
 	contentObj := &api.MessageData{
 		//Type:    2,
 		//Content: "C:\\Users\\Administrator\\Desktop\\logo.png",

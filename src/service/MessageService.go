@@ -334,54 +334,56 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 8: //群聊消息
-		messageService := NewMessageService()
-		var message = &entity.Message{}
-		log.Debug(protocol.Data)
-		e := util.Str2Obj(protocol.Data.(string), message)
-		if e != nil {
-			return log.WithError(e)
-		}
-		//重置userId为当前用户 不然userId就是发送者了
-		message.UserId = conf.GetLoginInfo().User.Id
-		//别人给自己发的 肯定是发送成功
-		message.Send = 2
-		e = messageService.repo.Save(message)
-		if e != nil {
-			return log.WithError(e)
-		}
-		//判断是否存在聊天
-		chat, e := QueryChat(message.Type, message.TargetId, repository.NewChatRepo())
-		if e != nil {
-			return log.WithError(e)
-		}
-		if chat == nil {
-			c, err := NewChatService().CoverChat(message.Type, message.TargetId, false)
+		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
+			messageService := NewMessageService()
+			var message = &entity.Message{}
+			log.Debug(protocol.Data)
+			e := util.Str2Obj(protocol.Data.(string), message)
+			if e != nil {
+				return log.WithError(e)
+			}
+			//重置userId为当前用户 不然userId就是发送者了
+			message.UserId = conf.GetLoginInfo().User.Id
+			//别人给自己发的 肯定是发送成功
+			message.Send = 2
+			e = messageService.repo.Save(message)
+			if e != nil {
+				return log.WithError(e)
+			}
+			//判断是否存在聊天
+			chat, e := QueryChat(message.Type, message.TargetId, repository.NewChatRepo())
+			if e != nil {
+				return log.WithError(e)
+			}
+			if chat == nil {
+				c, err := NewChatService().CoverChat(message.Type, message.TargetId, false)
+				if err != nil {
+					return log.WithError(err)
+				}
+				chat = c
+			}
+			// 通知聊天列表更新
+			err := NewChatService().ChatNotify(chat)
 			if err != nil {
 				return log.WithError(err)
 			}
-			chat = c
-		}
-		// 通知聊天列表更新
-		err := NewChatService().ChatNotify(chat)
-		if err != nil {
-			return log.WithError(err)
-		}
-		// 通知语音播报
-		err = NewChatService().VoiceNotify(message)
-		//如果发送者是当前用户打开的聊天目标
-		if message.TargetId == conf.Conf.ChatId {
-			//解密
-			data, err := Decrypt(message.Type, util.Str2Uint64(protocol.From), message.No, message.Data)
-			if err != nil {
-				data = util.GetTextErrMsg()
-			}
-			message.Data = data
-			if Listener != nil {
-				res, e := util.Obj2Str(message)
-				if e != nil {
-					return log.WithError(e)
+			// 通知语音播报
+			err = NewChatService().VoiceNotify(message)
+			//如果发送者是当前用户打开的聊天目标
+			if message.TargetId == conf.Conf.ChatId {
+				//解密
+				data, err := Decrypt(message.Type, util.Str2Uint64(protocol.From), message.No, message.Data)
+				if err != nil {
+					data = util.GetTextErrMsg()
 				}
-				Listener.OnReceive(res)
+				message.Data = data
+				if Listener != nil {
+					res, e := util.Obj2Str(message)
+					if e != nil {
+						return log.WithError(e)
+					}
+					Listener.OnReceive(res)
+				}
 			}
 		}
 		break
