@@ -337,7 +337,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
 			messageService := NewMessageService()
 			var message = &entity.Message{}
-			log.Debug(protocol.Data)
 			e := util.Str2Obj(protocol.Data.(string), message)
 			if e != nil {
 				return log.WithError(e)
@@ -372,7 +371,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			//如果发送者是当前用户打开的聊天目标
 			if message.TargetId == conf.Conf.ChatId {
 				//解密
-				data, err := Decrypt(message.Type, util.Str2Uint64(protocol.From), message.No, message.Data)
+				data, err := Decrypt(message.Type, message.TargetId, message.No, message.Data)
 				if err != nil {
 					data = util.GetTextErrMsg()
 				}
