@@ -4,6 +4,7 @@ type Group struct {
 	Id       uint64 `gorm:"unique;<-:create" json:"id"`
 	Name     string `json:"name"`
 	Notice   string `json:"notice"`
+	HeadImg  string `json:"headImg"`
 	Owner    uint64 `json:"owner"`
 	State    int    `json:"state"`
 	Type     int    `json:"type"`

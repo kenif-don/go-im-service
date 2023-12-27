@@ -73,23 +73,36 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 
 // CoverChat 封装聊天
 func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*entity.Chat, *utils.Error) {
-	//获取好友信息
-	friend, err := NewFriendService().SelectOne(target, refresh)
-	if err != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	var name string
-	if friend.Name != "" {
-		name = friend.Name
-	} else {
-		name = friend.HeUser.Nickname
+	var name, headImg string
+	switch tp {
+	case "friend":
+		//获取好友信息
+		friend, err := NewFriendService().SelectOne(target, refresh)
+		if err != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		//组装聊天名称
+		if friend.Name != "" {
+			name = friend.Name
+		} else {
+			name = friend.HeUser.Nickname
+		}
+		headImg = friend.HeUser.HeadImg
+	case "group":
+		//获取群信息
+		group, err := NewGroupService().SelectOne(target, refresh)
+		if err != nil {
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		name = group.Name
+		headImg = group.HeadImg
 	}
 	chat := &entity.Chat{
 		Type:     tp,
 		TargetId: target,
 		UserId:   conf.GetLoginInfo().User.Id,
 		Name:     name,
-		HeadImg:  friend.HeUser.HeadImg,
+		HeadImg:  headImg,
 		UnReadNo: 0,
 	}
 	e := _self.repo.Save(chat)

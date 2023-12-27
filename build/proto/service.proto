@@ -20,7 +20,7 @@ message GroupReq{
   string password = 3;
   repeated uint64 ids = 4;//邀请人用户ID
   string name = 5;//群名称 修改时使用
-  string avatar = 6;//群头像 修改时使用
+  string headImg = 6;//群头像 修改时使用
   string notice = 7;//群公告 修改时使用
   int32 status = 8;//群状态 1-正常 2-一级禁言 3-二级禁言
 }

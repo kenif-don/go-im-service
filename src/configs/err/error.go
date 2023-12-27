@@ -50,6 +50,7 @@ var (
 	ERR_GET_USER_FAIL                = NewError(1042, "get user fail", "获取用户失败")
 	ERR_MESSAGE_NOT_FOUND            = NewError(1043, "message not found", "消息不存在")
 	ERR_MESSAGE_UPDATE_FAIL          = NewError(1044, "message update fail", "消息更新失败")
+	ERR_GROUP_GET_FAIL               = NewError(1045, "group get fail", "获取群组失败")
 )
 
 type Error struct {

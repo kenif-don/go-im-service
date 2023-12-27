@@ -73,3 +73,34 @@ func (_self *GroupService) QueryAll() ([]entity.Group, error) {
 	}
 	return _self.repo.QueryAll(&entity.Group{Owner: conf.GetLoginInfo().User.Id})
 }
+
+func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group, *utils.Error) {
+	group, e := _self.repo.Query(&entity.Group{Id: target})
+	if e != nil {
+		return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
+	}
+	if group == nil || refresh {
+		resultDTO, err := Post("/api/group/selectOne", map[string]uint64{"id": target})
+		if err != nil {
+			return nil, log.WithError(err)
+		}
+		//如果服务器获取失败
+		if resultDTO.Data == nil {
+			return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
+		}
+		var g entity.Group
+		e := util.Str2Obj(resultDTO.Data.(string), &g)
+		if e != nil {
+			return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
+		}
+		if g.Id != 0 {
+			//保存到数据库
+			e := _self.repo.Save(&g)
+			if e != nil {
+				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+			}
+		}
+		return &g, nil
+	}
+	return group, nil
+}
