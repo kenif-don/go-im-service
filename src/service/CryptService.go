@@ -102,7 +102,6 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	return content, nil
 }
 func DecryptFile(tp string, target uint64, no string) *utils.Error {
-	log.Debug("解密1111111111111111111")
 	//如果当前聊天不是正在聊天的 就不解密了
 	if conf.Conf.ChatId != target {
 		return nil
@@ -112,7 +111,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		log.Error(err)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	log.Debug("解密2222222222222222222222")
 	var md = &entity.MessageData{}
 	e := util.Str2Obj(message.Data, md)
 	if e != nil {
@@ -123,7 +121,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		log.Error(e)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	log.Debug("解密333333333333333333333")
 	//无需解密文件
 	if md.Type < 2 || md.Type > 5 {
 		return nil
@@ -136,7 +133,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 	if err != nil {
 		return err
 	}
-	log.Debug("解密4444444444444444444444444444444444")
 	go func() {
 		md.Content, err = util.DecryptAes(md.Content, secret)
 		if err != nil {
@@ -144,7 +140,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debug("解密5555555555555555555555555555555")
 		//通过最后一根/获取文件后缀
 		paths := strings.Split(md.Content, "/")
 		filename := paths[len(paths)-1]
@@ -156,7 +151,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debug("解密666666666666666666666666666666666666")
 		//解密文件
 		fileData, err := util.DecryptFile(path, secret)
 		if err != nil {
@@ -164,7 +158,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debug("解密7777777777777777777777777")
 		//保存为临时文件
 		tempPath := filepath.Join(conf.Base.BaseDir, "configs", "temp", filename)
 		e = util.SaveTempFile(fileData, tempPath)
@@ -173,7 +166,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debug("解密8888888888888888888888")
 		//组装成各种类型
 		okMsg, err := coverMessageData(md, fileData, tempPath)
 		if err != nil {
@@ -181,7 +173,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debug("解密9999999999999999999999999999")
 		data, e := util.Obj2Str(okMsg)
 		if e != nil {
 			log.Error(e)
@@ -189,7 +180,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			return
 		}
 		FileNotify(chat.TargetId, no, data)
-		log.Debug("解密0000000000000000000000000000")
 	}()
 	return nil
 }
@@ -250,15 +240,15 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 // DecodeImageWidthHeight 解析图片的宽高信息
 func DecodeImageWidthHeight(imgBytes []byte, fileType string) (image.Config, error) {
 	switch strings.ToLower(fileType) {
-	case "jpg", "jpeg":
+	case ".jpg", ".jpeg":
 		return jpeg.DecodeConfig(bytes.NewReader(imgBytes))
-	//case "webp":
+	//case ".webp":
 	//	imgConf, err = webp.DecodeConfig(bytes.NewReader(imgBytes))
-	case "png":
+	case ".png":
 		return png.DecodeConfig(bytes.NewReader(imgBytes))
-	//case "tif", "tiff":
+	//case ".tif", ".tiff":
 	//	imgConf, err = tiff.DecodeConfig(bytes.NewReader(imgBytes))
-	case "gif":
+	case ".gif":
 		return gif.DecodeConfig(bytes.NewReader(imgBytes))
 		//case "bmp":
 		//	imgConf, err = bmp.DecodeConfig(bytes.NewReader(imgBytes))

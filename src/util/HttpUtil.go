@@ -124,7 +124,7 @@ func UploadData(path string, data []byte, secret string) (string, *utils.Error) 
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
 	//文件MD5作为文件名称--没有加密 可以重复
-	filename := MD5Bytes(data) + "." + endWith
+	filename := MD5Bytes(data) + endWith
 	if secret != "" {
 		beginIndex, endIndex := 3, 19
 		//将data 加密
@@ -178,7 +178,7 @@ func GetFileType(path string, data []byte) (string, *utils.Error) {
 	//以斜杠分割 取最后一个
 	tp := kind.MIME.Value
 	tps := strings.Split(tp, "/")
-	return tps[len(tps)-1], nil
+	return "." + tps[len(tps)-1], nil
 }
 func DownloadFile(url, path string) error {
 	// 判断文件是否存在
