@@ -125,7 +125,7 @@ func UploadData(path string, data []byte, secret string) (string, *utils.Error) 
 	}
 	//文件MD5作为文件名称--没有加密 可以重复
 	filename := MD5Bytes(data) + endWith
-	if secret != "" {
+	if secret != "" && len(data) > 19 {
 		beginIndex, endIndex := 3, 19
 		//将data 加密
 		subData := data[beginIndex:endIndex]
@@ -159,7 +159,7 @@ func Upload(path string, secret string) (string, *utils.Error) {
 	return UploadData(path, data, secret)
 }
 func UploadFile(data []byte, path string, secret string) (string, *utils.Error) {
-	if data == nil {
+	if data == nil || len(data) == 0 {
 		return Upload(path, secret)
 	}
 	return UploadData(path, data, secret)
