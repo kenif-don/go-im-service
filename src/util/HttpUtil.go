@@ -135,7 +135,7 @@ func UploadData(path string, data []byte, secret string) (string, *utils.Error) 
 		}
 		data = CoverSrcData2EnDate(data, subEnData, beginIndex, endIndex)
 		//如果是加密方式 需要保证文件名唯一,不然多人给自己发同一张图 都会出现解密失败
-		filename = MD5Bytes(append(data, []byte(time.Now().String())...)) + "." + endWith
+		filename = MD5Bytes(append(data, []byte(time.Now().String())...)) + endWith
 	}
 	_, e = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(conf.Conf.Aws.Bucket),
