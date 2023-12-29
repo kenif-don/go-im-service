@@ -192,14 +192,14 @@ type GroupReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       uint64   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`     //群ID 邀请，修改，退出等需要此字段
-	Type     int32    `protobuf:"varint,2,opt,name=type,proto3" json:"type,omitempty"` //1-正常群  2-加密群
-	Password string   `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	Ids      []uint64 `protobuf:"varint,4,rep,packed,name=ids,proto3" json:"ids,omitempty"` //邀请人用户ID
-	Name     string   `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`       //群名称 修改时使用
-	HeadImg  string   `protobuf:"bytes,6,opt,name=headImg,proto3" json:"headImg,omitempty"` //群头像 修改时使用
-	Notice   string   `protobuf:"bytes,7,opt,name=notice,proto3" json:"notice,omitempty"`   //群公告 修改时使用
-	Status   int32    `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`  //群状态 1-正常 2-一级禁言 3-二级禁言
+	Id       uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`     //群ID 邀请，修改，退出等需要此字段
+	Type     int32  `protobuf:"varint,2,opt,name=type,proto3" json:"type,omitempty"` //1-正常群  2-加密群
+	Password string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	Ids      string `protobuf:"bytes,4,opt,name=ids,proto3" json:"ids,omitempty"`         //邀请人用户ID字符串 1,2,3
+	Name     string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`       //群名称 修改时使用
+	HeadImg  string `protobuf:"bytes,6,opt,name=headImg,proto3" json:"headImg,omitempty"` //群头像 修改时使用
+	Notice   string `protobuf:"bytes,7,opt,name=notice,proto3" json:"notice,omitempty"`   //群公告 修改时使用
+	Status   int32  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`  //群状态 1-正常 2-一级禁言 3-二级禁言
 }
 
 func (x *GroupReq) Reset() {
@@ -255,11 +255,11 @@ func (x *GroupReq) GetPassword() string {
 	return ""
 }
 
-func (x *GroupReq) GetIds() []uint64 {
+func (x *GroupReq) GetIds() string {
 	if x != nil {
 		return x.Ids
 	}
-	return nil
+	return ""
 }
 
 func (x *GroupReq) GetName() string {
@@ -1525,7 +1525,7 @@ var file_service_proto_rawDesc = []byte{
 	0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65,
 	0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x10, 0x0a, 0x03,
-	0x69, 0x64, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x04, 0x52, 0x03, 0x69, 0x64, 0x73, 0x12, 0x12,
+	0x69, 0x64, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x69, 0x64, 0x73, 0x12, 0x12,
 	0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61,
 	0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x68, 0x65, 0x61, 0x64, 0x49, 0x6d, 0x67, 0x18, 0x06, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x07, 0x68, 0x65, 0x61, 0x64, 0x49, 0x6d, 0x67, 0x12, 0x16, 0x0a, 0x06,

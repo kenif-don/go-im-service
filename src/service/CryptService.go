@@ -125,6 +125,9 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 	if md.Type < 2 || md.Type > 5 {
 		return nil
 	}
+	if md.Type == 5 && conf.Base.DeviceType != conf.PC {
+		return nil
+	}
 	//如果是文件消息 需要解密
 	secret, err := GetSecret(chat.TargetId, chat.Type)
 	if err != nil {
@@ -214,21 +217,21 @@ func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity
 		return &entity.MessageData{
 			Type:     md.Type,
 			Content:  path,
-			Status:   1,
+			Status:   2,
 			Duration: int(duration.Seconds()),
 		}, nil
 	case 4: //视频
 		return &entity.MessageData{
 			Type:    md.Type,
 			Content: path,
-			Status:  1,
+			Status:  2,
 		}, nil
 	case 5: //文件
 		return &entity.MessageData{
 			Type:    md.Type,
 			Content: path,
 			Size:    len(data),
-			Status:  1,
+			Status:  2,
 		}, nil
 	}
 	return nil, nil

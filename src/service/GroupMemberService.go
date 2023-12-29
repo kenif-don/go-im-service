@@ -30,17 +30,24 @@ func QueryGroupMember(obj *entity.GroupMember, repo IGroupMemberRepo) (*entity.G
 	return repo.Query(obj)
 }
 
-// selectMembers 从服务器获取群成员
-func (_self *GroupMemberService) selectMembers(gId uint64) ([]entity.GroupMember, *utils.Error) {
+// SelectMembers 从服务器获取群成员
+func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]entity.GroupMember, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	ms, e := _self.QueryAll(&entity.GroupMember{GId: gId})
+	if e != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	if ms != nil && len(ms) > 0 && !refresh {
+		return ms, nil
 	}
 	resultDTO, err := Post("/api/group/selectMembers", map[string]interface{}{"id": gId})
 	if err != nil {
 		return nil, log.WithError(err)
 	}
 	var members []entity.GroupMember
-	e := util.Str2Obj(resultDTO.Data.(string), &members)
+	e = util.Str2Obj(resultDTO.Data.(string), &members)
 	if e != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
@@ -63,9 +70,9 @@ func (_self *GroupMemberService) selectMembers(gId uint64) ([]entity.GroupMember
 	}
 	return members, nil
 }
-func (_self *GroupMemberService) QueryAll() ([]entity.GroupMember, error) {
+func (_self *GroupMemberService) QueryAll(gm *entity.GroupMember) ([]entity.GroupMember, error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return []entity.GroupMember{}, nil
 	}
-	return _self.repo.QueryAll(&entity.GroupMember{})
+	return _self.repo.QueryAll(gm)
 }

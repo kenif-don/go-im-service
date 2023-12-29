@@ -60,8 +60,8 @@ func (_self *MessageRepo) Delete(obj *entity.Message) error {
 }
 func (_self *MessageRepo) QueryLast(obj *entity.Message) (*entity.Message, error) {
 	tx := _self.Data.Db.
-		Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
-		Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
+		Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId).
+		Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.UserId).
 		Order("time desc").First(obj)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return nil, nil

@@ -9,6 +9,7 @@ import (
 	"math"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -44,6 +45,17 @@ func Str2Uint64(s string) uint64 {
 		log.Error(e)
 	}
 	return i
+}
+func Str2Arr(s string) []uint64 {
+	ids := strings.Split(s, ",")
+	if len(ids) == 0 {
+		return []uint64{}
+	}
+	res := make([]uint64, len(ids))
+	for i, id := range ids {
+		res[i] = Str2Uint64(id)
+	}
+	return res
 }
 func Str2Float64(s string) float64 {
 	f, e := strconv.ParseFloat(s, 64)

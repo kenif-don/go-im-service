@@ -8,6 +8,30 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func GetGroupMembers(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	members, err := service.NewGroupMemberService().SelectMembers(req.Id, false)
+	if err != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	obj, e := util.Obj2Str(members)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = obj
+	res, _ := proto.Marshal(resp)
+	return res
+}
+
 // GetGroups 获取群
 func GetGroups() []byte {
 	resp := &api.ResultDTOResp{}
@@ -39,7 +63,7 @@ func CreateGroup(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	group, err := service.NewGroupService().Create(req.Ids, int(req.Type), req.Password)
+	group, err := service.NewGroupService().Create(util.Str2Arr(req.Ids), int(req.Type), req.Password)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -64,7 +88,7 @@ func InviteInGroup(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewGroupService().Invite(req.Id, req.Ids)
+	err := service.NewGroupService().Invite(req.Id, util.Str2Arr(req.Ids))
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
