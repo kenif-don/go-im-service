@@ -8,6 +8,32 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func GetGroup(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	group, err := service.NewGroupService().SelectOne(req.Id, false)
+	if err != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	obj, e := util.Obj2Str(group)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	resp.Body = obj
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
+	return res
+}
 func GetGroupMembers(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
@@ -28,7 +54,10 @@ func GetGroupMembers(data []byte) []byte {
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = obj
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
 	return res
 }
 
@@ -49,7 +78,10 @@ func GetGroups() []byte {
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = obj
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
 	return res
 }
 
@@ -74,7 +106,10 @@ func CreateGroup(data []byte) []byte {
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
 	resp.Body = obj
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
 	return res
 }
 
@@ -94,6 +129,9 @@ func InviteInGroup(data []byte) []byte {
 	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	res, _ := proto.Marshal(resp)
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
 	return res
 }
