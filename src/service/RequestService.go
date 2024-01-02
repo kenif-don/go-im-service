@@ -47,6 +47,7 @@ var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll", 
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 	//排除输入2级密码的URI和需要放行的URI
+	log.Debugf("request url: %s urls: %s", url, NotPwdUris)
 	if util.IndexOfString(url, NotPwdUris) == -1 && util.IndexOfString(url, conf.Conf.ExUris) == -1 && !ValidatePwd2() {
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
