@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func GetGroup(data []byte) []byte {
+func SelectOneGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
