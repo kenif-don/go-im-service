@@ -39,14 +39,30 @@ func (_self *MessageService) Update(obj *entity.Message) *utils.Error {
 
 // DelChatMsg 删除双方聊天记录
 func (_self *MessageService) DelChatMsg(tp string, target uint64) *utils.Error {
+	//组装data数据
+	data := make(map[string]string)
+	switch tp {
+	case "friend":
+		data["target"] = util.Uint642Str(conf.GetLoginInfo().User.Id)
+		break
+	case "group":
+		data["target"] = util.Uint642Str(target)
+		break
+	}
+	data["type"] = tp
+	dataStr, e := util.Obj2Str(data)
+	if e != nil {
+		log.Error(e)
+		return log.WithError(utils.ERR_DEL_FAIL)
+	}
 	//发出消息 让对方删除
 	//发送删除请求
 	protocol := &model.Protocol{
 		Type: 998,
-		From: strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
-		To:   strconv.FormatUint(target, 10),
+		From: util.Uint642Str(conf.GetLoginInfo().User.Id),
+		To:   util.Uint642Str(target),
 		Ack:  100,
-		Data: tp, //将聊天类型传递过去
+		Data: dataStr,
 		No:   uuid.New().String(),
 	}
 	err := Send(protocol)
@@ -259,13 +275,25 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 	case 998: //被删除本地聊天记录
-		err := NewMessageService().DelLocalChatMsg(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		data := make(map[string]string)
+		e := util.Str2Obj(protocol.Data.(string), &data)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		err := NewMessageService().DelLocalChatMsg(data["type"], util.Str2Uint64(data["target"]))
 		if err != nil {
 			return log.WithError(err)
 		}
 		break
 	case 999: //被删除聊天和记录
-		err := NewChatService().DelLocalChat(protocol.Data.(string), util.Str2Uint64(protocol.From))
+		data := make(map[string]string)
+		e := util.Str2Obj(protocol.Data.(string), &data)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		err := NewChatService().DelLocalChat(data["type"], util.Str2Uint64(data["target"]))
 		if err != nil {
 			return log.WithError(err)
 		}

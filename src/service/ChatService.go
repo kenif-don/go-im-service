@@ -228,12 +228,28 @@ func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
 		return log.WithError(utils.ERR_NOT_LOGIN)
 	}
 	//发送删除请求
+	//组装data数据
+	data := make(map[string]string)
+	switch tp {
+	case "friend":
+		data["target"] = util.Uint642Str(conf.GetLoginInfo().User.Id)
+		break
+	case "group":
+		data["target"] = util.Uint642Str(target)
+		break
+	}
+	data["type"] = tp
+	dataStr, e := util.Obj2Str(data)
+	if e != nil {
+		log.Error(e)
+		return log.WithError(utils.ERR_DEL_FAIL)
+	}
 	protocol := &model.Protocol{
 		Type: 999,
 		From: strconv.FormatUint(conf.GetLoginInfo().User.Id, 10),
 		To:   strconv.FormatUint(target, 10),
 		Ack:  100,
-		Data: tp, //将聊天类型传递过去
+		Data: dataStr,
 		No:   uuid.New().String(),
 	}
 	err := Send(protocol)
