@@ -276,6 +276,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 	case 998: //被删除本地聊天记录
 		data := make(map[string]string)
+		log.Debugf("被删除本地聊天记录%v", protocol.Data)
 		e := util.Str2Obj(protocol.Data.(string), &data)
 		if e != nil {
 			log.Error(e)
@@ -288,6 +289,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		break
 	case 999: //被删除聊天和记录
 		data := make(map[string]string)
+		log.Debugf("被删除聊天和记录%v", protocol.Data)
 		e := util.Str2Obj(protocol.Data.(string), &data)
 		if e != nil {
 			log.Error(e)
