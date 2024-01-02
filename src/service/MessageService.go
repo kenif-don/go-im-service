@@ -339,6 +339,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		break
 	case 8: //群聊消息
 		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
+			log.Debugf("群聊消息:%s", protocol.Data)
 			messageService := NewMessageService()
 			var message = &entity.Message{}
 			e := util.Str2Obj(protocol.Data.(string), message)
