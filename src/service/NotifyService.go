@@ -15,9 +15,15 @@ func FileNotify(target uint64, no, content string) *utils.Error {
 		return nil
 	}
 	if Listener != nil {
+		//根据No获取消息记录
+		message, err := NewMessageService().SelectOne(&entity.Message{No: no})
+		if err != nil {
+			return log.WithError(err)
+		}
 		resp := &api.FileDecryptResp{
 			No:      no,
 			Content: content,
+			Type:    message.Type,
 		}
 		res, e := proto.Marshal(resp)
 		if e != nil {
@@ -76,11 +82,6 @@ func (_self *ChatService) VoiceNotify(message *entity.Message) *utils.Error {
 
 // NotifySendReceive 通知消息是否发生成功
 func NotifySendReceive(no string, send int) *utils.Error {
-	res, e := util.Obj2Str(map[string]interface{}{"no": no, "send": send})
-	if e != nil {
-		log.Error(e)
-		return log.WithError(e)
-	}
 	//根据No获取消息记录
 	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
 	if err != nil {
@@ -95,6 +96,11 @@ func NotifySendReceive(no string, send int) *utils.Error {
 		}
 	}
 	if Listener != nil {
+		res, e := util.Obj2Str(map[string]interface{}{"no": no, "send": send, "type": message.Type})
+		if e != nil {
+			log.Error(e)
+			return log.WithError(e)
+		}
 		Listener.OnSendReceive(res)
 	}
 	return nil

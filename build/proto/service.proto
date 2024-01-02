@@ -71,6 +71,7 @@ message MsgPageReq{
 message FileDecryptResp{
   string no = 1;//消息ID
   string content = 2;//结果
+  string type = 3;//聊天类型
 }
 
 message ChatReq{
