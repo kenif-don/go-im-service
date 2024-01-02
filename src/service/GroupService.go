@@ -248,6 +248,12 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		//删除聊天
+		e = NewChatService().DelLocalChat("group", id)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
 		e = tx.Commit().Error
 		if e != nil {
 			log.Error(e)
