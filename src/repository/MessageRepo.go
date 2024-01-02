@@ -2,6 +2,7 @@ package repository
 
 import (
 	"IM-Service/src/configs/db"
+	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"errors"
 	"gorm.io/gorm"
@@ -79,11 +80,15 @@ func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) 
 			Where("type=? and target_id=? and user_id=? and time < ?", obj.Type, obj.TargetId, obj.UserId, obj.Time).
 			Or("type=? and target_id=? and user_id=? and time < ?", obj.Type, obj.UserId, obj.UserId, obj.Time).
 			Order("time desc").Limit(15).Find(objs)
+		log.Debugf("SELECT * FROM `messages` WHERE (type=%s and target_id=%d and user_id=%d) OR (type=%s and target_id=%d and user_id=%d) ORDER BY time desc,`messages`.`no` time desc LIMIT 15",
+			obj.Type, obj.TargetId, obj.UserId, obj.Type, obj.UserId, obj.UserId)
 	} else {
 		tx = _self.Data.Db.
 			Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId).
 			Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.UserId).
 			Order("time desc").Limit(15).Find(objs)
+		log.Debugf("SELECT * FROM `messages` WHERE (type=%s and target_id=%d and user_id=%d) OR (type=%s and target_id=%d and user_id=%d) ORDER BY time desc,`messages`.`no` time desc LIMIT 15",
+			obj.Type, obj.TargetId, obj.UserId, obj.Type, obj.UserId, obj.UserId)
 	}
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return []entity.Message{}, nil

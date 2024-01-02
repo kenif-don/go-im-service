@@ -68,6 +68,7 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 			}
 		}
+		log.Debugf("更新对方数据 对方id：%d", he)
 		return &fa, nil
 	}
 	//获取到了 组装heUser

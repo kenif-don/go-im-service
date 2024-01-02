@@ -3,6 +3,7 @@ package service
 import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
+	"IM-Service/src/util"
 )
 
 type VersionService struct {
@@ -19,5 +20,9 @@ func (_self *VersionService) GetVersion(versionCode, tp int32) (string, *utils.E
 	if resultDTO.Data == nil {
 		return "", nil
 	}
-	return resultDTO.Data.(string), nil
+	res, e := util.Obj2Str(resultDTO.Data)
+	if e != nil {
+		return "", log.WithError(utils.ERR_NET_FAIL)
+	}
+	return res, nil
 }

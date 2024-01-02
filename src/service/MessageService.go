@@ -213,9 +213,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		if len(ids) == 0 {
 			return nil
 		}
-		var req = make(map[string]interface{})
-		req["ids"] = ids
-		_, err = Post("/api/offline-bill/dels", req)
+		_, err = Post("/api/offline-bill/dels", map[string]interface{}{"ids": ids})
 		if err != nil {
 			return log.WithError(err)
 		}
