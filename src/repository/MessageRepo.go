@@ -2,7 +2,6 @@ package repository
 
 import (
 	"IM-Service/src/configs/db"
-	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"errors"
 	"gorm.io/gorm"
@@ -61,9 +60,9 @@ func (_self *MessageRepo) Delete(obj *entity.Message) error {
 }
 func (_self *MessageRepo) QueryLast(obj *entity.Message) (*entity.Message, error) {
 	tx := _self.Data.Db.
-		Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId).
-		Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.UserId).
-		Order("time desc").First(obj)
+		Where("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
+		Or("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
+		Order("`time` desc").First(obj)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
@@ -77,18 +76,14 @@ func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) 
 	var tx *gorm.DB
 	if obj.Time > 0 {
 		tx = _self.Data.Db.
-			Where("type=? and target_id=? and user_id=? and time < ?", obj.Type, obj.TargetId, obj.UserId, obj.Time).
-			Or("type=? and target_id=? and user_id=? and time < ?", obj.Type, obj.UserId, obj.UserId, obj.Time).
-			Order("time desc").Limit(15).Find(objs)
-		log.Debugf("SELECT * FROM `messages` WHERE (type=%s and target_id=%d and user_id=%d) OR (type=%s and target_id=%d and user_id=%d) ORDER BY time desc,`messages`.`no` time desc LIMIT 15",
-			obj.Type, obj.TargetId, obj.UserId, obj.Type, obj.UserId, obj.UserId)
+			Where("`type`=? and `target_id`=? and `user_id`=? and `from`=? and `time` < ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId, obj.Time).
+			Or("`type`=? and `target_id`=? and `user_id`=? and `from`=? and `time` < ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId, obj.Time).
+			Order("`time` desc").Limit(15).Find(objs)
 	} else {
 		tx = _self.Data.Db.
-			Where("type=? and target_id=? and user_id=?", obj.Type, obj.TargetId, obj.UserId).
-			Or("type=? and target_id=? and user_id=?", obj.Type, obj.UserId, obj.UserId).
-			Order("time desc").Limit(15).Find(objs)
-		log.Debugf("SELECT * FROM `messages` WHERE (type=%s and target_id=%d and user_id=%d) OR (type=%s and target_id=%d and user_id=%d) ORDER BY time desc,`messages`.`no` time desc LIMIT 15",
-			obj.Type, obj.TargetId, obj.UserId, obj.Type, obj.UserId, obj.UserId)
+			Where("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
+			Or("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
+			Order("`time` desc").Limit(15).Find(objs)
 	}
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return []entity.Message{}, nil
