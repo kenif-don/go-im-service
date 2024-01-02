@@ -115,7 +115,11 @@ func (_self *GroupService) NeedPassword(tp string, target uint64) string {
 		return "-1"
 	}
 	if group.Type == 2 {
-		return "1"
+		//需要密码 但是有密码
+		if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != "" {
+			return "2"
+		}
+		return "1" //前端 仅在返回1时 打开密码输入框
 	}
 	return "-1"
 }
