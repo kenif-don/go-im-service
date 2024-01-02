@@ -56,8 +56,6 @@ func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*
 		Keys["friend"+"_"+util.Uint642Str(target)] = ""
 		break
 	case "group":
-		//清除一次密码 重新计算秘钥
-		Keys["group"+"_"+util.Uint642Str(target)] = ""
 		//如果是加密群
 		group, e := NewGroupService().SelectOne(target, false)
 		if e != nil {
