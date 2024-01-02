@@ -68,7 +68,7 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 		//自己删除自己发送给对方的 或对方发给自己的
 		message := &entity.Message{
 			Type:     tp,
-			TargetId: target, //对方ID
+			TargetId: target,
 			UserId:   conf.GetLoginInfo().User.Id,
 		}
 		e := _self.repo.Delete(message)

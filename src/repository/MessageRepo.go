@@ -61,7 +61,6 @@ func (_self *MessageRepo) Delete(obj *entity.Message) error {
 	} else {
 		tx = _self.Data.Db.
 			Where("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.TargetId, obj.UserId).
-			Or("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.UserId, obj.UserId).
 			Delete(obj)
 	}
 	if tx.Error != nil {
