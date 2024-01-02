@@ -59,22 +59,23 @@ func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*
 		//清除一次密码 重新计算秘钥
 		Keys["group"+"_"+util.Uint642Str(target)] = ""
 		//如果是加密群
-		if tp == "group2" {
-			group, e := NewGroupService().SelectOne(target, false)
-			if e != nil {
-				log.Error(e)
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			//没有输入过 并且没有传进来 就提示需要输入密码
-			if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] == "" && password == "" {
-				return nil, log.WithError(utils.ERR_ENTER_PASSWORD)
-			} else if strings.ToUpper(group.Password) != strings.ToUpper(password) {
-				return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
-			} else if password != "" && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != password {
-				return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
-			}
-			conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] = password
+		group, e := NewGroupService().SelectOne(target, false)
+		if e != nil {
+			log.Error(e)
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
+		if group.Type != 2 {
+			break
+		}
+		//没有输入过 并且没有传进来 就提示需要输入密码
+		if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] == "" && password == "" {
+			return nil, log.WithError(utils.ERR_ENTER_PASSWORD)
+		} else if strings.ToUpper(group.Password) != strings.ToUpper(password) {
+			return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
+		} else if password != "" && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != password {
+			return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
+		}
+		conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] = password
 		break
 	}
 	//记录当前聊天ID
@@ -115,9 +116,6 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		}
 		name = group.Name
 		headImg = group.HeadImg
-		if group.Type == 2 {
-			tp = "group2"
-		}
 		break
 	}
 	chat := &entity.Chat{
