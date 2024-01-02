@@ -70,7 +70,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*
 		//没有输入过 并且没有传进来 就提示需要输入密码
 		if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] == "" && password == "" {
 			return nil, log.WithError(utils.ERR_ENTER_PASSWORD)
-		} else if strings.ToUpper(group.Password) != strings.ToUpper(password) {
+		} else if strings.ToUpper(group.Password) != strings.ToUpper(util.MD5(password)) {
 			return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
 		} else if password != "" && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != password {
 			return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
