@@ -55,7 +55,7 @@ func (_self *GroupMemberRepo) Save(obj *entity.GroupMember) error {
 	return nil
 }
 func (_self *GroupMemberRepo) Delete(obj *entity.GroupMember) error {
-	tx := _self.Data.Db.Model(&entity.GroupMember{}).Where("gid = ?", obj.GId).Delete(obj)
+	tx := _self.Data.Db.Model(&entity.GroupMember{}).Where("g_id = ?", obj.GId).Delete(obj)
 	if tx.Error != nil {
 		return tx.Error
 	}
