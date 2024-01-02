@@ -207,7 +207,7 @@ func SendMsg(data []byte) []byte {
 		err := msgService.SendMsg(req.Type, req.Target, req.No, &entity.MessageData{
 			Type:    int(req.Content.Type),
 			Content: req.Content.Content,
-		}, req.Content.Data)
+		})
 		if err != nil && service.Listener != nil {
 			//通知消息发送失败
 			err = service.NotifySendReceive(req.No, -1)

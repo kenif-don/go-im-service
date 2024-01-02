@@ -85,7 +85,6 @@ message ChatReq{
 message MessageData{
   int32 type = 1;//1-文本 2-图片 3-语音 4-视频 5-文件
   string content = 2;//消息内容 1-文本消息 如："hello" 2-图片链接,客户端传本地路径,SDK负责上传并更改此链接为网络路径// 如："www.baidu.com"或 "/var/temp/1.jpg" 3-语音链接 如：{"url":"var/temp/1.mp3",""duration":60} 4-视频链接 如：{"url":"var/temp/1.mp4","img":"www.baidu.com"} 5-文件链接 如："var/temp/1.docx"
-  bytes data = 3;//PC端上传的二进制数据
 }
 /** 好友详情页根据ID获取好友数据 */
 message FriendReq{
@@ -113,7 +112,6 @@ message UpdatePwdReq{
 }
 message UploadReq{
   string path = 1; // 文件路径 包含路径和文件名 列如 C:\\Users\\Administrator\\Desktop\\result.png
-  bytes data = 2; // 文件二进制数据
 }
 /** 注册 */
 message UserReq{

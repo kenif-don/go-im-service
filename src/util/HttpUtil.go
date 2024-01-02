@@ -158,14 +158,8 @@ func Upload(path string, secret string) (string, *utils.Error) {
 	}
 	return UploadData(path, data, secret)
 }
-func UploadFile(data []byte, path string, secret string) (string, *utils.Error) {
-	if data == nil || len(data) == 0 {
-		return Upload(path, secret)
-	}
-	return UploadData(path, data, secret)
-}
 func GetFileType(path string, data []byte) (string, *utils.Error) {
-	if len(data) < 261 {
+	if data == nil || len(data) < 261 {
 		return filepath.Ext(path), nil
 	}
 	//取data的前261个

@@ -387,7 +387,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 	return nil
 }
 
-func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
+func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
 	//判断好友或者群是否存在
 	switch tp {
 	case "friend":
@@ -408,47 +408,47 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataCo
 	case 1: //文本消息
 		return _self.realSend(tp, target, no, dataContent)
 	case 2, 5: //图片消息/文件消息
-		return _self.SendImgAndFileMsg(tp, target, no, dataContent, data)
+		return _self.SendImgAndFileMsg(tp, target, no, dataContent)
 	case 3: //语音消息
-		return _self.SendVoiceMsg(tp, target, no, dataContent, data)
+		return _self.SendVoiceMsg(tp, target, no, dataContent)
 	case 4: //视频消息
-		return _self.SendVideoMsg(tp, target, no, dataContent, data)
+		return _self.SendVideoMsg(tp, target, no, dataContent)
 	}
 	return nil
 }
-func (_self *MessageService) SendVideoMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
+func (_self *MessageService) SendVideoMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)
 	}
 	//上传文件
-	url, err := util.UploadFile(data, dataContent.Content, secret)
+	url, err := util.Upload(dataContent.Content, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
 	dataContent.Content = url
 	return _self.realSend(tp, target, no, dataContent)
 }
-func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
+func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)
 	}
 	//上传文件
-	url, err := util.UploadFile(data, dataContent.Content, secret)
+	url, err := util.Upload(dataContent.Content, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
 	dataContent.Content = url
 	return _self.realSend(tp, target, no, dataContent)
 }
-func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, dataContent *entity.MessageData, data []byte) *utils.Error {
+func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)
 	}
 	//上传文件
-	url, err := util.UploadFile(data, dataContent.Content, secret)
+	url, err := util.Upload(dataContent.Content, secret)
 	if err != nil {
 		return log.WithError(err)
 	}
