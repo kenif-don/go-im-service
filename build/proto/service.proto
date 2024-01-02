@@ -19,10 +19,8 @@ message GroupReq{
   int32 type = 2;//1-正常群  2-加密群
   string password = 3;
   string ids = 4;//邀请人用户ID字符串 1,2,3
-  string name = 5;//群名称 修改时使用
-  string headImg = 6;//群头像 修改时使用
-  string notice = 7;//群公告 修改时使用
-  int32 status = 8;//群状态 1-正常 2-一级禁言 3-二级禁言
+  string data = 5;//群名称/群公告/群头像 修改时使用
+  int32 status = 6;//群状态 1-正常 2-一级禁言 3-二级禁言
 }
 /** 文件解密请求对象 */
 message DecryptReq{

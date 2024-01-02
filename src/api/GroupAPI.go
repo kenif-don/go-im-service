@@ -59,7 +59,7 @@ func UploadGroupHeadImg(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewGroupService().Update(req.Id, req.HeadImg, 3)
+	err := service.NewGroupService().Update(req.Id, req.Data, 3)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -80,7 +80,7 @@ func UploadGroupNotice(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewGroupService().Update(req.Id, req.Notice, 2)
+	err := service.NewGroupService().Update(req.Id, req.Data, 2)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
@@ -101,7 +101,7 @@ func UploadGroupName(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewGroupService().Update(req.Id, req.Name, 1)
+	err := service.NewGroupService().Update(req.Id, req.Data, 1)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
