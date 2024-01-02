@@ -8,8 +8,27 @@ import (
 	"IM-Service/src/entity"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
+	"time"
 )
 
+// OfflineMessageNotify 获取离线消息
+func OfflineMessageNotify() {
+	go func() {
+		for {
+			//如果没有私钥 就下一次循环
+			if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.PrivateKey == "" {
+				time.Sleep(time.Second * 1)
+				continue
+			}
+			//获取离线消息
+			err := NewMessageService().GetOfflineMessage()
+			if err != nil {
+				log.Error(err)
+			}
+			return
+		}
+	}()
+}
 func FileNotify(target uint64, no, content string) *utils.Error {
 	if conf.Conf.ChatId != target {
 		return nil

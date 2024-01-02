@@ -249,7 +249,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 		break
-	case 201: // 系统指令 去服务器拉去群成员
+	case 201: // 去服务器拉去群成员
 		gId := util.Str2Uint64(protocol.Data.(string))
 		_, err := NewGroupMemberService().SelectMembers(gId, true)
 		if err != nil {

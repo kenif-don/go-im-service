@@ -43,12 +43,14 @@ func SetListener(listener MessageListener) {
 }
 
 // NotPwdUris 排除输入2级密码的URI
-var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll", "/api/offline-bill/dels"}
+var NotPwdUris = []string{"/api/user/loginPwd2", "/api/offline-bill/selectAll", "/api/offline-bill/dels",
+	"/api/group/selectMembers", "/api/friend/selectOne", "/api/friend-apply/selectOne", "/api/user/selectOne",
+	"/api/group/selectOne"}
 
 func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 	//排除输入2级密码的URI和需要放行的URI
-	log.Debugf("request url: %s urls: %s", url, NotPwdUris)
 	if util.IndexOfString(url, NotPwdUris) == -1 && util.IndexOfString(url, conf.Conf.ExUris) == -1 && !ValidatePwd2() {
+		log.Debugf("被二级密码拦截的 url: %s", url)
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
 	resultDTO, e := util.Post(url, req)

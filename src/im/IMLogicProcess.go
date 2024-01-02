@@ -135,24 +135,10 @@ func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 	messageService.UpdateReaded(protocol, -1)
 }
 
-// LoginOk 登录成功的回调
+// LoginOk 长连接登录成功的回调
 func (_self *LogicProcess) LoginOk(protocol *model.Protocol) {
 	conf.DiffTime = int(util.Str2Uint64(protocol.Data.(string)) - util.CurrentTime())
-	go func() {
-		for {
-			//如果没有私钥 就下一次循环
-			if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.PrivateKey == "" {
-				time.Sleep(time.Second * 1)
-				continue
-			}
-			//获取离线消息
-			err := service.NewMessageService().GetOfflineMessage()
-			if err != nil {
-				log.Error(err)
-			}
-			return
-		}
-	}()
+	service.OfflineMessageNotify()
 }
 
 // LoginFail 登录失败的回调
