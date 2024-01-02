@@ -74,8 +74,9 @@ func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*
 			//用户传了密码 但是与内存不一致
 		} else if password != "" && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != "" && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != password {
 			return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
+		} else if password != "" {
+			conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] = password
 		}
-		conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] = password
 		break
 	}
 	//记录当前聊天ID
