@@ -146,8 +146,9 @@ type Config struct {
 	Aws       *Aws
 	Key       string // 与服务器交互的key
 	Client    *client.WSClient
-	Connected bool   //长连接是否链接成功
-	ChatId    uint64 //当前打开的聊天ID
+	Connected bool              //长连接是否链接成功
+	ChatId    uint64            //当前打开的聊天ID
+	Pwds      map[string]string //密聊群的密码
 }
 type Aws struct {
 	Id       string

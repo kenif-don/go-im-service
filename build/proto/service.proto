@@ -80,6 +80,7 @@ message ChatReq{
   uint64 target = 2; // 聊天目标 用户ID或群ID
   string no = 3;//消息ID 客户端通过UUID生成 发送成功失败时根据此ID获取消息客户端并修改状态
   MessageData content = 4; // 聊天内容 仅发生消息时传
+  string password = 5;// 加密群时传密码
 }
 /** 消息内容 */
 message MessageData{

@@ -42,7 +42,7 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	}
 	return repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
 }
-func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *utils.Error) {
+func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*entity.Chat, *utils.Error) {
 	//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
 	chat, err := _self.CoverChat(tp, target, true)
 	if err != nil {
@@ -55,7 +55,18 @@ func (_self *ChatService) OpenChat(tp string, target uint64) (*entity.Chat, *uti
 		Keys["friend"+"_"+util.Uint642Str(target)] = ""
 		break
 	case "group":
+		//清除一次密码 重新计算秘钥
 		Keys["group"+"_"+util.Uint642Str(target)] = ""
+		//如果是加密群
+		if tp == "group2" {
+			//没有输入过 并且没有传进来 就提示需要输入密码
+			if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] == "" && password == "" {
+				return nil, log.WithError(utils.ERR_ENTER_PASSWORD)
+			} else if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != password {
+				return nil, log.WithError(utils.ERR_PASSWORD_ERROR)
+			}
+			conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] = password
+		}
 		break
 	}
 	//记录当前聊天ID
@@ -87,6 +98,7 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 			name = friend.HeUser.Nickname
 		}
 		headImg = friend.HeUser.HeadImg
+		break
 	case "group":
 		//获取群信息
 		group, err := NewGroupService().SelectOne(target, refresh)
@@ -95,6 +107,10 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		}
 		name = group.Name
 		headImg = group.HeadImg
+		if group.Type == 2 {
+			tp = "group2"
+		}
+		break
 	}
 	chat := &entity.Chat{
 		Type:     tp,

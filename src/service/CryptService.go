@@ -13,6 +13,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -37,6 +38,23 @@ func GetSecret(target uint64, tp string) (string, *utils.Error) {
 		}
 		break
 	case "group":
+		if Keys[key] == "" {
+			group, e := NewGroupService().SelectOne(target, false)
+			if e != nil {
+				return "", log.WithError(e)
+			}
+			if group == nil {
+				return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
+			}
+			//加密群
+			if group.Type == 2 {
+				secret := util.MD5("group_" + group.Password)
+				Keys[key] = secret
+			} else {
+				secret := util.MD5("group_" + strconv.FormatUint(group.Id, 10))
+				Keys[key] = secret
+			}
+		}
 		break
 	}
 	return Keys[key], nil
@@ -44,21 +62,15 @@ func GetSecret(target uint64, tp string) (string, *utils.Error) {
 
 // Encrypt 聊天内容加密
 func Encrypt(target uint64, tp, content string) (string, *utils.Error) {
-	switch tp {
-	case "friend":
-		secret, err := GetSecret(target, tp)
-		if err != nil {
-			return "", err
-		}
-		data, e := util.EncryptAes(content, secret)
-		if e != nil {
-			return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
-		}
-		return data, nil
-	case "group": //如果是加密群聊 处理  否则返回原文
-		return content, nil
+	secret, err := GetSecret(target, tp)
+	if err != nil {
+		return "", err
 	}
-	return content, nil
+	data, e := util.EncryptAes(content, secret)
+	if e != nil {
+		return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
+	}
+	return data, nil
 }
 
 // Decrypt 聊天内容解密
@@ -66,40 +78,38 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	if content == "" {
 		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	switch tp {
-	case "friend":
-		//字符串转换为消息体
-		md := &entity.MessageData{}
-		e := util.Str2Obj(content, md)
-		if e != nil {
-			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-		//如果是文件消息 需要解密
-		secret, err := GetSecret(target, tp)
-		if err != nil {
-			return "", err
-		}
-		md.Content, err = util.DecryptAes(md.Content, secret)
-		data, e := util.Obj2Str(md)
-		if e != nil {
-			return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-		//解密失败 直接返回解密失败
-		if err != nil {
-			return "", log.WithError(err)
-		}
-		if md.Type < 2 || md.Type > 5 {
-			return data, nil
-		}
-		//否则判断是否在聊天中
-		if no != "" && conf.Conf.ChatId == target {
-			return util.GetDecryptingMsg(md), nil
-		}
-		return data, nil
-	case "group": //加密群才进入这里
+	//字符串转换为消息体
+	md := &entity.MessageData{}
+	e := util.Str2Obj(content, md)
+	if e != nil {
+		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	//系统消息  无需解密
+	if md.Type == 9 {
 		return content, nil
 	}
-	return content, nil
+	//先解密消息体
+	secret, err := GetSecret(target, tp)
+	if err != nil {
+		return "", err
+	}
+	md.Content, err = util.DecryptAes(md.Content, secret)
+	data, e := util.Obj2Str(md)
+	if e != nil {
+		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
+	}
+	//解密失败 直接返回解密失败
+	if err != nil {
+		return "", log.WithError(err)
+	}
+	if md.Type < 2 || md.Type > 5 {
+		return data, nil
+	}
+	//否则判断是否在聊天中
+	if no != "" && conf.Conf.ChatId == target {
+		return util.GetDecryptingMsg(md), nil
+	}
+	return data, nil
 }
 func DecryptFile(tp string, target uint64, no string) *utils.Error {
 	//如果当前聊天不是正在聊天的 就不解密了
@@ -121,7 +131,7 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		log.Error(e)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	//无需解密文件
+	//不是PC 无需解密文件
 	if md.Type < 2 || md.Type > 5 {
 		return nil
 	}

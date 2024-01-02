@@ -12,6 +12,24 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// ValidateGroupNeedPassword 验证群聊是否需要密码
+func ValidateGroupNeedPassword(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.ChatReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Body = conf.Conf.Pwds[req.Type+"_"+util.Uint642Str(req.Target)]
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return res
+}
 func Decrypt(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
@@ -175,8 +193,7 @@ func OpenChat(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	chatService := service.NewChatService()
-	chat, err := chatService.OpenChat(req.Type, req.Target)
+	chat, err := service.NewChatService().OpenChat(req.Type, req.Target, req.Password)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
