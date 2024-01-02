@@ -79,6 +79,7 @@ func InitConfig(baseConfig *BaseConfig) {
 				Region:   "Singapore",
 				Bucket:   "world",
 			},
+			Pwds: make(map[string]string),
 		}
 		//初始化时 判断是否需要二级密码
 		if GetLoginInfo().User == nil {
