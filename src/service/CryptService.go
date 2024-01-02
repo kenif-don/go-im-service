@@ -112,18 +112,17 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	return data, nil
 }
 func DecryptFile(tp string, target uint64, no string) *utils.Error {
-	log.Debugf("11111111111111")
 	//如果当前聊天不是正在聊天的 就不解密了
 	if conf.Conf.ChatId != target {
 		return nil
 	}
-	log.Debugf("222222222222")
+	log.Debugf("消息编号：%s", no)
 	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
+	log.Debugf("消息内容：%v", message)
 	if err != nil || message == nil {
 		log.Error(err)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	log.Debugf("3333333333333333")
 	var md = &entity.MessageData{}
 	e := util.Str2Obj(message.Data, md)
 	if e != nil {
@@ -134,7 +133,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		log.Error(e)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
-	log.Debugf("444444444444444444444")
 	//不是PC 无需解密文件
 	if md.Type < 2 || md.Type > 5 {
 		return nil
@@ -142,14 +140,12 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 	if md.Type == 5 && conf.Base.DeviceType != conf.PC {
 		return nil
 	}
-	log.Debugf("55555555555555555555555")
 	//如果是文件消息 需要解密
 	secret, err := GetSecret(chat.TargetId, chat.Type)
 	if err != nil {
 		return err
 	}
 	go func() {
-		log.Debugf("66666666666666666")
 		md.Content, err = util.DecryptAes(md.Content, secret)
 		if err != nil {
 			log.Error(err)
@@ -160,7 +156,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		paths := strings.Split(md.Content, "/")
 		filename := paths[len(paths)-1]
 		path := filepath.Join(conf.Base.BaseDir, "configs", filename)
-		log.Debugf("777777777777777777")
 		//先下载文件
 		e := util.DownloadFile(md.Content, path)
 		if e != nil {
@@ -168,7 +163,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debugf("88888888888888888")
 		//解密文件
 		fileData, err := util.DecryptFile(path, secret)
 		if err != nil {
@@ -176,7 +170,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debugf("9999999999999999999")
 		//保存为临时文件
 		tempPath := filepath.Join(conf.Base.BaseDir, "configs", "temp", filename)
 		e = util.SaveTempFile(fileData, tempPath)
@@ -185,7 +178,6 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debugf("0000000000000000000000")
 		//组装成各种类型
 		okMsg, err := coverMessageData(md, fileData, tempPath)
 		if err != nil {
@@ -193,16 +185,13 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debugf("aaaaaaaaaaaaaaaaaaaaa")
 		data, e := util.Obj2Str(okMsg)
 		if e != nil {
 			log.Error(e)
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		log.Debugf("bbbbbbbbbbbbbbbbbbbb")
 		FileNotify(chat.TargetId, no, data)
-		log.Debugf("ccccccccccccccccc")
 	}()
 	return nil
 }
