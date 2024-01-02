@@ -50,7 +50,7 @@ func QuitGroup(data []byte) []byte {
 	}
 	return res
 }
-func UploadGroupHeadImg(data []byte) []byte {
+func UpdateGroupHeadImg(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
@@ -71,7 +71,7 @@ func UploadGroupHeadImg(data []byte) []byte {
 	}
 	return res
 }
-func UploadGroupNotice(data []byte) []byte {
+func UpdateGroupNotice(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
@@ -92,7 +92,7 @@ func UploadGroupNotice(data []byte) []byte {
 	}
 	return res
 }
-func UploadGroupName(data []byte) []byte {
+func UpdateGroupName(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
