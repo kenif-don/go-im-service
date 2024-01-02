@@ -156,6 +156,10 @@ func Upload(path string, secret string) (string, *utils.Error) {
 		log.Debug(err)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
+	//文件不能大于100M
+	if len(data) > 100*1024*1024 {
+		return "", log.WithError(utils.ERR_FILE_MAX_SIZE)
+	}
 	return UploadData(path, data, secret)
 }
 func GetFileType(path string, data []byte) (string, *utils.Error) {

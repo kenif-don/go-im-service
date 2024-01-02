@@ -53,6 +53,7 @@ var (
 	ERR_GROUP_GET_FAIL               = NewError(1045, "group get fail", "获取群组失败")
 	ERR_ENTER_PASSWORD               = NewError(1046, "enter password", "请输入密码")
 	ERR_PASSWORD_ERROR               = NewError(1047, "password error", "密码错误")
+	ERR_FILE_MAX_SIZE                = NewError(1048, "file max size", "文件大小超过限制")
 )
 
 type Error struct {
