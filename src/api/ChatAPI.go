@@ -22,8 +22,9 @@ func ValidateGroupNeedPassword(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
+
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Body = conf.Conf.Pwds[req.Type+"_"+util.Uint642Str(req.Target)]
+	resp.Body = service.NewGroupService().NeedPassword(req.Type, req.Target)
 	res, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)

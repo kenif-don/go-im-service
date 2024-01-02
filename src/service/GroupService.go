@@ -105,3 +105,17 @@ func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group
 	}
 	return group, nil
 }
+
+func (_self *GroupService) NeedPassword(tp string, target uint64) string {
+	if "group" != tp {
+		return "-1"
+	}
+	group, e := _self.SelectOne(target, false)
+	if e != nil || group == nil {
+		return "-1"
+	}
+	if group.Type == 2 {
+		return "1"
+	}
+	return "-1"
+}
