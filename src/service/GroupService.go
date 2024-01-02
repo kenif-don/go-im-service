@@ -123,3 +123,104 @@ func (_self *GroupService) NeedPassword(tp string, target uint64) string {
 	}
 	return "-1"
 }
+
+func (_self *GroupService) Update(id uint64, data string, updateType int) *utils.Error {
+	_, err := Post("/api/group/selectOne", map[string]interface{}{"id": id, "updateType": updateType, "name": data})
+	if err != nil {
+		return log.WithError(err)
+	}
+	return nil
+}
+
+func (_self *GroupService) Quit(id uint64) *utils.Error {
+	tx := _self.repo.BeginTx()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		err := _self.DelLocalGroup(id)
+		if err != nil {
+			return log.WithError(err)
+		}
+		_, err = Post("/api/group/quit", map[string]interface{}{"id": id})
+		if err != nil {
+			return log.WithError(err)
+		}
+		e := tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
+	}
+	return err
+}
+
+func (_self *GroupService) Delete(id uint64) *utils.Error {
+	tx := _self.repo.BeginTx()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		err := _self.DelLocalGroup(id)
+		if err != nil {
+			return log.WithError(err)
+		}
+		_, err = Post("/api/group/delete", map[string]interface{}{"id": id})
+		if err != nil {
+			return log.WithError(err)
+		}
+		e := tx.Commit().Error
+		if e != nil {
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
+	}
+	return err
+}
+
+func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
+	tx := _self.repo.BeginTx()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	err := func() *utils.Error {
+		//删除群
+		e := _self.repo.Delete(&entity.Group{
+			Id: id,
+		})
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		//删除群成员
+		e = NewGroupMemberService().repo.Delete(&entity.GroupMember{
+			GId: id,
+		})
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		e = tx.Commit().Error
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_DEL_FAIL)
+		}
+		return nil
+	}()
+	if err != nil {
+		tx.Rollback()
+	}
+	return err
+}

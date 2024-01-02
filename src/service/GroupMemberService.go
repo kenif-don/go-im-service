@@ -42,6 +42,14 @@ func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]enti
 	if ms != nil && len(ms) > 0 && !refresh {
 		return ms, nil
 	}
+	//需要刷新 先删除一次 重新获取
+	if refresh {
+		e = _self.repo.Delete(&entity.GroupMember{GId: gId})
+		if e != nil {
+			log.Error(e)
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+	}
 	resultDTO, err := Post("/api/group/selectMembers", map[string]interface{}{"id": gId})
 	if err != nil {
 		return nil, log.WithError(err)

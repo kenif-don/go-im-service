@@ -252,6 +252,13 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 		break
+	case 209: // 删除本地群
+		gId := util.Str2Uint64(protocol.Data.(string))
+		err := NewGroupService().DelLocalGroup(gId)
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
 	case 301: // 被好友删除
 		err := NewFriendService().DelLocalFriend(&entity.Friend{He: util.Str2Uint64(protocol.From), Me: util.Str2Uint64(protocol.To)})
 		if err != nil {

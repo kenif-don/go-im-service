@@ -8,6 +8,111 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func DeleteGroup(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().Delete(req.Id)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
+	return res
+}
+func QuitGroup(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().Quit(req.Id)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
+	return res
+}
+func UploadGroupHeadImg(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().Update(req.Id, req.HeadImg, 3)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
+	return res
+}
+func UploadGroupNotice(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().Update(req.Id, req.Notice, 2)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
+	return res
+}
+func UploadGroupName(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().Update(req.Id, req.Name, 1)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	res, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
+	}
+	return res
+}
 func SelectOneGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
