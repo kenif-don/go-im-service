@@ -125,9 +125,45 @@ func (_self *GroupService) NeedPassword(tp string, target uint64) string {
 }
 
 func (_self *GroupService) Update(id uint64, data string, updateType int) *utils.Error {
-	_, err := Post("/api/group/selectOne", map[string]interface{}{"id": id, "updateType": updateType, "name": data})
-	if err != nil {
-		return log.WithError(err)
+	//修改本地的群名称
+	group, e := _self.repo.Query(&entity.Group{Id: id})
+	if e != nil {
+		log.Error(e)
+		return log.WithError(utils.ERR_GROUP_GET_FAIL)
+	}
+	switch updateType {
+	case 1:
+		_, err := Post("/api/group/edit", map[string]interface{}{"id": id, "updateType": updateType, "name": data})
+		if err != nil {
+			return log.WithError(err)
+		}
+		group.Name = data
+		//修改聊天名称
+		chat, e := NewChatService().repo.Query(&entity.Chat{Type: "group", TargetId: id, UserId: conf.GetLoginInfo().User.Id})
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_GROUP_GET_FAIL)
+		}
+		chat.Name = data
+		e = NewChatService().repo.Save(chat)
+		break
+	case 2:
+		_, err := Post("/api/group/edit", map[string]interface{}{"id": id, "updateType": updateType, "notice": data})
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
+	case 3:
+		_, err := Post("/api/group/edit", map[string]interface{}{"id": id, "updateType": updateType, "headImg": data})
+		if err != nil {
+			return log.WithError(err)
+		}
+		break
+	}
+	e = _self.repo.Save(group)
+	if e != nil {
+		log.Error(e)
+		return log.WithError(utils.ERR_GROUP_GET_FAIL)
 	}
 	return nil
 }
