@@ -79,7 +79,6 @@ func Send(protocol *model.Protocol) *utils.Error {
 		log.Error("获取消息管理器失败")
 		return utils.ERR_SEND_FAIL
 	}
-	log.Debugf("发送消息: %s", protocol)
 	mgr.Send(protocol)
 	return nil
 }
