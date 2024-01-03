@@ -82,3 +82,11 @@ func (_self *GroupMemberService) QueryAll(gm *entity.GroupMember) ([]entity.Grou
 	gm.State = 2
 	return _self.repo.QueryAll(gm)
 }
+
+func (_self *GroupMemberService) GetGroupMemberByMe(id uint64) (*entity.GroupMember, *utils.Error) {
+	gm, e := _self.repo.Query(&entity.GroupMember{GId: id, UserId: conf.GetLoginInfo().User.Id})
+	if e != nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	return gm, nil
+}
