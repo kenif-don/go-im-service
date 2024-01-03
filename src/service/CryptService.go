@@ -99,7 +99,6 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	md.Content, err = util.DecryptAes(md.Content, secret)
 	//解密失败 直接返回解密失败
 	if err != nil {
-		log.Debugf("解密失败: tp:%s target:%d no:%s content:%s", tp, target, no, content)
 		return "", log.WithError(err)
 	}
 	data, e := util.Obj2Str(md)
