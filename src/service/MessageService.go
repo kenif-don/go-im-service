@@ -216,7 +216,6 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 				return log.WithError(err)
 			}
 		}
-		log.Debugf("删除离线消息  ids: %v", ids)
 		if len(ids) == 0 {
 			return nil
 		}

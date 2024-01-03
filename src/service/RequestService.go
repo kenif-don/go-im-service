@@ -53,9 +53,9 @@ func Post(url string, req interface{}) (*dto.ResultDTO, *utils.Error) {
 		log.Debugf("被二级密码拦截的 url: %s", url)
 		return nil, log.WithError(utils.ERR_NOT_PWD2_FAIL)
 	}
-	resultDTO, e := util.Post(url, req)
-	if e != nil {
-		return nil, log.WithError(e)
+	resultDTO, err := util.Post(url, req)
+	if err != nil {
+		return nil, log.WithError(err)
 	}
 	if resultDTO.Code == 401 {
 		//退出登录
