@@ -14,6 +14,11 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+message GroupMemberInfoReq{
+  uint64 userId = 1;//用户ID
+  uint64 gId = 2;//群ID
+  string name = 3;//群昵称
+}
 message GroupReq{
   uint64 id = 1;//群ID 邀请，修改，退出等需要此字段
   int32 type = 2;//1-正常群  2-加密群
