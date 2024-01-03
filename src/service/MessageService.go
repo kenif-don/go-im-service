@@ -259,6 +259,19 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			return log.WithError(err)
 		}
 		break
+	case 202: // 更新群成员信息
+		var gm = &entity.GroupMember{}
+		e := util.Str2Obj(protocol.Data.(string), gm)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_UPDATE_FAIL)
+		}
+		e = NewGroupMemberService().repo.Save(gm)
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_UPDATE_FAIL)
+		}
+		break
 	case 209: // 删除本地群
 		gId := util.Str2Uint64(protocol.Data.(string))
 		err := NewGroupService().DelLocalGroup(gId)

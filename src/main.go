@@ -8,6 +8,6 @@ import (
 
 func main() {
 	resp := &api.ResultDTOResp{}
-	d := api2.SyncPutSuccess("1", resp)
+	d := api2.SyncPutSuccess("null", resp)
 	fmt.Println(d)
 }

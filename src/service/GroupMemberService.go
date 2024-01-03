@@ -90,3 +90,23 @@ func (_self *GroupMemberService) GetGroupMemberByMe(id uint64) (*entity.GroupMem
 	}
 	return gm, nil
 }
+
+func (_self *GroupMemberService) UpdateGroupMemberName(id uint64, name string) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
+	}
+	_, err := Post("/api/group/updateGroupMemberName", map[string]interface{}{"gId": id, "name": name})
+	if err != nil {
+		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
+	}
+	gm, e := _self.repo.Query(&entity.GroupMember{GId: id, UserId: conf.GetLoginInfo().User.Id})
+	if e != nil {
+		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
+	}
+	gm.Name = name
+	e = _self.repo.Save(gm)
+	if e != nil {
+		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
+	}
+	return nil
+}

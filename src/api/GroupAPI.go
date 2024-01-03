@@ -8,6 +8,21 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func UpdateGroupMemberName(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupMemberInfoReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupMemberService().UpdateGroupMemberName(req.GId, req.Name)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	return SyncPutSuccess(nil, resp)
+}
 func GetGroupMemberByMe(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
@@ -150,9 +165,9 @@ func GetGroups() []byte {
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
-	groups, e := service.NewGroupService().SelectAll()
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	groups, err := service.NewGroupService().SelectAll()
+	if err != nil {
+		return SyncPutErr(err, resp)
 	}
 	return SyncPutSuccess(groups, resp)
 }
