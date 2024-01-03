@@ -23,21 +23,6 @@ func UpdateGroupMemberName(data []byte) []byte {
 	}
 	return SyncPutSuccess(nil, resp)
 }
-func GetGroupMemberByMe(data []byte) []byte {
-	resp := &api.ResultDTOResp{}
-	if !service.ValidatePwd2() {
-		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
-	}
-	req := &api.GroupReq{}
-	if e := proto.Unmarshal(data, req); e != nil {
-		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
-	}
-	members, err := service.NewGroupMemberService().GetGroupMemberByMe(req.Id)
-	if err != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return SyncPutSuccess(members, resp)
-}
 func GetGroupMemberInfo(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {

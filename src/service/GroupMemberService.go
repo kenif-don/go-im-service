@@ -83,20 +83,13 @@ func (_self *GroupMemberService) QueryAll(gm *entity.GroupMember) ([]entity.Grou
 	return _self.repo.QueryAll(gm)
 }
 
-func (_self *GroupMemberService) GetGroupMemberByMe(id uint64) (*entity.GroupMember, *utils.Error) {
-	gm, e := _self.repo.Query(&entity.GroupMember{GId: id, UserId: conf.GetLoginInfo().User.Id})
-	if e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	return gm, nil
-}
-
 func (_self *GroupMemberService) UpdateGroupMemberName(id uint64, name string) *utils.Error {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
 	}
 	_, err := Post("/api/group/updateGroupMemberName", map[string]interface{}{"gId": id, "name": name})
 	if err != nil {
+		log.Error(err)
 		return log.WithError(utils.ERR_NICKNAME_UPDATE_FAIL)
 	}
 	gm, e := _self.repo.Query(&entity.GroupMember{GId: id, UserId: conf.GetLoginInfo().User.Id})

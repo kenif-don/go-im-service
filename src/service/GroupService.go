@@ -311,23 +311,11 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 
 // SelectOneGroupMemberInfo 获取群成员信息
 func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[string]interface{}, *utils.Error) {
-	//如果是当前用户 就什么都不返回
-	if userId == conf.GetLoginInfo().User.Id {
-		return nil, nil
-	}
 	//获取用户信息
 	user, err := NewUserService().SelectOne(userId, false)
 	if err != nil {
 		log.Error(err)
 		return nil, log.WithError(utils.ERR_GET_USER_FAIL)
-	}
-	//用户信息不存在 就查一次
-	if user == nil {
-		user, err = NewUserService().SelectOne(userId, true)
-		if err != nil {
-			log.Error(err)
-			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
-		}
 	}
 	//获取群成员信息
 	gm, e := NewGroupMemberService().repo.Query(&entity.GroupMember{
@@ -342,6 +330,25 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 	data := map[string]interface{}{
 		"userId":  userId,
 		"headImg": user.HeadImg,
+	}
+	//如果是当前用户
+	if userId == conf.GetLoginInfo().User.Id {
+		//如果有群昵称
+		if gm.Name != "" {
+			data["name"] = gm.Name
+			return data, nil
+		}
+		//否则显示用户昵称
+		data["name"] = conf.GetLoginInfo().User.Nickname
+		return data, nil
+	}
+	//用户信息不存在 就查一次
+	if user == nil {
+		user, err = NewUserService().SelectOne(userId, true)
+		if err != nil {
+			log.Error(err)
+			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
+		}
 	}
 	//有群昵称
 	if gm != nil && gm.Name != "" {
