@@ -27,6 +27,46 @@ func NewFriendService() *FriendService {
 		repo: repository.NewFriendRepo(),
 	}
 }
+func (_self *FriendService) IsFriend(id uint64) (*entity.Friend, *utils.Error) {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return nil, log.WithError(utils.ERR_NOT_LOGIN)
+	}
+	//先从本地获取
+	friend, e := _self.repo.Query(&entity.Friend{Me: conf.GetLoginInfo().User.Id, He: id})
+	if e != nil {
+		return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+	}
+	if friend == nil {
+		resultDTO, err := Post("/api/friend/selectOne", map[string]uint64{"he": id, "me": conf.GetLoginInfo().User.Id})
+		if err != nil {
+			return nil, log.WithError(err)
+		}
+		if resultDTO.Data == nil {
+			return nil, nil
+		}
+		var fa entity.Friend
+		e := util.Str2Obj(resultDTO.Data.(string), &fa)
+		if e != nil {
+			return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+		}
+		if fa.Id != 0 {
+			//修改好友信息
+			e := _self.repo.Save(&fa)
+			if e != nil {
+				log.Error(e)
+				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+			}
+			//保存用户信息 -- 这里也是返回服务器最新的用户信息 不用再去调用userService中的selectOne进行更新
+			e = NewUserService().Save(fa.HeUser)
+			if e != nil {
+				log.Error(e)
+				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+			}
+		}
+		return &fa, nil
+	}
+	return friend, nil
+}
 
 // SelectOne 获取好友 逻辑： 先从本地获取 获取失败或需要刷新 则从远程获取
 func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, *utils.Error) {

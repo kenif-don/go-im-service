@@ -18,7 +18,7 @@ func IsFriend(data []byte) []byte {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
 	friendService := service.NewFriendService()
-	friend, err := friendService.SelectOne(req.Id, false)
+	friend, err := friendService.IsFriend(req.Id)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}

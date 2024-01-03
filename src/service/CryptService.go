@@ -116,9 +116,7 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 	if conf.Conf.ChatId != target {
 		return nil
 	}
-	log.Debugf("消息编号：%s", no)
 	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
-	log.Debugf("消息内容：%v", message)
 	if err != nil || message == nil {
 		log.Error(err)
 		return log.WithError(utils.ERR_DECRYPT_FAIL)
