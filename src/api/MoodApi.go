@@ -21,13 +21,7 @@ func AddMood(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // DeleteMood 删除动态
@@ -44,13 +38,7 @@ func DeleteMood(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_DELETE_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // SelectOneMood 获取单个动态用于回复时更新
@@ -67,14 +55,7 @@ func SelectOneMood(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_SELECT_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(result, resp)
 }
 
 // PagingMood 分页获取动态 userId可以只看某人
@@ -91,14 +72,7 @@ func PagingMood(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_SELECT_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(result, resp)
 }
 
 // AddReply 添加动态回复
@@ -115,11 +89,5 @@ func AddReply(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_REPLY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }

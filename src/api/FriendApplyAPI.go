@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
-	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -20,18 +19,11 @@ func UpdateFriendApply(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	friendApplyService := service.NewFriendApplyService()
-	err := friendApplyService.Update(req.Id, int(req.State))
+	err := service.NewFriendApplyService().Update(req.Id, int(req.State))
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func SelectFriendApplyNotOperated() []byte {
 	resp := &api.ResultDTOResp{}
@@ -43,18 +35,7 @@ func SelectFriendApplyNotOperated() []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(fas)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(fas, resp)
 }
 func SelectAllFriendApply() []byte {
 	resp := &api.ResultDTOResp{}
@@ -66,18 +47,7 @@ func SelectAllFriendApply() []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(fas)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(fas, resp)
 }
 func AddFriend(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -93,11 +63,5 @@ func AddFriend(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }

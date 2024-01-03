@@ -391,13 +391,7 @@ func LoginPwd2(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 func Register(data []byte) []byte {
@@ -410,11 +404,5 @@ func Register(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }

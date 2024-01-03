@@ -22,14 +22,8 @@ func ValidateGroupNeedPassword(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Body = service.NewGroupService().NeedPassword(req.Type, req.Target)
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	obj := service.NewGroupService().NeedPassword(req.Type, req.Target)
+	return SyncPutSuccess(obj, resp)
 }
 func Decrypt(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -44,13 +38,7 @@ func Decrypt(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // DelChatMsg 删除双方聊天消息
@@ -68,13 +56,7 @@ func DelChatMsg(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // DelLocalChatMsg 删除聊天消息
@@ -92,13 +74,7 @@ func DelLocalChatMsg(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func ImReConnect() []byte {
 	resp := &api.ResultDTOResp{}
@@ -106,13 +82,7 @@ func ImReConnect() []byte {
 	if e == nil {
 		return SyncPutErr(utils.ERR_NET_FAIL, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // DelLocalChat 删除本地聊天记录
@@ -130,13 +100,7 @@ func DelLocalChat(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_DEL_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // DelChat 删除双方聊天记录
@@ -154,13 +118,7 @@ func DelChat(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_DEL_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func GetChats() []byte {
 	resp := &api.ResultDTOResp{}
@@ -172,18 +130,7 @@ func GetChats() []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(chats)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_OPEN_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(chats, resp)
 }
 func OpenChat(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -198,18 +145,7 @@ func OpenChat(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(chat)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_OPEN_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(chat, resp)
 }
 func SendMsg(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -234,13 +170,7 @@ func SendMsg(data []byte) []byte {
 			}
 		}
 	}()
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_SEND_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 
 // GetMsgs 分页获取消息
@@ -258,30 +188,13 @@ func GetMsgs(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(msgs)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(msgs, resp)
 }
 func CurrentTime() []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = util.Uint642Str(service.NewMessageService().CurrentTime())
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	t := util.Uint642Str(service.NewMessageService().CurrentTime())
+	return SyncPutSuccess(t, resp)
 }

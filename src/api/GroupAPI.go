@@ -21,18 +21,7 @@ func GetGroupMemberInfo(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(f)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(f, resp)
 }
 func DeleteGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -47,13 +36,7 @@ func DeleteGroup(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func QuitGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -68,13 +51,7 @@ func QuitGroup(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func UpdateGroupHeadImg(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -89,13 +66,7 @@ func UpdateGroupHeadImg(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func UpdateGroupNotice(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -110,13 +81,7 @@ func UpdateGroupNotice(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func UpdateGroupName(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -131,13 +96,7 @@ func UpdateGroupName(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func SelectOneGroup(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -152,18 +111,7 @@ func SelectOneGroup(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
 	}
-	obj, e := util.Obj2Str(group)
-	if e != nil {
-		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = obj
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(group, resp)
 }
 func GetGroupMembers(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -178,18 +126,7 @@ func GetGroupMembers(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
 	}
-	obj, e := util.Obj2Str(members)
-	if e != nil {
-		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = obj
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(members, resp)
 }
 
 // GetGroups 获取群
@@ -202,18 +139,7 @@ func GetGroups() []byte {
 	if e != nil {
 		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
 	}
-	obj, e := util.Obj2Str(groups)
-	if e != nil {
-		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = obj
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(groups, resp)
 }
 
 // CreateGroup 创建群聊
@@ -230,18 +156,7 @@ func CreateGroup(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	obj, e := util.Obj2Str(group)
-	if e != nil {
-		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = obj
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(group, resp)
 }
 
 // InviteInGroup 邀请进群
@@ -258,11 +173,5 @@ func InviteInGroup(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_ADD_MOOD_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }

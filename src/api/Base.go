@@ -3,6 +3,8 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/util"
+	"fmt"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -29,10 +31,35 @@ type MessageListener interface {
 	OnConnectChange(state string)
 }
 
-// SyncPutErr 同步导出
+// SyncPutErr 错误同步导出
 func SyncPutErr(err *utils.Error, resp *api.ResultDTOResp) []byte {
 	resp.Code = uint32(api.ResultDTOCode_ERROR)
 	resp.Msg = err.MsgZh
 	result, _ := proto.Marshal(resp)
+	return result
+}
+
+// SyncPutSuccess 统一返回成功的封装
+func SyncPutSuccess(obj interface{}, resp *api.ResultDTOResp) []byte {
+	if obj != nil {
+		switch obj.(type) {
+		case string:
+			resp.Body = obj.(string)
+			break
+		default:
+			str, e := util.Obj2Str(obj)
+			if e != nil {
+				return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
+			}
+			resp.Body = str
+		}
+	}
+	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	resp.Msg = "success"
+	fmt.Println(resp.Body)
+	result, e := proto.Marshal(resp)
+	if e != nil {
+		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
+	}
 	return result
 }

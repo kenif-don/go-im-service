@@ -22,10 +22,7 @@ func InitConfig(data []byte, listener MessageListener) []byte {
 		ApiHost:    req.ApiHost,
 		WsHost:     req.WsHost,
 	})
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, _ := proto.Marshal(resp)
 	service.SetListener(listener)
 	im.StartIM()
-	return res
+	return SyncPutSuccess(nil, resp)
 }

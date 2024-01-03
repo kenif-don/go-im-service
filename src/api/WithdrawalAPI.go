@@ -17,14 +17,7 @@ func GetWithdrawalFee() []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(result, resp)
 }
 
 // AddWithdrawal 添加提现
@@ -41,11 +34,5 @@ func AddWithdrawal(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_RECHARGE_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }

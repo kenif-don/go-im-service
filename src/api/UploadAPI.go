@@ -21,9 +21,5 @@ func Upload(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = url
-	res, _ := proto.Marshal(resp)
-	return res
+	return SyncPutSuccess(url, resp)
 }

@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
-	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -22,18 +21,10 @@ func IsFriend(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
 	if friend != nil {
-		resp.Body = "1"
-	} else {
-		resp.Body = "0"
+		return SyncPutSuccess(1, resp)
 	}
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(0, resp)
 }
 
 func DelFriend(data []byte) []byte {
@@ -45,18 +36,11 @@ func DelFriend(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	friendService := service.NewFriendService()
-	err := friendService.DelFriend(req.Id)
+	err := service.NewFriendService().DelFriend(req.Id)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }
 func SelectOneFriend(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -72,41 +56,18 @@ func SelectOneFriend(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(f)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(f, resp)
 }
 func SelectAllFriend() []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
-	friendService := service.NewFriendService()
-	fs, err := friendService.SelectAll()
+	fs, err := service.NewFriendService().SelectAll()
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	result, e := util.Obj2Str(fs)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(fs, resp)
 }
 func UpdateFriendName(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
@@ -117,16 +78,9 @@ func UpdateFriendName(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	friendService := service.NewFriendService()
-	err := friendService.UpdateName(req.Id, req.Name)
+	err := service.NewFriendService().UpdateName(req.Id, req.Name)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_GET_USER_INFO_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(nil, resp)
 }

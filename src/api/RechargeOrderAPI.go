@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
-	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -15,18 +14,7 @@ func GetRechargeTypes() []byte {
 		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
 	}
 	obj := service.NewRechargeOrderService().GetTypes()
-	result, e := util.Obj2Str(obj)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(obj, resp)
 }
 
 // AddRechargeOrder 充值
@@ -43,12 +31,5 @@ func AddRechargeOrder(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
-	resp.Body = result
-	res, e := proto.Marshal(resp)
-	if e != nil {
-		return SyncPutErr(utils.ERR_RECHARGE_FAIL, resp)
-	}
-	return res
+	return SyncPutSuccess(result, resp)
 }
