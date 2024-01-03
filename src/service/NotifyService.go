@@ -102,10 +102,16 @@ func (_self *ChatService) VoiceNotify(message *entity.Message) *utils.Error {
 
 // NotifySendReceive 通知消息是否发生成功
 func NotifySendReceive(no string, send int) *utils.Error {
+	if no == "" {
+		return nil
+	}
 	//根据No获取消息记录
 	message, err := NewMessageService().SelectOne(&entity.Message{No: no})
 	if err != nil {
 		return log.WithError(err)
+	}
+	if message == nil {
+		return nil
 	}
 	//修改消息状态
 	if message != nil {
