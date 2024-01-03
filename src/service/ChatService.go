@@ -168,13 +168,13 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	if lastMsg != nil {
-		//解密
-		data, err := Decrypt(chat.Type, chat.TargetId, "", lastMsg.Data)
-		if err != nil {
-			chat.LastMsg = util.GetTextErrMsg()
-		} else {
-			chat.LastMsg = data
-		}
+		//解密 因为聊天页不再显示具体内容 所以这里无需再进行解密
+		//data, err := Decrypt(chat.Type, chat.TargetId, "", lastMsg.Data)
+		//if err != nil {
+		//	chat.LastMsg = util.GetTextErrMsg()
+		//} else {
+		chat.LastMsg = lastMsg.Data
+		//}
 		chat.LastTime = lastMsg.Time
 	}
 	return nil
