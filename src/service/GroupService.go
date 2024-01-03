@@ -233,7 +233,6 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 		}
 	}()
 	err := func() *utils.Error {
-		log.Debugf("del local group %d", id)
 		//删除群
 		e := _self.repo.Delete(&entity.Group{
 			Id: id,
@@ -242,7 +241,6 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		log.Debugf("del local group member %d", id)
 		//删除群成员
 		e = NewGroupMemberService().repo.Delete(&entity.GroupMember{
 			GId: id,
@@ -251,14 +249,11 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		log.Debugf("del local chat %d", id)
 		//删除聊天
-		e = NewChatService().DelLocalChat("group", id)
-		if e != nil {
-			log.Error(e)
+		err := NewChatService().DelLocalChat("group", id)
+		if err != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-
 		e = tx.Commit().Error
 		if e != nil {
 			log.Error(e)
