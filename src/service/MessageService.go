@@ -278,6 +278,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		if err != nil {
 			return log.WithError(err)
 		}
+		break
 	case 998: //被删除本地聊天记录
 		log.Debugf("接收到系统指令 998 type: %v target: %v", protocol.Type, protocol.Data)
 		data := make(map[string]string)
