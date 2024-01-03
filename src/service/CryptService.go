@@ -46,10 +46,11 @@ func GetSecret(target uint64, tp string) (string, *utils.Error) {
 			if group == nil {
 				return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
 			}
-			//加密群 并且输了密码 才返回正确的秘钥 否则可能返回一个错误的秘钥
-			log.Debugf("target: %d 密码 :%s", target, conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)])
-			if group.Type == 2 && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != "" {
-				log.Debugf("target: %d 有密码 :%s", target, conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)])
+			//加密群
+			if group.Type == 2 {
+				if conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] == "" {
+					return "", log.WithError(utils.ERR_ENTER_PASSWORD)
+				}
 				secret := util.MD5("group_" + conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)])
 				Keys[key] = secret
 			} else {
@@ -98,7 +99,7 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 	md.Content, err = util.DecryptAes(md.Content, secret)
 	//解密失败 直接返回解密失败
 	if err != nil {
-		log.Debugf("解密失败: %s", no)
+		log.Debugf("解密失败: tp:%s target:%d no:%s content:%s", tp, target, no, content)
 		return "", log.WithError(err)
 	}
 	data, e := util.Obj2Str(md)

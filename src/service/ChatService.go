@@ -49,11 +49,11 @@ func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
+	//清除秘钥缓存
+	Keys[tp+"_"+util.Uint642Str(target)] = ""
 	//根据类型查询数据
 	switch tp {
 	case "friend":
-		//清除秘钥缓存
-		Keys["friend"+"_"+util.Uint642Str(target)] = ""
 		break
 	case "group":
 		//如果是加密群
