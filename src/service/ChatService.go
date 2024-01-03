@@ -202,6 +202,7 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		chat.UserId = conf.GetLoginInfo().User.Id
 		e := _self.repo.Delete(&chat)
 		if e != nil {
+			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
 		// 删除聊天记录
