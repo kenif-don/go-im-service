@@ -303,11 +303,9 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 	//有群昵称
 	if gm != nil && gm.Name != "" {
 		data["name"] = gm.Name
-		log.Debugf("群昵称:%s", gm.Name)
 		return data, nil
 	}
 	//没有群昵称 获取好友信息
-	log.Debugf("没有群昵称 获取好友信息 userId:%v", userId)
 	friend, err := NewFriendService().IsFriend(userId)
 	if err != nil {
 		log.Error(err)
@@ -315,11 +313,9 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 	}
 	if friend != nil && friend.Name != "" {
 		data["name"] = friend.Name
-		log.Debugf("好友 %v 好友昵称:%s", friend, friend.Name)
 		return data, nil
 	}
 	//没有好友信息
 	data["name"] = user.Nickname
-	log.Debugf("用户昵称:%s", user.Nickname)
 	return data, nil
 }
