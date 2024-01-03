@@ -277,7 +277,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 	case 998: //被删除本地聊天记录
 		data := make(map[string]string)
-		log.Debugf("被删除本地聊天记录%v", protocol.Data)
 		e := util.Str2Obj(protocol.Data.(string), &data)
 		if e != nil {
 			log.Error(e)
@@ -287,10 +286,10 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		if err != nil {
 			return log.WithError(err)
 		}
+		log.Debugf("删除本地聊天记录 type: %v target: %v", data["type"], data["target"])
 		break
 	case 999: //被删除聊天和记录
 		data := make(map[string]string)
-		log.Debugf("被删除聊天和记录%v", protocol.Data)
 		e := util.Str2Obj(protocol.Data.(string), &data)
 		if e != nil {
 			log.Error(e)
@@ -300,6 +299,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		if err != nil {
 			return log.WithError(err)
 		}
+		log.Debugf("删除本地聊天和记录 type: %v target: %v", data["type"], data["target"])
 		break
 	case 1: // 接收到聊天消息
 		//如果是别人发给自己的 就存起来 如果是自己发的 再发送时已经进行了存储
