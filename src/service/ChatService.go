@@ -195,6 +195,7 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		}
 	}()
 	err := func() *utils.Error {
+		log.Debugf("del local chat %s %d", tp, target)
 		// 删除聊天
 		var chat entity.Chat
 		chat.Type = tp
@@ -204,6 +205,7 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		log.Debugf("del local message %s %d", tp, target)
 		// 删除聊天记录
 		err := NewMessageService().DelLocalChatMsg(tp, target)
 		if err != nil {
@@ -214,6 +216,7 @@ func (_self *ChatService) DelLocalChat(tp string, target uint64) *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		log.Debugf("提交事务111111")
 		return nil
 	}()
 	if err != nil {

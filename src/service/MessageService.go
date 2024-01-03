@@ -81,6 +81,7 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 		}
 	}()
 	err := func() *utils.Error {
+		log.Debugf("删本地消息 tp:%s target:%d", tp, target)
 		//自己删除自己发送给对方的 或对方发给自己的
 		message := &entity.Message{
 			Type:     tp,
@@ -104,11 +105,13 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 				return log.WithError(utils.ERR_DEL_FAIL)
 			}
 		}
+		log.Debugf("通知删除聊天 tp:%s target:%d", tp, target)
 		//如果当前打开的会话是要被删除聊天记录的 就进行通知
 		err := DelMsgNotify(tp, target)
 		if err != nil {
 			return log.WithError(err)
 		}
+		log.Debugf("已通知删除聊天 提交事务 tp:%s target:%d", tp, target)
 		e = tx.Commit().Error
 		if e != nil {
 			log.Error(e)

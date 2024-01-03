@@ -55,6 +55,7 @@ func FileNotify(target uint64, no, content string) *utils.Error {
 }
 func DelMsgNotify(tp string, target uint64) *utils.Error {
 	if conf.Conf.ChatId != target {
+		log.Error("没有打开聊天")
 		return nil
 	}
 	if Listener != nil {

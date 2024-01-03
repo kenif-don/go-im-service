@@ -216,6 +216,7 @@ func (_self *GroupService) Delete(id uint64) *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		log.Debugf("提交事务33333")
 		return nil
 	}()
 	if err != nil {
@@ -257,11 +258,13 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+
 		e = tx.Commit().Error
 		if e != nil {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
+		log.Debugf("提交事务成功22222")
 		return nil
 	}()
 	if err != nil {
