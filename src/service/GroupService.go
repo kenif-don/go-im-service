@@ -158,6 +158,14 @@ func (_self *GroupService) Update(id uint64, data string, updateType int) *utils
 		if err != nil {
 			return log.WithError(err)
 		}
+		//修改聊天头像
+		chat, e := NewChatService().repo.Query(&entity.Chat{Type: "group", TargetId: id, UserId: conf.GetLoginInfo().User.Id})
+		if e != nil {
+			log.Error(e)
+			return log.WithError(utils.ERR_GROUP_GET_FAIL)
+		}
+		chat.HeadImg = data
+		e = NewChatService().repo.Save(chat)
 		break
 	}
 	e = _self.repo.Save(group)
