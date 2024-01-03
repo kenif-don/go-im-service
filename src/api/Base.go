@@ -4,7 +4,6 @@ import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/util"
-	"fmt"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -54,9 +53,11 @@ func SyncPutSuccess(obj interface{}, resp *api.ResultDTOResp) []byte {
 			resp.Body = str
 		}
 	}
+	if resp.Body == "null" {
+		resp.Body = ""
+	}
 	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	resp.Msg = "success"
-	fmt.Println(resp.Body)
 	result, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)
