@@ -46,9 +46,9 @@ func GetSecret(target uint64, tp string) (string, *utils.Error) {
 			if group == nil {
 				return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
 			}
-			//加密群
-			if group.Type == 2 {
-				secret := util.MD5("group_" + group.Password)
+			//加密群 并且输了密码 才返回正确的秘钥 否则可能返回一个错误的秘钥
+			if group.Type == 2 && conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)] != "" {
+				secret := util.MD5("group_" + conf.Conf.Pwds[tp+"_"+util.Uint642Str(target)])
 				Keys[key] = secret
 			} else {
 				secret := util.MD5("group_" + strconv.FormatUint(group.Id, 10))
