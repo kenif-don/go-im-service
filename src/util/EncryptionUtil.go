@@ -133,10 +133,10 @@ func DecryptAes2(data []byte, key string) ([]byte, *utils.Error) {
 	decrypted := make([]byte, len(data))
 	for bs, be := 0, cipher.BlockSize(); bs < len(data); bs, be = bs+cipher.BlockSize(), be+cipher.BlockSize() {
 		if bs > be {
-			return nil, log.WithError(utils.ERR_ENCRYPT_FAIL)
+			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
 		if be > len(data) {
-			return nil, log.WithError(utils.ERR_ENCRYPT_FAIL)
+			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
 		}
 		cipher.Decrypt(decrypted[bs:be], data[bs:be])
 	}
@@ -146,7 +146,7 @@ func DecryptAes2(data []byte, key string) ([]byte, *utils.Error) {
 		trim = len(decrypted) - int(decrypted[len(decrypted)-1])
 	}
 	if trim < 0 || trim > len(decrypted) {
-		return nil, log.WithError(utils.ERR_ENCRYPT_FAIL)
+		return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
 	//再这里引起过解密失败,所以注释掉
 	//if !utf8.Valid(decrypted[:trim]) {

@@ -94,13 +94,13 @@ func Decrypt(tp string, target uint64, no, content string) (string, *utils.Error
 		return "", err
 	}
 	md.Content, err = util.DecryptAes(md.Content, secret)
-	data, e := util.Obj2Str(md)
-	if e != nil {
-		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
-	}
 	//解密失败 直接返回解密失败
 	if err != nil {
 		return "", log.WithError(err)
+	}
+	data, e := util.Obj2Str(md)
+	if e != nil {
+		return "", log.WithError(utils.ERR_DECRYPT_FAIL)
 	}
 	if md.Type < 2 || md.Type > 5 {
 		return data, nil
