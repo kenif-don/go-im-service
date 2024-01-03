@@ -3,6 +3,7 @@ package api
 import (
 	api "IM-Service/build/generated/service/v1"
 	utils "IM-Service/src/configs/err"
+	"IM-Service/src/configs/log"
 	"IM-Service/src/service"
 	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
@@ -21,6 +22,7 @@ func GetGroupMemberInfo(data []byte) []byte {
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
+	log.Debugf("参数 gId:%d userId:%d,返回:%+v", req.GId, req.UserId, f)
 	return SyncPutSuccess(f, resp)
 }
 func DeleteGroup(data []byte) []byte {

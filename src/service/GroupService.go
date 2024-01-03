@@ -291,6 +291,7 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 	gm, e := NewGroupMemberService().repo.Query(&entity.GroupMember{
 		GId:    gId,
 		UserId: userId,
+		State:  2,
 	})
 	if e != nil {
 		log.Error(e)

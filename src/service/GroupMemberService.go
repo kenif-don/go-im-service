@@ -26,9 +26,6 @@ func NewGroupMemberService() *GroupMemberService {
 		repo: repository.NewGroupMemberRepo(),
 	}
 }
-func QueryGroupMember(obj *entity.GroupMember, repo IGroupMemberRepo) (*entity.GroupMember, error) {
-	return repo.Query(obj)
-}
 
 // SelectMembers 从服务器获取群成员
 func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]entity.GroupMember, *utils.Error) {
@@ -82,5 +79,6 @@ func (_self *GroupMemberService) QueryAll(gm *entity.GroupMember) ([]entity.Grou
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return []entity.GroupMember{}, nil
 	}
+	gm.State = 2
 	return _self.repo.QueryAll(gm)
 }
