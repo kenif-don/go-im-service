@@ -307,6 +307,7 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 		return data, nil
 	}
 	//没有群昵称 获取好友信息
+	log.Debugf("没有群昵称 获取好友信息 userId:%v", userId)
 	friend, err := NewFriendService().IsFriend(userId)
 	if err != nil {
 		log.Error(err)
