@@ -314,7 +314,7 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 	}
 	if friend != nil && friend.Name != "" {
 		data["name"] = friend.Name
-		log.Debugf("好友昵称:%s", friend.Name)
+		log.Debugf("好友 %v 好友昵称:%s", friend, friend.Name)
 		return data, nil
 	}
 	//没有好友信息
