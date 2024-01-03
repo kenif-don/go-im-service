@@ -69,8 +69,8 @@ func Encrypt(target uint64, tp, content string) (string, *utils.Error) {
 	if err != nil {
 		return "", err
 	}
-	data, e := util.EncryptAes(content, secret)
-	if e != nil {
+	data, err := util.EncryptAes(content, secret)
+	if err != nil {
 		return "", log.WithError(utils.ERR_ENCRYPT_FAIL)
 	}
 	return data, nil
