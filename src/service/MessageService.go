@@ -105,13 +105,11 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 				return log.WithError(utils.ERR_DEL_FAIL)
 			}
 		}
-		log.Debugf("通知删除聊天 tp:%s target:%d", tp, target)
 		//如果当前打开的会话是要被删除聊天记录的 就进行通知
 		err := DelMsgNotify(tp, target)
 		if err != nil {
 			return log.WithError(err)
 		}
-		log.Debugf("已通知删除聊天 提交事务 tp:%s target:%d", tp, target)
 		e = tx.Commit().Error
 		if e != nil {
 			log.Error(e)
@@ -316,6 +314,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 1: // 接收到聊天消息
+		log.Debugf("接收到聊天消息:%s", protocol)
 		//如果是别人发给自己的 就存起来 如果是自己发的 再发送时已经进行了存储
 		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
 			messageService := NewMessageService()
