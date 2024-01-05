@@ -333,8 +333,11 @@ func AutoLogin() []byte {
 		if conf.GetLoginInfo().InputPwd2 == 1 {
 			//需要输入二级密码
 			resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
+			//需要输入二级密码
+			conf.UpdateInputPwd2(1)
 		} else {
 			resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+			conf.UpdateInputPwd2(-1)
 		}
 		//已经登录--如果已经登录 再链接长连接成功后 会进行一次登录 这里不处理
 	} else {

@@ -25,3 +25,20 @@ func TestGetGroupMemberInfo(t *testing.T) {
 	log.Debug(result.Body)
 	time.Sleep(time.Hour)
 }
+
+func TestGetGroupMembers(t *testing.T) {
+	TestAutoLogin(t)
+	//time.Sleep(time.Second * 5)
+	//oldReq := &api.GroupReq{
+	//	Id: 24,
+	//}
+	//req, _ := proto.Marshal(oldReq)
+	//resp := GetGroupMembers(req)
+	//result := &api.ResultDTOResp{}
+	//err := proto.Unmarshal(resp, result)
+	//if err != nil {
+	//	log.Error(err)
+	//}
+	//log.Debug(result.Body)
+	time.Sleep(time.Hour)
+}

@@ -187,6 +187,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		return log.WithError(err)
 	}
 	var offlineBills = &[]entity.OfflineBill{}
+	log.Debugf("resultDTO: %v", resultDTO.Data)
 	e := util.Str2Obj(resultDTO.Data.(string), offlineBills)
 	if e != nil {
 		log.Error(e)

@@ -348,10 +348,10 @@ func (_self *UserService) LoginInfo() *utils.Error {
 			if err != nil {
 				return log.WithError(err)
 			}
-			e = _self.Save(&user)
-			if e != nil {
-				return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
-			}
+		}
+		e = _self.Save(&user)
+		if e != nil {
+			return log.WithError(utils.ERR_GET_USER_INFO_FAIL)
 		}
 		//覆盖登录文件
 		conf.PutLoginInfo(user)
