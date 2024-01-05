@@ -144,7 +144,7 @@ func UploadData(path string, data []byte, secret string) (string, *utils.Error) 
 		ACL:    aws.String("public-read"),
 	})
 	if e != nil {
-		log.Error(err)
+		log.Error(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
 	// 获取预览URL

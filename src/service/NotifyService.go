@@ -109,9 +109,6 @@ func NotifySendReceive(no string, send int) *utils.Error {
 	if err != nil {
 		return log.WithError(err)
 	}
-	if message == nil {
-		return nil
-	}
 	//修改消息状态
 	if message != nil {
 		message.Send = send
@@ -121,7 +118,11 @@ func NotifySendReceive(no string, send int) *utils.Error {
 		}
 	}
 	if Listener != nil {
-		res, e := util.Obj2Str(map[string]interface{}{"no": no, "send": send, "type": message.Type})
+		m := map[string]interface{}{"no": no, "send": send, "type": 0}
+		if message != nil {
+			m["type"] = message.Type
+		}
+		res, e := util.Obj2Str(m)
 		if e != nil {
 			log.Error(e)
 			return log.WithError(e)
