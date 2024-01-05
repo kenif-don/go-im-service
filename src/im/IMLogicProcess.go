@@ -161,7 +161,7 @@ func (_self *LogicProcess) Logout() {
 func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 	//此操作需要登录 但是当前链接未登录 直接重启
 	if protocol.Ack == 500 {
-		log.Error("链接报错：%s", protocol.Data)
+		log.Error("链接报错 链接重启：%s", protocol.Data)
 		err := conf.Conf.Client.Reconnect(websocket.New())
 		if err == nil {
 			return
