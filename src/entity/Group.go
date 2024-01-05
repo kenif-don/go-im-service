@@ -14,13 +14,13 @@ type Group struct {
 	HeUser *User `gorm:"-" json:"heUser"`
 }
 type GroupMember struct {
-	Id     uint64 `gorm:"unique;<-:create" json:"id"`
-	GId    uint64 `json:"gId"`
-	UserId uint64 `json:"userId"`
-	Type   int    `json:"type"`
-	Name   string `json:"name"`
-	State  int    `json:"state"`
-	Remark string `json:"remark"`
-
-	User *User `gorm:"-" json:"User"`
+	Id      uint64 `gorm:"unique;<-:create" json:"id"`
+	GId     uint64 `json:"gId"`
+	UserId  uint64 `json:"userId"`
+	Type    int    `json:"type"`
+	Name    string `json:"name"`
+	State   int    `json:"state"`
+	Remark  string `json:"remark"`
+	HeadImg string `json:"headImg" gorm:"-"`
+	User    *User  `gorm:"-" json:"User"`
 }

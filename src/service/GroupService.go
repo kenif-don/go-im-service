@@ -342,7 +342,7 @@ func (_self *GroupService) SelectOneGroupMemberInfo(gId, userId uint64) (map[str
 	//如果是当前用户
 	if userId == conf.GetLoginInfo().User.Id {
 		//如果有群昵称
-		if gm.Name != "" {
+		if gm != nil && gm.Name != "" {
 			data["name"] = gm.Name
 			return data, nil
 		}
