@@ -103,18 +103,39 @@ func (_self *GroupService) SelectAll() ([]entity.Group, *utils.Error) {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
 	}
-	if gs != nil && len(gs) > 0 {
-		//保存到数据库
-		for i := 0; i < len(gs); i++ {
-			gs[i].UserId = conf.GetLoginInfo().User.Id
-			e := _self.repo.Save(&gs[i])
-			if e != nil {
-				log.Error(e)
-				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+	tx := _self.repo.BeginTx()
+	if e := tx.Error; e != nil {
+		log.Error(e)
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	r, err := func() ([]entity.Group, *utils.Error) {
+		if gs != nil && len(gs) > 0 {
+			//保存到数据库
+			for i := 0; i < len(gs); i++ {
+				gs[i].UserId = conf.GetLoginInfo().User.Id
+				e := _self.repo.Save(&gs[i])
+				if e != nil {
+					log.Error(e)
+					return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+				}
 			}
 		}
+		e = tx.Commit().Error
+		if e != nil {
+			log.Error(e)
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
 		return gs, nil
+	}()
+	if err != nil {
+		tx.Rollback()
 	}
+	return r, err
 }
 
 func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group, *utils.Error) {
