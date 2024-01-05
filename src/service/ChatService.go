@@ -183,7 +183,6 @@ func (_self *ChatService) coverLastMsg(chat *entity.Chat) *utils.Error {
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	if lastMsg != nil {
-		log.Debugf("聊天: %s lastMsg: %s msg:%s", chat.Name, lastMsg.Data, lastMsg)
 		//解密 因为聊天页不再显示具体内容 所以这里无需再进行解密
 		//data, err := Decrypt(chat.Type, chat.TargetId, "", lastMsg.Data)
 		//if err != nil {

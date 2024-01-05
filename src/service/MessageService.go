@@ -318,7 +318,6 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 		}
 		break
 	case 1: // 接收到聊天消息
-		log.Debugf("接收到聊天消息:%s", protocol)
 		//如果是别人发给自己的 就存起来 如果是自己发的 再发送时已经进行了存储
 		if util.Str2Uint64(protocol.From) != conf.GetLoginInfo().User.Id {
 			messageService := NewMessageService()
