@@ -187,7 +187,6 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		return log.WithError(err)
 	}
 	var offlineBills = &[]entity.OfflineBill{}
-	log.Debugf("resultDTO: %v", resultDTO.Data)
 	e := util.Str2Obj(resultDTO.Data.(string), offlineBills)
 	if e != nil {
 		log.Error(e)
@@ -217,7 +216,6 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 				return log.WithError(err)
 			}
 		}
-		log.Debugf("要删除的ids: %v", ids)
 		if len(ids) == 0 {
 			return nil
 		}

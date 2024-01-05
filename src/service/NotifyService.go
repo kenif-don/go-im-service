@@ -16,7 +16,7 @@ func OfflineMessageNotify() {
 	go func() {
 		for {
 			//如果没有私钥 或者还未登录 就下一次循环
-			if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.PrivateKey == "" || conf.GetLoginInfo().InputPwd2 == 0 {
+			if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.PrivateKey == "" {
 				time.Sleep(time.Second * 1)
 				continue
 			}
