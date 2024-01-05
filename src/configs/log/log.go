@@ -51,7 +51,7 @@ func loggerInit(dir string, logLevel uint32) *Logger {
 	logger.SetLevel(logrus.Level(logLevel))
 
 	var formatter logrus.Formatter = &nested.Formatter{
-		TimestampFormat: "2006-01-02 15:04:05.000",
+		TimestampFormat: "01-02 15:04:05",
 		HideKeys:        true,
 		FieldsOrder:     []string{"FilePath"},
 	}

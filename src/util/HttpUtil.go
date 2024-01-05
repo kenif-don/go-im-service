@@ -170,8 +170,7 @@ func GetFileType(path string, data []byte) (string, *utils.Error) {
 	buffer := data[:261]
 	kind, _ := filetype.Match(buffer)
 	if kind == filetype.Unknown {
-		log.Debug("未知文件类型")
-		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+		return filepath.Ext(path), nil
 	}
 	//以斜杠分割 取最后一个
 	tp := kind.MIME.Value

@@ -81,40 +81,40 @@ func (_self *GroupService) SelectAll() ([]entity.Group, *utils.Error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return []entity.Group{}, nil
 	}
-	groups, e := _self.repo.QueryAll(&entity.Group{UserId: conf.GetLoginInfo().User.Id})
+	//groups, e := _self.repo.QueryAll(&entity.Group{UserId: conf.GetLoginInfo().User.Id})
+	//if e != nil {
+	//	log.Error(e)
+	//	return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
+	//}
+	//if groups != nil && len(groups) != 0 {
+	//	return groups, nil
+	//}
+	resultDTO, err := Post("/api/group/list", nil)
+	if err != nil {
+		return nil, log.WithError(err)
+	}
+	//如果服务器获取失败
+	if resultDTO.Data == nil {
+		return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
+	}
+	var gs []entity.Group
+	e := util.Str2Obj(resultDTO.Data.(string), &gs)
 	if e != nil {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
 	}
-	if groups == nil || len(groups) == 0 {
-		resultDTO, err := Post("/api/group/list", nil)
-		if err != nil {
-			return nil, log.WithError(err)
-		}
-		//如果服务器获取失败
-		if resultDTO.Data == nil {
-			return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
-		}
-		var gs []entity.Group
-		e := util.Str2Obj(resultDTO.Data.(string), &gs)
-		if e != nil {
-			log.Error(e)
-			return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
-		}
-		if gs != nil && len(gs) > 0 {
-			//保存到数据库
-			for i := 0; i < len(gs); i++ {
-				gs[i].UserId = conf.GetLoginInfo().User.Id
-				e := _self.repo.Save(&gs[i])
-				if e != nil {
-					log.Error(e)
-					return nil, log.WithError(utils.ERR_OPERATION_FAIL)
-				}
+	if gs != nil && len(gs) > 0 {
+		//保存到数据库
+		for i := 0; i < len(gs); i++ {
+			gs[i].UserId = conf.GetLoginInfo().User.Id
+			e := _self.repo.Save(&gs[i])
+			if e != nil {
+				log.Error(e)
+				return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 			}
-			return gs, nil
 		}
+		return gs, nil
 	}
-	return groups, nil
 }
 
 func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group, *utils.Error) {

@@ -121,36 +121,39 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 	return friend, nil
 }
 func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
-	friends, e := _self.repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
-	if e != nil {
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	if len(friends) != 0 {
-		//封装好友信息
-		for i := 0; i < len(friends); i++ {
-			user, err := NewUserService().SelectOne(friends[i].He, false)
-			if err != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			friends[i].HeUser = user
-			if friends[i].Name == "" {
-				friends[i].Name = user.Nickname
-			}
-		}
-		return friends, nil
-	}
+	//friends, e := _self.repo.QueryAll(&entity.Friend{Me: conf.GetLoginInfo().User.Id})
+	//if e != nil {
+	//	return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	//}
+	//if friends !=nil && len(friends) != 0 {
+	//	//封装好友信息
+	//	for i := 0; i < len(friends); i++ {
+	//		user, err := NewUserService().SelectOne(friends[i].He, false)
+	//		if err != nil {
+	//			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	//		}
+	//		friends[i].HeUser = user
+	//		if friends[i].Name == "" {
+	//			friends[i].Name = user.Nickname
+	//		}
+	//	}
+	//	return friends, nil
+	//}
+	// 直接从服务器获取
 	//没查到 就从后台查一次
 	resultDTO, err := Post("/api/friend/selectAll", nil)
 	if err != nil {
 		return nil, log.WithError(err)
 	}
 	var fs []entity.Friend
-	e = util.Str2Obj(resultDTO.Data.(string), &fs)
+	e := util.Str2Obj(resultDTO.Data.(string), &fs)
 	if e != nil || fs == nil {
+		log.Error(e)
 		return []entity.Friend{}, nil
 	}
 	tx := _self.repo.BeginTx()
 	if e := tx.Error; e != nil {
+		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	defer func() {
@@ -163,6 +166,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 		for _, v := range fs {
 			e := _self.repo.Save(&v)
 			if e != nil {
+				log.Error(e)
 				return nil, log.WithError(utils.ERR_QUERY_FAIL)
 			}
 			//保存对应的用户信息
@@ -173,6 +177,7 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 		}
 		e = tx.Commit().Error
 		if e != nil {
+			log.Error(e)
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 		return fs, nil
