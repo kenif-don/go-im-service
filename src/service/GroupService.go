@@ -129,7 +129,7 @@ func (_self *GroupService) SelectOne(target uint64, refresh bool) (*entity.Group
 		}
 		//如果服务器获取失败
 		if resultDTO.Data == nil {
-			return nil, log.WithError(utils.ERR_GROUP_GET_FAIL)
+			return nil, nil
 		}
 		var g entity.Group
 		e := util.Str2Obj(resultDTO.Data.(string), &g)

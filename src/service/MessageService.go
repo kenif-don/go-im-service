@@ -189,10 +189,12 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 	var offlineBills = &[]entity.OfflineBill{}
 	e := util.Str2Obj(resultDTO.Data.(string), offlineBills)
 	if e != nil {
+		log.Error(e)
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	tx := db.NewTransaction().BeginTx()
 	if e := tx.Error; e != nil {
+		log.Error(e)
 		return log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	defer func() {
@@ -321,6 +323,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			var message = &entity.Message{}
 			e := util.Str2Obj(protocol.Data.(string), message)
 			if e != nil {
+				log.Error(e)
 				return log.WithError(e)
 			}
 			//重置userId为当前用户 不然userId就是发送者了
@@ -329,6 +332,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			message.Send = 2
 			e = messageService.repo.Save(message)
 			if e != nil {
+				log.Error(e)
 				return log.WithError(e)
 			}
 			//如果发送者是当前用户打开的聊天目标
@@ -342,6 +346,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				if Listener != nil {
 					res, e := util.Obj2Str(message)
 					if e != nil {
+						log.Error(e)
 						return log.WithError(e)
 					}
 					Listener.OnReceive(res)
@@ -350,6 +355,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			//判断是否存在聊天
 			chat, e := QueryChat(message.Type, util.Str2Uint64(protocol.From), repository.NewChatRepo())
 			if e != nil {
+				log.Error(e)
 				return log.WithError(e)
 			}
 			if chat == nil {
@@ -374,6 +380,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			var message = &entity.Message{}
 			e := util.Str2Obj(protocol.Data.(string), message)
 			if e != nil {
+				log.Error(e)
 				return log.WithError(e)
 			}
 			message.No = protocol.No
@@ -383,11 +390,13 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			message.Send = 2
 			e = messageService.repo.Save(message)
 			if e != nil {
+				log.Error(e)
 				return log.WithError(e)
 			}
 			//判断是否存在聊天
 			chat, e := QueryChat(message.Type, message.TargetId, repository.NewChatRepo())
 			if e != nil {
+				log.Error(e)
 				return log.WithError(e)
 			}
 			if chat == nil {
@@ -415,6 +424,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				if Listener != nil {
 					res, e := util.Obj2Str(message)
 					if e != nil {
+						log.Error(e)
 						return log.WithError(e)
 					}
 					Listener.OnReceive(res)
