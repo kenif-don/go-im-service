@@ -77,18 +77,21 @@ func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]enti
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
-		name, e := util.Obj2Str(m["name"])
-		if e != nil {
-			log.Error(e)
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		if m != nil {
+			log.Debugf("组装群成员: %s", m)
+			name, e := util.Obj2Str(m["name"])
+			if e != nil {
+				log.Error(e)
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+			headImg, e := util.Obj2Str(m["headImg"])
+			if e != nil {
+				log.Error(e)
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+			members[i].Name = name
+			members[i].HeadImg = headImg
 		}
-		headImg, e := util.Obj2Str(m["headImg"])
-		if e != nil {
-			log.Error(e)
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		members[i].Name = name
-		members[i].HeadImg = headImg
 	}
 	return members, nil
 }
