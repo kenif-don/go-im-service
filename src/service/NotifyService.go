@@ -15,7 +15,7 @@ import (
 func OfflineMessageNotify() {
 	go func() {
 		for {
-			//如果没有私钥 或者还未登录 就下一次循环
+			//如果没有私钥 或者还未登录 就下一次循环  TODO 这里可能会在登录之前调用 而且秘钥可能有问题 所以离线消息会解密失败 成为乱码
 			if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.PrivateKey == "" {
 				time.Sleep(time.Second * 1)
 				continue
