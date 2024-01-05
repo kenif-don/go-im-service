@@ -44,6 +44,7 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	return repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
 }
 func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*entity.Chat, *utils.Error) {
+
 	//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
 	chat, err := _self.CoverChat(tp, target, true)
 	if err != nil {
@@ -101,6 +102,12 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
+		if friend == nil { // 没有这个好友
+			err := _self.DelLocalChat(tp, target)
+			if err != nil {
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+		}
 		//组装聊天名称
 		if friend.Name != "" {
 			name = friend.Name
@@ -114,6 +121,12 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		group, err := NewGroupService().SelectOne(target, refresh)
 		if err != nil {
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		if group == nil { // 没有这个群
+			err := _self.DelLocalChat(tp, target)
+			if err != nil {
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
 		}
 		name = group.Name
 		headImg = group.HeadImg
