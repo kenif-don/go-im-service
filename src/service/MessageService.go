@@ -216,6 +216,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 				return log.WithError(err)
 			}
 		}
+		log.Debugf("要删除的ids: %v", ids)
 		if len(ids) == 0 {
 			return nil
 		}
@@ -225,6 +226,7 @@ func (_self *MessageService) GetOfflineMessage() *utils.Error {
 		}
 		e = tx.Commit().Error
 		if e != nil {
+			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
 		return nil
