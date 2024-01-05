@@ -37,6 +37,28 @@ func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]enti
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
 	if ms != nil && len(ms) > 0 && !refresh {
+		for i := 0; i < len(ms); i++ {
+			// 组装显示信息
+			m, err := NewGroupService().SelectOneGroupMemberInfo(gId, ms[i].UserId)
+			if err != nil {
+				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+			}
+			if m != nil {
+				log.Debugf("组装群成员: %s", m)
+				name, e := util.Obj2Str(m["name"])
+				if e != nil {
+					log.Error(e)
+					return nil, log.WithError(utils.ERR_QUERY_FAIL)
+				}
+				headImg, e := util.Obj2Str(m["headImg"])
+				if e != nil {
+					log.Error(e)
+					return nil, log.WithError(utils.ERR_QUERY_FAIL)
+				}
+				ms[i].Name = name
+				ms[i].HeadImg = headImg
+			}
+		}
 		return ms, nil
 	}
 	//需要刷新 先删除一次 重新获取
@@ -71,26 +93,6 @@ func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]enti
 		if e != nil {
 			log.Error(e)
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		// 组装显示信息
-		m, err := NewGroupService().SelectOneGroupMemberInfo(gId, members[i].UserId)
-		if err != nil {
-			return nil, log.WithError(utils.ERR_QUERY_FAIL)
-		}
-		if m != nil {
-			log.Debugf("组装群成员: %s", m)
-			name, e := util.Obj2Str(m["name"])
-			if e != nil {
-				log.Error(e)
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			headImg, e := util.Obj2Str(m["headImg"])
-			if e != nil {
-				log.Error(e)
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
-			}
-			members[i].Name = name
-			members[i].HeadImg = headImg
 		}
 	}
 	return members, nil
