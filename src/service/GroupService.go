@@ -26,8 +26,18 @@ func NewGroupService() *GroupService {
 		repo: repository.NewGroupRepo(),
 	}
 }
-func QueryGroup(obj *entity.Group, repo IGroupRepo) (*entity.Group, error) {
-	return repo.Query(obj)
+
+// KillGroupMember 踢出群成员
+func (_self *GroupService) KillGroupMember(id uint64, ids []uint64) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NOT_LOGIN)
+	}
+	//先从服务器创建
+	_, err := Post("/api/group/killGroupMember", map[string]interface{}{"ids": ids, "id": id})
+	if err != nil {
+		return log.WithError(err)
+	}
+	return nil
 }
 
 // Invite 邀请好友进群 ids是用户ID
@@ -257,7 +267,6 @@ func (_self *GroupService) Delete(id uint64) *utils.Error {
 		if e != nil {
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		log.Debugf("提交事务33333")
 		return nil
 	}()
 	if err != nil {
@@ -300,7 +309,6 @@ func (_self *GroupService) DelLocalGroup(id uint64) *utils.Error {
 			log.Error(e)
 			return log.WithError(utils.ERR_DEL_FAIL)
 		}
-		log.Debugf("提交事务成功22222")
 		return nil
 	}()
 	if err != nil {

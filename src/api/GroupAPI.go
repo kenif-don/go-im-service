@@ -8,6 +8,22 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// KillGroupMember 踢出群成员
+func KillGroupMember(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.GroupReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	err := service.NewGroupService().KillGroupMember(req.Id, util.Str2Arr(req.Ids))
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	return SyncPutSuccess(nil, resp)
+}
 func UpdateGroupMemberName(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
