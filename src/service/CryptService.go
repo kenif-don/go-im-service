@@ -153,7 +153,7 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
 			return
 		}
-		//通过最后一根/获取文件后缀
+		//通过最后一根/获取文件名称
 		paths := strings.Split(md.Content, "/")
 		filename := paths[len(paths)-1]
 		path := filepath.Join(conf.Base.BaseDir, "configs", filename)

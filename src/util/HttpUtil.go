@@ -165,7 +165,7 @@ func Upload(path string, secret string) (string, *utils.Error) {
 func GetFileType(path string, data []byte) (string, *utils.Error) {
 	endWith := filepath.Ext(path)
 	if endWith != "" {
-		return "." + endWith, nil
+		return endWith, nil
 	}
 	if len(data) < 261 {
 		return "", nil
@@ -174,7 +174,7 @@ func GetFileType(path string, data []byte) (string, *utils.Error) {
 	buffer := data[:261]
 	kind, _ := filetype.Match(buffer)
 	if kind == filetype.Unknown {
-		return "." + filepath.Ext(path), nil
+		return "", nil
 	}
 	//以斜杠分割 取最后一个
 	tp := kind.MIME.Value

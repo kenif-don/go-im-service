@@ -1,13 +1,14 @@
 package main
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	api2 "IM-Service/src/api"
+	"IM-Service/src/util"
 	"fmt"
 )
 
 func main() {
-	resp := &api.ResultDTOResp{}
-	d := api2.SyncPutSuccess("null", resp)
-	fmt.Println(d)
+	endWith, e := util.GetFileType("C:\\Users\\Administrator\\Desktop\\bug.txt", make([]byte, 0))
+	if e != nil {
+		fmt.Println(e)
+	}
+	fmt.Println(endWith)
 }
