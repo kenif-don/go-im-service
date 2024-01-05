@@ -105,8 +105,9 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		if friend == nil { // 没有这个好友
 			err := _self.DelLocalChat(tp, target)
 			if err != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+				log.Error(err)
 			}
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 		//组装聊天名称
 		if friend.Name != "" {
@@ -125,8 +126,9 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		if group == nil { // 没有这个群
 			err := _self.DelLocalChat(tp, target)
 			if err != nil {
-				return nil, log.WithError(utils.ERR_QUERY_FAIL)
+				log.Error(err)
 			}
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 		name = group.Name
 		headImg = group.HeadImg
