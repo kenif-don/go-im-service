@@ -163,8 +163,12 @@ func Upload(path string, secret string) (string, *utils.Error) {
 	return UploadData(path, data, secret)
 }
 func GetFileType(path string, data []byte) (string, *utils.Error) {
-	if data == nil || len(data) < 261 {
-		return "." + filepath.Ext(path), nil
+	endWith := filepath.Ext(path)
+	if endWith != "" {
+		return "." + endWith, nil
+	}
+	if len(data) < 261 {
+		return "", nil
 	}
 	//取data的前261个
 	buffer := data[:261]
