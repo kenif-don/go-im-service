@@ -16,7 +16,7 @@ func Transfer(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	err := service.NewAccountService().Transfer(req.Type, req.Remark, req.Password, req.Amount, req.GId, req.He)
+	err := service.NewAccountService().Transfer(req.Type, req.Remark, req.Amount, req.Password, req.GId, req.He)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}

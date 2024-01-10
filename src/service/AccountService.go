@@ -43,8 +43,7 @@ func (_self *AccountService) Transfer(tp, remark, amount, password string, gId, 
 	}
 	_, err := Post("/api/account/transfer", req)
 	if err != nil {
-		log.Error(err)
-		return log.WithError(utils.ERR_TRANSFER_FAIL)
+		return log.WithError(err)
 	}
 	req["password"] = nil
 	reqStr, e := util.Obj2Str(req)
