@@ -29,22 +29,24 @@ func NewAccountService() *AccountService {
 }
 
 // Transfer 转账并发消息
-func (_self *AccountService) Transfer(tp, remark, amount string, gId, he uint64) *utils.Error {
+func (_self *AccountService) Transfer(tp, remark, amount, password string, gId, he uint64) *utils.Error {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return utils.ERR_NOT_LOGIN
 	}
 	req := map[string]interface{}{
-		"tp":     tp,
-		"remark": remark,
-		"gId":    gId,
-		"he":     he,
-		"amount": amount,
+		"tp":       tp,
+		"remark":   remark,
+		"gId":      gId,
+		"he":       he,
+		"amount":   amount,
+		"password": password,
 	}
 	_, err := Post("/api/account/transfer", req)
 	if err != nil {
 		log.Error(err)
 		return log.WithError(utils.ERR_TRANSFER_FAIL)
 	}
+	req["password"] = nil
 	reqStr, e := util.Obj2Str(req)
 	if e != nil {
 		log.Error(e)
