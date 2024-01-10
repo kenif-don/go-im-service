@@ -6,12 +6,17 @@ import (
 	"IM-Service/src/entity"
 	"encoding/binary"
 	"encoding/json"
+	"github.com/google/uuid"
 	"math"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func GetUUID() string {
+	return uuid.New().String()
+}
 
 // IndexOfString 查找字符串在数组中的位置
 func IndexOfString(target string, arr []string) int {

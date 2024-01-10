@@ -2,6 +2,7 @@ package service
 
 import (
 	"IM-Service/src/configs/conf"
+	_const "IM-Service/src/configs/const"
 	"IM-Service/src/configs/db"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
@@ -454,44 +455,14 @@ func (_self *MessageService) SendMsg(tp string, target uint64, no string, dataCo
 		}
 	}
 	switch dataContent.Type {
-	case 1: //文本消息
+	case _const.MSG_TXT, _const.MSG_TRANSFER: //文本消息/转账
 		return _self.realSend(tp, target, no, dataContent)
-	case 2, 5: //图片消息/文件消息
-		return _self.SendImgAndFileMsg(tp, target, no, dataContent)
-	case 3: //语音消息
-		return _self.SendVoiceMsg(tp, target, no, dataContent)
-	case 4: //视频消息
-		return _self.SendVideoMsg(tp, target, no, dataContent)
+	case _const.MSG_IMG, _const.MSG_VOICE, _const.MSG_VIDEO, _const.MSG_FILE: //图片消息/语音消息/视频消息/文件消息
+		return _self.SendFileMsg(tp, target, no, dataContent)
 	}
 	return nil
 }
-func (_self *MessageService) SendVideoMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
-	secret, err := GetSecret(target, tp)
-	if err != nil {
-		return log.WithError(err)
-	}
-	//上传文件
-	url, err := util.Upload(dataContent.Content, secret)
-	if err != nil {
-		return log.WithError(err)
-	}
-	dataContent.Content = url
-	return _self.realSend(tp, target, no, dataContent)
-}
-func (_self *MessageService) SendVoiceMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
-	secret, err := GetSecret(target, tp)
-	if err != nil {
-		return log.WithError(err)
-	}
-	//上传文件
-	url, err := util.Upload(dataContent.Content, secret)
-	if err != nil {
-		return log.WithError(err)
-	}
-	dataContent.Content = url
-	return _self.realSend(tp, target, no, dataContent)
-}
-func (_self *MessageService) SendImgAndFileMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
+func (_self *MessageService) SendFileMsg(tp string, target uint64, no string, dataContent *entity.MessageData) *utils.Error {
 	secret, err := GetSecret(target, tp)
 	if err != nil {
 		return log.WithError(err)

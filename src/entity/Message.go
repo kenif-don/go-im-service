@@ -18,7 +18,7 @@ type Message struct {
 }
 
 type MessageData struct {
-	Type     int    `json:"type"`     //1-文本 2-图片 3-语音 4-视频 5-文件
+	Type     int    `json:"type"`     //1-文本 2-图片 3-语音 4-视频 5-文件 6-转账
 	Content  string `json:"content"`  //消息内容
 	Width    int    `json:"width"`    //图片宽
 	Height   int    `json:"height"`   //图片高

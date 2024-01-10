@@ -14,6 +14,14 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+/** 转账请求对象 */
+message TransferReq{
+  string type = 1;//friend group
+  uint64 he = 2;//目标 用户id
+  uint64 gId = 3;//目标 群id
+  string remark = 4;//转账备注
+  string amount = 5;//转账金额
+}
 message GroupMemberInfoReq{
   uint64 userId = 1;//用户ID
   uint64 gId = 2;//群ID
