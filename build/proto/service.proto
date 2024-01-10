@@ -22,6 +22,7 @@ message TransferReq{
   string remark = 4;//转账备注
   string amount = 5;//转账金额
   string password = 6;//二级密码
+  string no = 7;//消息编号
 }
 message GroupMemberInfoReq{
   uint64 userId = 1;//用户ID

@@ -29,7 +29,7 @@ func NewAccountService() *AccountService {
 }
 
 // Transfer 转账并发消息
-func (_self *AccountService) Transfer(tp, remark, amount, password string, gId, he uint64) *utils.Error {
+func (_self *AccountService) Transfer(tp, remark, amount, password, no string, gId, he uint64) *utils.Error {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return utils.ERR_NOT_LOGIN
 	}
@@ -40,12 +40,14 @@ func (_self *AccountService) Transfer(tp, remark, amount, password string, gId, 
 		"he":       he,
 		"amount":   amount,
 		"password": password,
+		"no":       no,
 	}
 	_, err := Post("/api/account/transfer", req)
 	if err != nil {
 		return log.WithError(err)
 	}
 	req["password"] = nil
+	req["no"] = nil
 	reqStr, e := util.Obj2Str(req)
 	if e != nil {
 		log.Error(e)
@@ -57,9 +59,9 @@ func (_self *AccountService) Transfer(tp, remark, amount, password string, gId, 
 	}
 	// 发送消息
 	if gId == 0 {
-		return NewMessageService().SendMsg(tp, he, util.GetUUID(), md)
+		return NewMessageService().SendMsg(tp, he, no, md)
 	}
-	return NewMessageService().SendMsg(tp, gId, util.GetUUID(), md)
+	return NewMessageService().SendMsg(tp, gId, no, md)
 }
 
 // SelectOneAccount 获取登录者账户数据 没有就从服务器同步
