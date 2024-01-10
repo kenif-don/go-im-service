@@ -34,7 +34,7 @@ func (_self *AccountService) Transfer(tp, remark, amount, password string, gId, 
 		return utils.ERR_NOT_LOGIN
 	}
 	req := map[string]interface{}{
-		"tp":       tp,
+		"type":     tp,
 		"remark":   remark,
 		"gId":      gId,
 		"he":       he,
