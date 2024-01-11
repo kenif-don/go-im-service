@@ -103,3 +103,20 @@ func SelectOneSafe(data []byte) []byte {
 	}
 	return SyncPutSuccess(resultDTO, resp)
 }
+
+// DecrySafeContent 解密保险箱内容
+func DecrySafeContent(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.SafeReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	content, err := service.NewSafeService().DecrySafeContent(req.Content)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	return SyncPutSuccess(content, resp)
+}

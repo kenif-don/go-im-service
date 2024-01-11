@@ -77,3 +77,11 @@ func (_self *SafeService) SelectOne(id uint64) (*entity.Safe, *utils.Error) {
 	}
 	return &safe, nil
 }
+
+func (_self *SafeService) DecrySafeContent(content string) (string, *utils.Error) {
+	data, err := util.DecryptAes(content, conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)])
+	if err != nil {
+		return "", log.WithError(err)
+	}
+	return data, nil
+}
