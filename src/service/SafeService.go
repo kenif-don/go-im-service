@@ -48,27 +48,12 @@ func (_self *SafeService) Add(content string) *utils.Error {
 }
 
 // Paging 分页获取归档
-func (_self *SafeService) Paging(page, pageSize int) ([]entity.Safe, *utils.Error) {
+func (_self *SafeService) Paging(page, pageSize int) (string, *utils.Error) {
 	resultDTO, err := Post("/api/safe/paging", map[string]int{"page": page, "pageSize": pageSize})
 	if err != nil {
-		return nil, log.WithError(err)
+		return "", log.WithError(err)
 	}
-	var safes []entity.Safe
-	e := util.Str2Obj(resultDTO.Data.(string), &safes)
-	if e != nil {
-		log.Error(e)
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
-	//循环解密
-	for i := 0; i < len(safes); i++ {
-		data, err := util.DecryptAes(safes[i].Content, conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)])
-		if err != nil {
-			safes[i].Content = "解密失败"
-		} else {
-			safes[i].Content = data
-		}
-	}
-	return safes, nil
+	return resultDTO.Data.(string), nil
 }
 
 // SelectOne 获取单个归档
