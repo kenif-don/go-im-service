@@ -36,10 +36,6 @@ func (_self *SafeService) Add(content string) *utils.Error {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return log.WithError(utils.ERR_NOT_LOGIN)
 	}
-	//验证密码
-	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
-		return log.WithError(utils.ERR_INPUT_SAFE_PASSWORD)
-	}
 	encryptStr, err := util.EncryptAes(content, conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)])
 	if err != nil {
 		return log.WithError(err)
@@ -53,10 +49,6 @@ func (_self *SafeService) Add(content string) *utils.Error {
 
 // Paging 分页获取归档
 func (_self *SafeService) Paging(page, pageSize int) ([]entity.Safe, *utils.Error) {
-	//验证密码
-	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
-		return nil, log.WithError(utils.ERR_INPUT_SAFE_PASSWORD)
-	}
 	resultDTO, err := Post("/api/safe/paging", map[string]int{"page": page, "pageSize": pageSize})
 	if err != nil {
 		return nil, log.WithError(err)
@@ -81,10 +73,6 @@ func (_self *SafeService) Paging(page, pageSize int) ([]entity.Safe, *utils.Erro
 
 // SelectOne 获取单个归档
 func (_self *SafeService) SelectOne(id uint64) (*entity.Safe, *utils.Error) {
-	//验证密码
-	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
-		return nil, log.WithError(utils.ERR_INPUT_SAFE_PASSWORD)
-	}
 	resultDTO, err := Post("/api/safe/selectOne", map[string]uint64{"id": id})
 	if err != nil {
 		return nil, log.WithError(err)

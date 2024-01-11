@@ -2,8 +2,10 @@ package api
 
 import (
 	api "IM-Service/build/generated/service/v1"
+	"IM-Service/src/configs/conf"
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/service"
+	"IM-Service/src/util"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -34,6 +36,15 @@ func AddSafe(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
+	//验证密码
+	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
+		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		}
+		return res
+	}
 	err := service.NewSafeService().Add(req.Content)
 	if err != nil {
 		return SyncPutErr(err, resp)
@@ -51,6 +62,15 @@ func PagingSafe(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
+	//验证密码
+	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
+		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		}
+		return res
+	}
 	resultDTO, err := service.NewSafeService().Paging(int(req.Page), int(req.PageSize))
 	if err != nil {
 		return SyncPutErr(err, resp)
@@ -67,6 +87,15 @@ func SelectOneSafe(data []byte) []byte {
 	req := &api.SafeReq{}
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	//验证密码
+	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
+		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		}
+		return res
 	}
 	resultDTO, err := service.NewSafeService().SelectOne(req.Id)
 	if err != nil {
