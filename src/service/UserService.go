@@ -93,6 +93,7 @@ func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *ut
 		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
 	user.PrivateKey = sysUser.PrivateKey
+	conf.PutLoginInfo(*user)
 	e = _self.repo.Save(user)
 	if e != nil {
 		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
