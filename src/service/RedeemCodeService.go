@@ -3,6 +3,7 @@ package service
 import (
 	utils "IM-Service/src/configs/err"
 	"IM-Service/src/configs/log"
+	"strings"
 )
 
 type RedeemCodeService struct{}
@@ -17,12 +18,15 @@ func (_self *RedeemCodeService) Create(money string) (string, *utils.Error) {
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return "", nil
+	}
 	return resultDTO.Data.(string), nil
 }
 
 // Exchange 码兑钱
 func (_self *RedeemCodeService) Exchange(code string) *utils.Error {
-	_, err := Post("/api/redeem-code/exchange", map[string]string{"code": code})
+	_, err := Post("/api/redeem-code/exchange", map[string]string{"code": strings.TrimSpace(code)})
 	if err != nil {
 		return log.WithError(err)
 	}
@@ -35,14 +39,20 @@ func (_self *RedeemCodeService) Paging(page, pageSize int) (string, *utils.Error
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return "", nil
+	}
 	return resultDTO.Data.(string), nil
 }
 
 // SelectOne 获取兑换记录
 func (_self *RedeemCodeService) SelectOne(code string) (string, *utils.Error) {
-	resultDTO, err := Post("/api/redeem-code/selectOne", map[string]string{"code": code})
+	resultDTO, err := Post("/api/redeem-code/selectOne", map[string]string{"code": strings.TrimSpace(code)})
 	if err != nil {
 		return "", log.WithError(err)
+	}
+	if resultDTO.Data == nil {
+		return "", nil
 	}
 	return resultDTO.Data.(string), nil
 }

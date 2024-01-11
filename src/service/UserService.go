@@ -48,10 +48,10 @@ func (_self *UserService) SelectOne(id uint64, refresh bool) (*entity.User, *uti
 		if err != nil {
 			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
 		}
-		user = &entity.User{}
 		if resultDTO.Data == nil {
 			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
 		}
+		user = &entity.User{}
 		e := util.Str2Obj(resultDTO.Data.(string), user)
 		if e != nil {
 			return nil, log.WithError(utils.ERR_GET_USER_FAIL)
@@ -73,6 +73,9 @@ func (_self *UserService) Search(keyword string) (string, *utils.Error) {
 	if err != nil {
 		return "", err
 	}
+	if resultDTO.Data == nil {
+		return "", nil
+	}
 	return resultDTO.Data.(string), nil
 }
 
@@ -81,6 +84,9 @@ func (_self *UserService) UpdatePassword(tp int, pwd, oldPwd, newPwd string) *ut
 	resultDTO, err := Post("/api/user/editPwd", map[string]interface{}{"type": tp, "pwd": pwd, "oldPwd": oldPwd, "newPwd": newPwd})
 	if err != nil {
 		return log.WithError(err)
+	}
+	if resultDTO.Data == nil {
+		return log.WithError(utils.ERR_PASSWORD_UPDATE_FAIL)
 	}
 	user := &entity.User{}
 	e := util.Str2Obj(resultDTO.Data.(string), user)

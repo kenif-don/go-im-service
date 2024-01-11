@@ -156,6 +156,9 @@ func (_self *FriendService) SelectAll() ([]entity.Friend, *utils.Error) {
 	if err != nil {
 		return nil, log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return []entity.Friend{}, nil
+	}
 	var fs []entity.Friend
 	e := util.Str2Obj(resultDTO.Data.(string), &fs)
 	if e != nil || fs == nil {

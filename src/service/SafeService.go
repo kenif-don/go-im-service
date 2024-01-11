@@ -53,6 +53,9 @@ func (_self *SafeService) Paging(page, pageSize int) (string, *utils.Error) {
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return "", nil
+	}
 	return resultDTO.Data.(string), nil
 }
 
@@ -61,6 +64,9 @@ func (_self *SafeService) SelectOne(id uint64) (*entity.Safe, *utils.Error) {
 	resultDTO, err := Post("/api/safe/selectOne", map[string]uint64{"id": id})
 	if err != nil {
 		return nil, log.WithError(err)
+	}
+	if resultDTO.Data == nil {
+		return nil, nil
 	}
 	var safe entity.Safe
 	e := util.Obj2Obj(resultDTO.Data, &safe)

@@ -20,5 +20,8 @@ func (_self *CashFlowService) Paging(page int) (string, *utils.Error) {
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return "", log.WithError(utils.ERR_QUERY_FAIL)
+	}
 	return resultDTO.Data.(string), nil
 }

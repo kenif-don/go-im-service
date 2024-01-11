@@ -63,9 +63,13 @@ func (_self *GroupService) Create(ids []uint64, tp int, password string) (*entit
 	if err != nil {
 		return nil, log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return nil, log.WithError(utils.ERR_OPERATION_FAIL)
+	}
 	var group entity.Group
 	e := util.Str2Obj(resultDTO.Data.(string), &group)
 	if e != nil {
+		log.Error(e)
 		return nil, log.WithError(utils.ERR_OPERATION_FAIL)
 	}
 	if group.Id != 0 {

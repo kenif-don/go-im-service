@@ -53,6 +53,9 @@ func (_service *MoodService) PagingMood(page, pageSize int, userId uint64) (stri
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return "", nil
+	}
 	return resultDTO.Data.(string), nil
 }
 

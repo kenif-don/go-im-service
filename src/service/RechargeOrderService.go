@@ -38,13 +38,16 @@ func (_self *RechargeOrderService) AddRechargeOrder(tp int, value string) (strin
 	if err != nil {
 		return "", log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return "", utils.ERR_RECHARGE_FAIL
+	}
 	// 再获取订单进行存储和返回
 	id := util.Str2Uint64(resultDTO.Data.(string))
 	resultDTO, err = Post("/api/recharge-order/selectOne", map[string]uint64{"id": id})
 	if err != nil {
 		return "", log.WithError(err)
 	}
-	if resultDTO == nil {
+	if resultDTO.Data == nil {
 		return "", utils.ERR_RECHARGE_FAIL
 	}
 	return resultDTO.Data.(string), nil

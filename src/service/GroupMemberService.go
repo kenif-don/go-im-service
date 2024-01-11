@@ -62,6 +62,9 @@ func (_self *GroupMemberService) SelectMembers(gId uint64, refresh bool) ([]enti
 	if err != nil {
 		return nil, log.WithError(err)
 	}
+	if resultDTO.Data == nil {
+		return nil, nil
+	}
 	var members []entity.GroupMember
 	e = util.Str2Obj(resultDTO.Data.(string), &members)
 	if e != nil {

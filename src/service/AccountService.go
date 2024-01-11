@@ -83,6 +83,9 @@ func (_self *AccountService) SelectOneAccount(flush bool) (*entity.Account, *uti
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
+	if resultDTO.Data == nil {
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
 	a := &entity.Account{}
 	e = util.Str2Obj(resultDTO.Data.(string), a)
 	if e != nil {
