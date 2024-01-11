@@ -14,6 +14,24 @@ enum ResultDTOCode {
   /** 跳转2级密码输入页 */
   TO_INPUT_PWD2 = 2000;
 }
+/** 兑换码请求参数 */
+message RedeemCodeReq{
+  string money = 1;//兑换金额
+  string code = 2;//兑换码
+  int32 page = 3;//分页显示条数
+  int32 pageSize = 4;//每页显示条数
+}
+/** 保险箱请求对象 */
+message SafeReq{
+  string content = 1;//内容
+  uint64 id = 2;//保险箱单条内容
+  int32 page = 3;//分页显示条数
+  int32 pageSize = 4;//每页显示条数
+}
+/** 保险箱密码 */
+message InputSafePwdReq{
+  string pwd = 1;
+}
 /** 转账请求对象 */
 message TransferReq{
   string type = 1;//friend group

@@ -56,6 +56,8 @@ var (
 	ERR_FILE_MAX_SIZE                = NewError(1048, "file max size", "文件大小超过限制")
 	ERR_UPDATE_FAIL                  = NewError(1049, "update fail", "更新失败")
 	ERR_TRANSFER_FAIL                = NewError(1050, "transfer fail", "转账失败")
+	ERR_INPUT_SAFE_PASSWORD          = NewError(1051, "not safe password", "请输入安全密码")
+	ERR_SAFE_PASSWORD                = NewError(1052, "safe password err", "安全密码错误")
 )
 
 type Error struct {

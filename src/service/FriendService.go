@@ -73,6 +73,16 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
+	//如果是当前登录者
+	if he == conf.GetLoginInfo().User.Id {
+		f := &entity.Friend{
+			Me:     conf.GetLoginInfo().User.Id,
+			He:     he,
+			Name:   conf.GetLoginInfo().User.Nickname,
+			HeUser: conf.GetLoginInfo().User,
+		}
+		return f, nil
+	}
 	me := conf.GetLoginInfo().User.Id
 	//先从本地获取
 	friend, e := _self.repo.Query(&entity.Friend{He: he, Me: me})

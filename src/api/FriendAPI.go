@@ -51,8 +51,7 @@ func SelectOneFriend(data []byte) []byte {
 	if e := proto.Unmarshal(data, req); e != nil {
 		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
 	}
-	friendService := service.NewFriendService()
-	f, err := friendService.SelectOne(req.Id, false)
+	f, err := service.NewFriendService().SelectOne(req.Id, false)
 	if err != nil {
 		return SyncPutErr(err, resp)
 	}
