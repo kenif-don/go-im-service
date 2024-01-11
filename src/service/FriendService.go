@@ -87,6 +87,7 @@ func (_self *FriendService) SelectOne(he uint64, refresh bool) (*entity.Friend, 
 	//先从本地获取
 	friend, e := _self.repo.Query(&entity.Friend{He: he, Me: me})
 	if e != nil {
+		log.Error(e)
 		return nil, log.WithError(utils.ERR_FRIEND_GET_FAIL)
 	}
 	//没有获取到 或者需要刷新好友数据
