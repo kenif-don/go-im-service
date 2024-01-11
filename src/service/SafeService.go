@@ -78,7 +78,7 @@ func (_self *SafeService) SelectOne(id uint64) (*entity.Safe, *utils.Error) {
 		return nil, log.WithError(err)
 	}
 	var safe entity.Safe
-	e := util.Str2Obj(resultDTO.Data.(string), &safe)
+	e := util.Obj2Obj(resultDTO.Data, &safe)
 	if e != nil {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
