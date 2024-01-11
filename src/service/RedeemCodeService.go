@@ -37,3 +37,12 @@ func (_self *RedeemCodeService) Paging(page, pageSize int) (string, *utils.Error
 	}
 	return resultDTO.Data.(string), nil
 }
+
+// SelectOne 获取兑换记录
+func (_self *RedeemCodeService) SelectOne(code string) (string, *utils.Error) {
+	resultDTO, err := Post("/api/redeem-code/selectOne", map[string]string{"code": code})
+	if err != nil {
+		return "", log.WithError(err)
+	}
+	return resultDTO.Data.(string), nil
+}

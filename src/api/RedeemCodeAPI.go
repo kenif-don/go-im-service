@@ -57,3 +57,20 @@ func PagingRedeemCode(data []byte) []byte {
 	}
 	return SyncPutSuccess(code, resp)
 }
+
+// SelectOneRedeemCode 获取兑换记录
+func SelectOneRedeemCode(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.RedeemCodeReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	code, err := service.NewRedeemCodeService().SelectOne(req.Code)
+	if err != nil {
+		return SyncPutErr(utils.ERR_QUERY_FAIL, resp)
+	}
+	return SyncPutSuccess(code, resp)
+}
