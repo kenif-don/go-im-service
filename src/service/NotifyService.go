@@ -131,3 +131,24 @@ func NotifySendReceive(no string, send int) *utils.Error {
 	}
 	return nil
 }
+func NotifyReceive(message *entity.Message, target uint64) *utils.Error {
+	if message.TargetId == conf.Conf.ChatId {
+		//解密
+		data, err := Decrypt(message.Type, target, message.No, message.Data)
+		if err != nil {
+			data = util.GetTextErrMsg()
+		}
+		message.Data = data
+		if Listener != nil {
+			res, e := util.Obj2Str(message)
+			if e != nil {
+				log.Error(e)
+				return log.WithError(e)
+			}
+			//修改聊天消息为已读
+			NewMessageService().UpdateChatRead(message.Type, target)
+			Listener.OnReceive(res)
+		}
+	}
+	return nil
+}

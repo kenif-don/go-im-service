@@ -108,12 +108,12 @@ func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) 
 		if obj.Time > 0 {
 			tx = _self.Data.Db.
 				Where("`type`=? and `target_id`=? and `user_id`=? and `time` < ?", obj.Type, obj.TargetId, obj.UserId, obj.Time).
-				Or("`type`=? and `target_id`=? and `user_id`=? and `time` < ?", obj.Type, obj.UserId, obj.UserId, obj.Time).
+				//Or("`type`=? and `target_id`=? and `user_id`=? and `time` < ?", obj.Type, obj.UserId, obj.UserId, obj.Time).
 				Order("`time` desc").Limit(15).Find(objs)
 		} else {
 			tx = _self.Data.Db.
 				Where("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.TargetId, obj.UserId).
-				Or("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.UserId, obj.UserId).
+				//Or("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.UserId, obj.UserId).
 				Order("`time` desc").Limit(15).Find(objs)
 		}
 	}
@@ -125,6 +125,23 @@ func (_self *MessageRepo) Paging(obj *entity.Message) ([]entity.Message, error) 
 	}
 	Reverse(objs)
 	return *objs, nil
+}
+func (_self *MessageRepo) UpdateRead(obj *entity.Message) error {
+	var tx *gorm.DB
+	if "friend" == obj.Type {
+		tx = _self.Data.Db.
+			Where("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
+			Or("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
+			Update("read", obj.Read)
+	} else {
+		tx = _self.Data.Db.
+			Where("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.TargetId, obj.UserId).
+			Update("read", obj.Read)
+	}
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
 }
 
 // Reverse 数组倒序
@@ -147,4 +164,23 @@ func (_self *MessageRepo) Count(obj *entity.Message) (int64, error) {
 		return 0, tx.Error
 	}
 	return tx.RowsAffected, nil
+}
+
+func (_self *MessageRepo) GetUnReadNo(obj *entity.Message) (int, error) {
+	var tx *gorm.DB
+	var count *int64
+	if "friend" == obj.Type {
+		tx = _self.Data.Db.
+			Where("`type`=? and `target_id`=? and `user_id`=? and `from`=? and `read` = ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId, obj.Read).
+			Or("`type`=? and `target_id`=? and `user_id`=? and `from`=? and `read` = ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId, obj.Read).
+			Count(count)
+	} else {
+		tx = _self.Data.Db.
+			Where("`type`=? and `target_id`=? and `user_id`=? and `read` = ?", obj.Type, obj.TargetId, obj.UserId, obj.Read).
+			Count(count)
+	}
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+	return int(*count), nil
 }

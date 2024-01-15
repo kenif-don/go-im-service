@@ -166,7 +166,22 @@ func (_self *MessageService) Paging(tp string, target, time uint64) ([]entity.Me
 func (_self *MessageService) QueryLast(obj *entity.Message) (*entity.Message, error) {
 	return _self.repo.QueryLast(obj)
 }
-func (_self *MessageService) UpdateReaded(protocol *model.Protocol, send int) {
+
+// UpdateChatRead 将聊天对应消息修改为已读
+func (_self *MessageService) UpdateChatRead(tp string, target uint64) {
+	var message = &entity.Message{}
+	message.Type = tp
+	message.TargetId = target
+	message.UserId = conf.GetLoginInfo().User.Id
+	message.Read = 2
+	e := _self.repo.UpdateRead(message)
+	if e != nil {
+		log.Error(e)
+	}
+}
+
+// UpdateSend 修改发送状态
+func (_self *MessageService) UpdateSend(protocol *model.Protocol, send int) {
 	var message = &entity.Message{}
 	e := util.Str2Obj(protocol.Data.(string), message)
 	if e != nil {
@@ -334,27 +349,15 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			message.UserId = conf.GetLoginInfo().User.Id
 			//别人给自己发的 肯定是发送成功
 			message.Send = 2
+			message.Read = 1
 			e = messageService.repo.Save(message)
 			if e != nil {
 				log.Error(e)
 				return log.WithError(e)
 			}
-			//如果发送者是当前用户打开的聊天目标
-			if util.Str2Uint64(protocol.From) == conf.Conf.ChatId {
-				//解密
-				data, err := Decrypt(message.Type, util.Str2Uint64(protocol.From), message.No, message.Data)
-				if err != nil {
-					data = util.GetTextErrMsg()
-				}
-				message.Data = data
-				if Listener != nil {
-					res, e := util.Obj2Str(message)
-					if e != nil {
-						log.Error(e)
-						return log.WithError(e)
-					}
-					Listener.OnReceive(res)
-				}
+			err := NotifyReceive(message, util.Str2Uint64(protocol.From))
+			if err != nil {
+				return log.WithError(err)
 			}
 			//判断是否存在聊天
 			chat, e := QueryChat(message.Type, util.Str2Uint64(protocol.From), repository.NewChatRepo())
@@ -363,14 +366,14 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				c, err := NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From), false)
+				c, err := NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From), false, false)
 				if err != nil {
 					return log.WithError(err)
 				}
 				chat = c
 			}
 			// 通知聊天列表更新
-			err := NewChatService().ChatNotify(chat)
+			err = NewChatService().ChatNotify(chat)
 			if err != nil {
 				return log.WithError(err)
 			}
@@ -392,6 +395,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			message.UserId = conf.GetLoginInfo().User.Id
 			//别人给自己发的 肯定是发送成功
 			message.Send = 2
+			message.Read = 1 //未读
 			e = messageService.repo.Save(message)
 			if e != nil {
 				log.Error(e)
@@ -404,35 +408,25 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				return log.WithError(e)
 			}
 			if chat == nil {
-				c, err := NewChatService().CoverChat(message.Type, message.TargetId, false)
+				c, err := NewChatService().CoverChat(message.Type, message.TargetId, false, false)
 				if err != nil {
 					return log.WithError(err)
 				}
 				chat = c
 			}
-			// 通知聊天列表更新
-			err := NewChatService().ChatNotify(chat)
+			// 通知语音播报
+			err := NewChatService().VoiceNotify(message)
 			if err != nil {
 				return log.WithError(err)
 			}
-			// 通知语音播报
-			err = NewChatService().VoiceNotify(message)
-			//如果发送者是当前用户打开的聊天目标
-			if message.TargetId == conf.Conf.ChatId {
-				//解密
-				data, err := Decrypt(message.Type, message.TargetId, message.No, message.Data)
-				if err != nil {
-					data = util.GetTextErrMsg()
-				}
-				message.Data = data
-				if Listener != nil {
-					res, e := util.Obj2Str(message)
-					if e != nil {
-						log.Error(e)
-						return log.WithError(e)
-					}
-					Listener.OnReceive(res)
-				}
+			err = NotifyReceive(message, message.TargetId)
+			if err != nil {
+				return log.WithError(err)
+			}
+			// 通知聊天列表更新
+			err = NewChatService().ChatNotify(chat)
+			if err != nil {
+				return log.WithError(err)
 			}
 		}
 		break
@@ -556,4 +550,16 @@ func (_self *MessageService) coverMessage(tp string, target uint64, no string, d
 }
 func (_self *MessageService) CurrentTime() uint64 {
 	return uint64(int64(util.CurrentTime()) + int64(conf.DiffTime))
+}
+func (_self *MessageService) GetUnReadNo(tp string, target uint64) (int, *utils.Error) {
+	var message = &entity.Message{}
+	message.Type = tp
+	message.TargetId = target
+	message.UserId = conf.GetLoginInfo().User.Id
+	message.Read = 1
+	no, e := _self.repo.GetUnReadNo(message)
+	if e != nil {
+		return 0, log.WithError(utils.ERR_FRIEND_GET_FAIL)
+	}
+	return no, nil
 }

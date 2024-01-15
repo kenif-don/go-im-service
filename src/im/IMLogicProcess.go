@@ -86,7 +86,7 @@ func (_self *LogicProcess) Connected() {
 // SendOk qos中的消息发送成功 服务器成功返回
 func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 	messageService := service.NewMessageService()
-	messageService.UpdateReaded(protocol, 2)
+	messageService.UpdateSend(protocol, 2)
 	if service.Listener != nil && (protocol.Type == 1 || protocol.Type == 8) {
 		//消息状态通知
 		err := service.NotifySendReceive(protocol.No, 2)
@@ -107,11 +107,12 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 			return
 		}
 		if chat == nil {
-			chat, e = service.NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From), false)
-			if e != nil {
-				log.Error(e)
+			c, err := service.NewChatService().CoverChat(message.Type, util.Str2Uint64(protocol.From), false, true)
+			if err != nil {
+				log.Error(err)
 				return
 			}
+			chat = c
 		}
 		// 通知聊天列表更新
 		err = service.NewChatService().ChatNotify(chat)
@@ -132,7 +133,7 @@ func (_self *LogicProcess) SendOkCallback(protocol *model.Protocol) {
 // SendFailedCallback 发送失败的回调
 func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
 	messageService := service.NewMessageService()
-	messageService.UpdateReaded(protocol, -1)
+	messageService.UpdateSend(protocol, -1)
 }
 
 // LoginOk 长连接登录成功的回调

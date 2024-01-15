@@ -150,3 +150,14 @@ func RevertCoveredData(enData []byte, oldData []byte, beginIndex, endIndex, diff
 	copy(res[beginIndex+len(oldData):], enData[beginIndex+diff:])
 	return res
 }
+
+// Reverse 数组倒序
+func Reverse(arr *[]entity.Message) {
+	var temp entity.Message
+	length := len(*arr)
+	for i := 0; i < length/2; i++ {
+		temp = (*arr)[i]
+		(*arr)[i] = (*arr)[length-1-i]
+		(*arr)[length-1-i] = temp
+	}
+}

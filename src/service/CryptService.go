@@ -6,12 +6,6 @@ import (
 	"IM-Service/src/configs/log"
 	"IM-Service/src/entity"
 	"IM-Service/src/util"
-	"bytes"
-	"github.com/go-audio/wav"
-	"image"
-	"image/gif"
-	"image/jpeg"
-	"image/png"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -180,13 +174,12 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 			return
 		}
 		//组装成各种类型
-		okMsg, err := coverMessageData(md, fileData, tempPath)
-		if err != nil {
-			log.Error(err)
-			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
-			return
+		okMD := &entity.MessageData{
+			Type:    md.Type,
+			Content: tempPath,
+			Status:  2,
 		}
-		data, e := util.Obj2Str(okMsg)
+		data, e := util.Obj2Str(okMD)
 		if e != nil {
 			log.Error(e)
 			FileNotify(chat.TargetId, no, util.GetErrMsg(md.Type))
@@ -195,76 +188,4 @@ func DecryptFile(tp string, target uint64, no string) *utils.Error {
 		FileNotify(chat.TargetId, no, data)
 	}()
 	return nil
-}
-
-func coverMessageData(md *entity.MessageData, data []byte, path string) (*entity.MessageData, *utils.Error) {
-	switch md.Type {
-	case 2: //图片
-		//获取文件后缀
-		endWidth, err := util.GetFileType(path, data)
-		if err != nil {
-			log.Error(err)
-			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-		c, e := DecodeImageWidthHeight(data, endWidth)
-		if e != nil {
-			log.Error(e)
-			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-		return &entity.MessageData{
-			Type:    md.Type,
-			Content: path,
-			Status:  2,
-			Width:   c.Width,
-			Height:  c.Height,
-		}, nil
-	case 3: //语音
-		decoder := wav.NewDecoder(bytes.NewReader(data))
-		if decoder == nil {
-			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-		duration, e := decoder.Duration()
-		if e != nil {
-			return nil, log.WithError(utils.ERR_DECRYPT_FAIL)
-		}
-		return &entity.MessageData{
-			Type:     md.Type,
-			Content:  path,
-			Status:   2,
-			Duration: int(duration.Seconds()),
-		}, nil
-	case 4: //视频
-		return &entity.MessageData{
-			Type:    md.Type,
-			Content: path,
-			Status:  2,
-		}, nil
-	case 5: //文件
-		return &entity.MessageData{
-			Type:    md.Type,
-			Content: path,
-			Size:    len(data),
-			Status:  2,
-		}, nil
-	}
-	return nil, nil
-}
-
-// DecodeImageWidthHeight 解析图片的宽高信息
-func DecodeImageWidthHeight(imgBytes []byte, fileType string) (image.Config, error) {
-	switch strings.ToLower(fileType) {
-	case ".jpg", ".jpeg":
-		return jpeg.DecodeConfig(bytes.NewReader(imgBytes))
-	//case ".webp":
-	//	imgConf, err = webp.DecodeConfig(bytes.NewReader(imgBytes))
-	case ".png":
-		return png.DecodeConfig(bytes.NewReader(imgBytes))
-	//case ".tif", ".tiff":
-	//	imgConf, err = tiff.DecodeConfig(bytes.NewReader(imgBytes))
-	case ".gif":
-		return gif.DecodeConfig(bytes.NewReader(imgBytes))
-		//case "bmp":
-		//	imgConf, err = bmp.DecodeConfig(bytes.NewReader(imgBytes))
-	}
-	return image.Config{}, nil
 }

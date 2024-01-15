@@ -46,7 +46,7 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*entity.Chat, *utils.Error) {
 
 	//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
-	chat, err := _self.CoverChat(tp, target, true)
+	chat, err := _self.CoverChat(tp, target, true, true)
 	if err != nil {
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
 	}
@@ -93,7 +93,7 @@ func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*
 }
 
 // CoverChat 封装聊天
-func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*entity.Chat, *utils.Error) {
+func (_self *ChatService) CoverChat(tp string, target uint64, refresh, read bool) (*entity.Chat, *utils.Error) {
 	var name, headImg string
 	switch tp {
 	case "friend":
@@ -134,18 +134,29 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh bool) (*en
 		headImg = group.HeadImg
 		break
 	}
+	//获取未读消息
+	no, err := NewMessageService().GetUnReadNo(tp, target)
+	if err != nil {
+		log.Error(err)
+		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
 	chat := &entity.Chat{
 		Type:     tp,
 		TargetId: target,
 		UserId:   conf.GetLoginInfo().User.Id,
 		Name:     name,
 		HeadImg:  headImg,
-		UnReadNo: 0,
+		UnReadNo: no,
 	}
 	e := _self.repo.Save(chat)
 	if e != nil {
 		log.Error(e)
 		return nil, log.WithError(utils.ERR_QUERY_FAIL)
+	}
+	if read {
+		//将当前聊天的消息都设置以为已读
+		NewMessageService().UpdateChatRead(tp, target)
+		chat.UnReadNo = 0
 	}
 	return chat, nil
 }
@@ -163,6 +174,14 @@ func (_self *ChatService) GetChats() (*[]entity.Chat, *utils.Error) {
 		if err != nil {
 			return &[]entity.Chat{}, log.WithError(utils.ERR_QUERY_FAIL)
 		}
+		//获取未读消息数
+		//获取未读消息
+		no, err := NewMessageService().GetUnReadNo(chats[i].Type, chats[i].TargetId)
+		if err != nil {
+			log.Error(err)
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		chats[i].UnReadNo = no
 	}
 	//排序 根据最后的消息时间倒序
 	sort.Slice(chats, func(i, j int) bool {
