@@ -130,11 +130,13 @@ func (_self *MessageRepo) UpdateRead(obj *entity.Message) error {
 	var tx *gorm.DB
 	if "friend" == obj.Type {
 		tx = _self.Data.Db.
+			Model(&entity.Message{}).
 			Where("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.TargetId, obj.UserId, obj.UserId).
 			Or("`type`=? and `target_id`=? and `user_id`=? and `from`=?", obj.Type, obj.UserId, obj.UserId, obj.TargetId).
 			Update("read", obj.Read)
 	} else {
 		tx = _self.Data.Db.
+			Model(&entity.Message{}).
 			Where("`type`=? and `target_id`=? and `user_id`=?", obj.Type, obj.TargetId, obj.UserId).
 			Update("read", obj.Read)
 	}
