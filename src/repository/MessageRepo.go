@@ -168,21 +168,21 @@ func (_self *MessageRepo) Count(obj *entity.Message) (int64, error) {
 
 func (_self *MessageRepo) GetUnReadNo(obj *entity.Message) (int, error) {
 	var tx *gorm.DB
-	var count *int64
+	count := int64(0)
 	if "friend" == obj.Type {
 		tx = _self.Data.Db.
 			Model(&entity.Message{}).
 			Where("`type`=? and `target_id`=? and `user_id`=? and `from`=? and `read` = ?", obj.Type, obj.TargetId, obj.UserId, obj.UserId, obj.Read).
 			Or("`type`=? and `target_id`=? and `user_id`=? and `from`=? and `read` = ?", obj.Type, obj.UserId, obj.UserId, obj.TargetId, obj.Read).
-			Count(count)
+			Count(&count)
 	} else {
 		tx = _self.Data.Db.
 			Model(&entity.Message{}).
 			Where("`type`=? and `target_id`=? and `user_id`=? and `read` = ?", obj.Type, obj.TargetId, obj.UserId, obj.Read).
-			Count(count)
+			Count(&count)
 	}
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
-	return int(*count), nil
+	return int(count), nil
 }
