@@ -74,7 +74,6 @@ func DelMsgNotify(tp string, target uint64) *utils.Error {
 
 // ChatNotify 通知客户端更新聊天列表
 func (_self *ChatService) ChatNotify(chat *entity.Chat) *utils.Error {
-	log.Debugf("聊天通知 chat: %s", chat)
 	err := _self.coverLastMsg(chat)
 	if err != nil {
 		return log.WithError(err)

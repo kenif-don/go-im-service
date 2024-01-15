@@ -41,7 +41,18 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil, log.WithError(utils.ERR_NOT_LOGIN)
 	}
-	return repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
+	chat, e := repo.Query(&entity.Chat{Type: tp, TargetId: target, UserId: conf.GetLoginInfo().User.Id})
+	if e != nil {
+		return nil, e
+	}
+	//获取未读消息
+	no, err := NewMessageService().GetUnReadNo(tp, target)
+	if err != nil {
+		log.Error(err)
+	} else {
+		chat.UnReadNo = no
+	}
+	return chat, nil
 }
 func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*entity.Chat, *utils.Error) {
 
@@ -151,7 +162,6 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh, read bool
 		//将当前聊天的消息都设置以为已读
 		NewMessageService().UpdateChatRead(tp, target)
 		chat.UnReadNo = 0
-		log.Debugf("清空未读消息")
 	} else {
 		//获取未读消息
 		no, err := NewMessageService().GetUnReadNo(tp, target)
@@ -160,7 +170,6 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh, read bool
 			return nil, log.WithError(utils.ERR_QUERY_FAIL)
 		}
 		chat.UnReadNo = no
-		log.Debugf("未读消息:%v", chat.UnReadNo)
 	}
 	return chat, nil
 }
