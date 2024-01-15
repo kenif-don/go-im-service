@@ -15,6 +15,18 @@ func NewSafeService() *SafeService {
 	return &SafeService{}
 }
 
+// Delete 删除单个归档
+func (_self *SafeService) Delete(id uint64) *utils.Error {
+	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
+		return log.WithError(utils.ERR_NOT_LOGIN)
+	}
+	_, err := Post("/api/safe/delete", map[string]uint64{"id": id})
+	if err != nil {
+		return log.WithError(err)
+	}
+	return nil
+}
+
 // InputSafePwd 修改安全密码
 func (_self *SafeService) InputSafePwd(pwd string) *utils.Error {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {

@@ -9,6 +9,32 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// DeleteOneSafe 删除单个归档记录
+func DeleteOneSafe(data []byte) []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	req := &api.SafeReq{}
+	if e := proto.Unmarshal(data, req); e != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	//验证密码
+	if conf.Conf.Pwds["safe_"+util.Uint642Str(conf.GetLoginInfo().User.Id)] == "" {
+		resp.Code = uint32(api.ResultDTOCode_TO_INPUT_PWD2)
+		res, e := proto.Marshal(resp)
+		if e != nil {
+			return SyncPutErr(utils.ERR_LOGIN_FAIL, resp)
+		}
+		return res
+	}
+	err := service.NewSafeService().Delete(req.Id)
+	if err != nil {
+		return SyncPutErr(err, resp)
+	}
+	return SyncPutSuccess(nil, resp)
+}
+
 // InputSafePwd 输入保险箱密码
 func InputSafePwd(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
