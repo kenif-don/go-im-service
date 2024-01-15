@@ -134,19 +134,13 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh, read bool
 		headImg = group.HeadImg
 		break
 	}
-	//获取未读消息
-	no, err := NewMessageService().GetUnReadNo(tp, target)
-	if err != nil {
-		log.Error(err)
-		return nil, log.WithError(utils.ERR_QUERY_FAIL)
-	}
+
 	chat := &entity.Chat{
 		Type:     tp,
 		TargetId: target,
 		UserId:   conf.GetLoginInfo().User.Id,
 		Name:     name,
 		HeadImg:  headImg,
-		UnReadNo: no,
 	}
 	e := _self.repo.Save(chat)
 	if e != nil {
@@ -157,6 +151,16 @@ func (_self *ChatService) CoverChat(tp string, target uint64, refresh, read bool
 		//将当前聊天的消息都设置以为已读
 		NewMessageService().UpdateChatRead(tp, target)
 		chat.UnReadNo = 0
+		log.Debugf("清空未读消息")
+	} else {
+		//获取未读消息
+		no, err := NewMessageService().GetUnReadNo(tp, target)
+		if err != nil {
+			log.Error(err)
+			return nil, log.WithError(utils.ERR_QUERY_FAIL)
+		}
+		chat.UnReadNo = no
+		log.Debugf("未读消息:%v", chat.UnReadNo)
 	}
 	return chat, nil
 }
