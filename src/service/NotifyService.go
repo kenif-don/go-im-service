@@ -132,7 +132,7 @@ func NotifySendReceive(no string, send int) *utils.Error {
 	return nil
 }
 func NotifyReceive(message *entity.Message, target uint64) *utils.Error {
-	if message.TargetId == conf.Conf.ChatId {
+	if target == conf.Conf.ChatId {
 		//解密
 		data, err := Decrypt(message.Type, target, message.No, message.Data)
 		if err != nil {

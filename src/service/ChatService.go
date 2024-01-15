@@ -55,7 +55,6 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	return chat, nil
 }
 func (_self *ChatService) OpenChat(tp string, target uint64, password string) (*entity.Chat, *utils.Error) {
-
 	//再根据最新user 更新一次聊天信息 如果用户更新了昵称 头像等 这里可以刷新
 	chat, err := _self.CoverChat(tp, target, true, true)
 	if err != nil {
