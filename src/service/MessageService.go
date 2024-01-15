@@ -355,7 +355,9 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 				log.Error(e)
 				return log.WithError(e)
 			}
-			err := NotifyReceive(message, util.Str2Uint64(protocol.From))
+			// 通知语音播报
+			err := NewChatService().VoiceNotify(message)
+			err = NotifyReceive(message, util.Str2Uint64(protocol.From))
 			if err != nil {
 				return log.WithError(err)
 			}
@@ -377,8 +379,7 @@ func (_self *MessageService) Handler(protocol *model.Protocol) *utils.Error {
 			if err != nil {
 				return log.WithError(err)
 			}
-			// 通知语音播报
-			err = NewChatService().VoiceNotify(message)
+
 		}
 		break
 	case 8: //群聊消息
