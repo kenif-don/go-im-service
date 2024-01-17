@@ -45,12 +45,14 @@ func QueryChat(tp string, target uint64, repo IChatRepo) (*entity.Chat, error) {
 	if e != nil {
 		return nil, e
 	}
-	//获取未读消息
-	no, err := NewMessageService().GetUnReadNo(tp, target)
-	if err != nil {
-		log.Error(err)
-	} else {
-		chat.UnReadNo = no
+	if chat != nil {
+		//获取未读消息
+		no, err := NewMessageService().GetUnReadNo(tp, target)
+		if err != nil {
+			log.Error(err)
+		} else {
+			chat.UnReadNo = no
+		}
 	}
 	return chat, nil
 }
