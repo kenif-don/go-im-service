@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	endWith, e := util.GetFileType("C:\\Users\\Administrator\\Desktop\\bug.txt", make([]byte, 0))
-	if e != nil {
-		fmt.Println(e)
+	data, err := util.DecryptAes("OIa6SS1TNS0GWoMSHPcaWPd7eh8w3WXjXwCkTmPPIHU=", util.MD5("safe_111026"))
+	if err != nil {
+		fmt.Println(err)
 	}
-	fmt.Println(endWith)
+	fmt.Println(data)
 }

@@ -7,13 +7,13 @@ require (
 	github.com/aws/aws-sdk-go v1.47.4
 	github.com/go-netty/go-netty v1.6.4
 	github.com/go-netty/go-netty-transport v1.7.6
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/h2non/filetype v1.1.3
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.5
 	im-sdk v0.0.0-00010101000000-000000000000

@@ -132,6 +132,14 @@ func GetChats() []byte {
 	}
 	return SyncPutSuccess(chats, resp)
 }
+func CloseChat() []byte {
+	resp := &api.ResultDTOResp{}
+	if !service.ValidatePwd2() {
+		return SyncPutErr(utils.ERR_NOT_PWD2_FAIL, resp)
+	}
+	conf.Conf.ChatId = 0
+	return SyncPutSuccess(nil, resp)
+}
 func OpenChat(data []byte) []byte {
 	resp := &api.ResultDTOResp{}
 	if !service.ValidatePwd2() {
