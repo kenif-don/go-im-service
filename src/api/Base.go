@@ -56,8 +56,12 @@ func SyncPutSuccess(obj interface{}, resp *api.ResultDTOResp) []byte {
 	if resp.Body == "null" {
 		resp.Body = ""
 	}
-	resp.Code = uint32(api.ResultDTOCode_SUCCESS)
-	resp.Msg = "success"
+	if resp.Code == 0 {
+		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
+	}
+	if resp.Msg == "" {
+		resp.Msg = "success"
+	}
 	result, e := proto.Marshal(resp)
 	if e != nil {
 		return SyncPutErr(utils.ERR_OPERATION_FAIL, resp)

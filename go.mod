@@ -22,9 +22,6 @@ require (
 replace im-sdk => github.com/don764372409/im-sdk v0.4.4
 
 require (
-	github.com/go-audio/audio v1.0.0 // indirect
-	github.com/go-audio/riff v1.0.0 // indirect
-	github.com/go-audio/wav v1.1.0 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.3.0 // indirect
@@ -34,12 +31,8 @@ require (
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
-	golang.org/x/mobile v0.0.0-20240112133503-c713f31d574b // indirect
-	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/tools v0.17.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
