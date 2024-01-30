@@ -26,3 +26,27 @@ func InitConfig(data []byte, listener MessageListener) []byte {
 	im.StartIM()
 	return SyncPutSuccess(nil, resp)
 }
+
+func SelectConfig() []byte {
+	resp := &api.ResultDTOResp{}
+	res, err := service.SelectConfig()
+	if err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	return SyncPutSuccess(res, resp)
+}
+
+// SetLanguage 设置语言
+func SetLanguage(language string) []byte {
+	service.SetLanguage(language)
+	resp := &api.ResultDTOResp{}
+	return SyncPutSuccess(nil, resp)
+}
+func GetAgent() []byte {
+	resp := &api.ResultDTOResp{}
+	res, err := service.GetAgent()
+	if err != nil {
+		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+	}
+	return SyncPutSuccess(res, resp)
+}

@@ -14,6 +14,9 @@ const (
 	PC      = "PC"
 	Android = "Android"
 	IOS     = "IOS"
+
+	ZN = "zh-CN"
+	EN = "en"
 )
 
 var (
@@ -69,7 +72,8 @@ func InitConfig(baseConfig *BaseConfig) {
 		//初始化配置
 		Conf = &Config{
 			ExUris: []string{"/api/user/login", "/api/user/info", "/api/user/register", "/api/user/resetPublicKey",
-				"/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe", "/api/version/select"},
+				"/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe", "/api/version/select",
+				"/api/agent/selectOne"},
 			Prime: "262074f1e0e19618f0d2af786779d6ad9e814b",
 			Pk:    "19311a1a18656914b9381c058c309083022301",
 			Aws: &Aws{
@@ -79,7 +83,8 @@ func InitConfig(baseConfig *BaseConfig) {
 				Region:   "Singapore",
 				Bucket:   "world",
 			},
-			Pwds: make(map[string]string),
+			Pwds:     make(map[string]string),
+			Language: ZN,
 		}
 		//初始化时 判断是否需要二级密码
 		if GetLoginInfo().User == nil {
@@ -150,6 +155,7 @@ type Config struct {
 	Connected bool              //长连接是否链接成功
 	ChatId    uint64            //当前打开的聊天ID
 	Pwds      map[string]string //密聊群的密码
+	Language  string            //语言环境
 }
 type Aws struct {
 	Id       string
