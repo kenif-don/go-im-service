@@ -72,7 +72,7 @@ func InitConfig(baseConfig *BaseConfig) {
 		//初始化配置
 		Conf = &Config{
 			ExUris: []string{"/api/user/login", "/api/user/info", "/api/user/register", "/api/user/resetPublicKey",
-				"/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe", "/api/version/select",
+				"/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe", "/public/version/select",
 				"/api/agent/selectOne", "/api/config/selectOne"},
 			Prime: "262074f1e0e19618f0d2af786779d6ad9e814b",
 			Pk:    "19311a1a18656914b9381c058c309083022301",
