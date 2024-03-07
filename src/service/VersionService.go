@@ -13,7 +13,7 @@ func NewVersionService() *VersionService {
 	return &VersionService{}
 }
 func (_self *VersionService) GetVersion(versionCode, tp int32) (string, *utils.Error) {
-	resultDTO, err := Post("/api/version/select", map[string]int32{"versionCode": versionCode, "type": tp})
+	resultDTO, err := Post("/public/version/select", map[string]int32{"versionCode": versionCode, "type": tp})
 	if err != nil {
 		return "", log.WithError(err)
 	}
