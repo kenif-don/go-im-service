@@ -31,7 +31,7 @@ func SelectConfig() []byte {
 	resp := &api.ResultDTOResp{}
 	res, err := service.SelectConfig()
 	if err != nil {
-		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+		return SyncPutErr(err, resp)
 	}
 	return SyncPutSuccess(res, resp)
 }
