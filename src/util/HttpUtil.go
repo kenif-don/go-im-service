@@ -25,6 +25,7 @@ import (
 // Post 发起POST json请求
 func Post(url string, body interface{}) (*dto.ResultDTO, *utils.Error) {
 	data, _ := json.Marshal(body)
+	http.TimeoutHandler(nil, time.Second*60, "timeout")
 	req, e := http.NewRequest("POST", conf.Base.ApiHost+url, nil)
 	if e != nil {
 		return nil, log.WithError(e)
