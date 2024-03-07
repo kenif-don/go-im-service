@@ -71,6 +71,7 @@ func InitConfig(baseConfig *BaseConfig) {
 		DbPath = filepath.Join(mkdirAndReturn(filepath.Join(path, "configs", "db")), DbPath)
 		//初始化配置
 		Conf = &Config{
+			//不需要登录的URI
 			ExUris: []string{"/api/user/login", "/api/user/info", "/api/user/register", "/api/user/resetPublicKey",
 				"/api/test/index", "/back/admin/login", "/back/admin/info", "/back/admin/resetPublicKe", "/public/version/select",
 				"/api/agent/selectOne", "/api/config/selectOne"},

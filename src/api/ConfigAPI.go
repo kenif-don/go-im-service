@@ -46,7 +46,7 @@ func GetAgent() []byte {
 	resp := &api.ResultDTOResp{}
 	res, err := service.GetAgent()
 	if err != nil {
-		return SyncPutErr(utils.ERR_PARAM_PARSE, resp)
+		return SyncPutErr(err, resp)
 	}
 	return SyncPutSuccess(res, resp)
 }
