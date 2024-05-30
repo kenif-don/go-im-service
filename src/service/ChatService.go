@@ -312,7 +312,8 @@ func (_self *ChatService) DelChat(tp string, target uint64) *utils.Error {
 // DelAllChat 删除制定用户所有聊天
 func (_self *ChatService) DelAllChat() *utils.Error {
 	chat := &entity.Chat{
-		UserId: conf.GetLoginInfo().User.Id,
+		UserId:   conf.GetLoginInfo().User.Id,
+		TargetId: conf.GetLoginInfo().User.Id,
 	}
 	e := _self.repo.Delete(chat)
 	if e != nil {

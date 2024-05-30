@@ -60,6 +60,12 @@ func (_self *ChatRepo) Save(obj *entity.Chat) error {
 	return nil
 }
 func (_self *ChatRepo) Delete(obj *entity.Chat) error {
+	if obj.Type == "" {
+		tx := _self.Data.Db.Model(&entity.Chat{}).Where("`target_id` = ? and `user_id` = ?", obj.TargetId, obj.UserId).Delete(obj)
+		if tx.Error != nil {
+			return tx.Error
+		}
+	}
 	tx := _self.Data.Db.Model(&entity.Chat{}).Where("`type` = ? and `target_id` = ? and `user_id` = ?", obj.Type, obj.TargetId, obj.UserId).Delete(obj)
 	if tx.Error != nil {
 		return tx.Error
