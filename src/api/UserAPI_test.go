@@ -44,14 +44,17 @@ func TestRegister(t *testing.T) {
 }
 func TestLogin(t *testing.T) {
 	user := &api.UserReq{
-		Username: "qq123456",
-		Password: "qq123456",
+		Username: "666666",
+		Password: "666666",
 	}
 	req, _ := proto.Marshal(user)
 	resp := Login(req)
 	result := &api.ResultDTOResp{}
 	proto.Unmarshal(resp, result)
 	log.Debug(result)
+	user.Password = "ilove1314"
+	req, _ = proto.Marshal(user)
+	LoginPwd2(req)
 }
 func TestAutoLogin(t *testing.T) {
 	resp := AutoLogin()

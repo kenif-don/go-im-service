@@ -275,12 +275,16 @@ func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
 			if err != nil {
 				return log.WithError(err)
 			}
+			e := tx.Commit().Error
+			if e != nil {
+				return log.WithError(e)
+			}
 			return nil
 		}()
 		if err != nil {
 			tx.Rollback()
+			return err
 		}
-		return log.WithError(err)
 	}
 	//没有错误 标记已经输入2级密码
 	conf.UpdateInputPwd2(2)
