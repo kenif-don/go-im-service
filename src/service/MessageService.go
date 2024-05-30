@@ -128,9 +128,10 @@ func (_self *MessageService) DelLocalChatMsg(tp string, target uint64) *utils.Er
 // DelAllMessage 删除制定用户所有消息 用于自毁
 func (_self *MessageService) DelAllMessage() *utils.Error {
 	message := &entity.Message{
-		UserId: conf.GetLoginInfo().User.Id,
+		UserId:   conf.GetLoginInfo().User.Id,
+		TargetId: conf.GetLoginInfo().User.Id,
 	}
-	e := _self.repo.Delete(message)
+	e := _self.repo.DeleteAll(message)
 	if e != nil {
 		return log.WithError(utils.ERR_DEL_FAIL)
 	}

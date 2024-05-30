@@ -27,6 +27,7 @@ type IChatRepo interface {
 	QueryAll(userId uint64) ([]entity.Chat, error)
 	Save(obj *entity.Chat) error
 	Delete(obj *entity.Chat) error
+	DeleteAll(obj *entity.Chat) error
 	BeginTx() *gorm.DB
 }
 type ChatService struct {
@@ -315,7 +316,7 @@ func (_self *ChatService) DelAllChat() *utils.Error {
 		UserId:   conf.GetLoginInfo().User.Id,
 		TargetId: conf.GetLoginInfo().User.Id,
 	}
-	e := _self.repo.Delete(chat)
+	e := _self.repo.DeleteAll(chat)
 	if e != nil {
 		return log.WithError(utils.ERR_DEL_FAIL)
 	}

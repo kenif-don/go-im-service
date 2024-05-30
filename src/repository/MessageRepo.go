@@ -52,6 +52,15 @@ func (_self *MessageRepo) Save(obj *entity.Message) error {
 	}
 	return nil
 }
+func (_self *MessageRepo) DeleteAll(obj *entity.Message) error {
+	tx := _self.Data.Db.Model(&entity.Message{}).
+		Where("`target_id`=? or `user_id`=?", obj.TargetId, obj.UserId).
+		Delete(obj)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
+}
 func (_self *MessageRepo) Delete(obj *entity.Message) error {
 	var tx *gorm.DB
 	if "friend" == obj.Type {

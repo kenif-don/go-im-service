@@ -169,3 +169,9 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 func (_self *LogicProcess) Exception(ctx netty.ExceptionContext, e netty.Exception) {
 	log.Error(e)
 }
+func (_self *LogicProcess) Disconnect() {
+	if service.Listener != nil {
+		//通知前端 断开连接
+		service.Listener.OnConnectChange("0")
+	}
+}
