@@ -8,7 +8,6 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/aws/aws-sdk-go v1.53.12
 	github.com/go-netty/go-netty v1.6.5
-	github.com/go-netty/go-netty-transport v1.7.10
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
@@ -24,6 +23,7 @@ require (
 replace go-nio-client-sdk => github.com/kenif-don/go-nio-client-sdk v1.0.1
 
 require (
+	github.com/go-netty/go-netty-transport v1.7.10 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.4.0 // indirect
