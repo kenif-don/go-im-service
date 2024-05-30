@@ -151,7 +151,7 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 func (_self *LogicProcess) Logout() {
 	//进行重连
 	go func() {
-		conf.Conf.Client.Reconnect(conf.Base.WsHost)
+		conf.Conf.Client.Reconnect("ws")
 	}()
 }
 

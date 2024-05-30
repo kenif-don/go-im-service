@@ -267,6 +267,7 @@ func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
 			}
 		}()
 		err = func() *utils.Error {
+			log.Debug("自毁中...")
 			err = NewChatService().DelAllChat()
 			if err != nil {
 				return log.WithError(err)
@@ -279,6 +280,7 @@ func (_self *UserService) LoginPwd2(pwd2 string) *utils.Error {
 			if e != nil {
 				return log.WithError(e)
 			}
+			log.Debug("自毁完成")
 			return nil
 		}()
 		if err != nil {
