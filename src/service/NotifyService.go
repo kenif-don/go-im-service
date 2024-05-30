@@ -1,14 +1,15 @@
 package service
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/util"
-	"google.golang.org/protobuf/proto"
+	api "go-im-service/build/generated/service/v1"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/util"
 	"time"
+
+	"google.golang.org/protobuf/proto"
 )
 
 // OfflineMessageNotify 获取离线消息

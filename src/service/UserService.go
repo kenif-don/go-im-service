@@ -1,15 +1,16 @@
 package service
 
 import (
-	"IM-Service/src/configs/conf"
-	"IM-Service/src/configs/db"
-	"IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/repository"
-	"IM-Service/src/util"
+	"go-im-service/src/configs/conf"
+	"go-im-service/src/configs/db"
+	"go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/repository"
+	"go-im-service/src/util"
+	"go-nio-client-sdk/handler"
+
 	"gorm.io/gorm"
-	"im-sdk/handler"
 )
 
 type IUserRepo interface {

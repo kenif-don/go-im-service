@@ -1,10 +1,11 @@
 package api
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/service"
-	"IM-Service/src/util"
+	api "go-im-service/build/generated/service/v1"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/service"
+	"go-im-service/src/util"
+
 	"google.golang.org/protobuf/proto"
 )
 

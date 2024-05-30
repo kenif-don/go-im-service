@@ -1,13 +1,14 @@
 package db
 
 import (
-	"IM-Service/src/configs/conf"
-	l "IM-Service/src/configs/log"
-	"IM-Service/src/entity"
 	"context"
+	"go-im-service/src/configs/conf"
+	l "go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"sync"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"sync"
 )
 
 var (

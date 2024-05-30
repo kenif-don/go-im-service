@@ -1,19 +1,20 @@
 package service
 
 import (
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/repository"
-	"IM-Service/src/util"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
-	"im-sdk/model"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/repository"
+	"go-im-service/src/util"
+	"go-nio-client-sdk/model"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 var (

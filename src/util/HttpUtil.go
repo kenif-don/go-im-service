@@ -1,18 +1,13 @@
 package util
 
 import (
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/dto"
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/h2non/filetype"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/dto"
 	"io"
 	"net/http"
 	"os"
@@ -20,6 +15,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/h2non/filetype"
 )
 
 // Post 发起POST json请求

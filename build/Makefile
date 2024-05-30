@@ -43,7 +43,7 @@ android_windows: proto_go_windows
 	gomobile init
 	go mod download golang.org/x/exp
 	gomobile bind -v -trimpath -ldflags "-s -w" \
-	-o build_android\\im-service.aar -target=android ..\\src\\api
+	-o build_android\\go-im-service.aar -target=android ..\\src\\api
 android_all: android_windows proto_kt_windows
 #--------------------------------------------------------------------Mac Android打包----------------------------------------------------------------------------------
 proto_kt_mac:
@@ -55,5 +55,5 @@ android_mac:proto_go_mac
 	go get golang.org/x/mobile
 	go mod download golang.org/x/exp
 	GOARCH=arm64 gomobile bind -v -trimpath -ldflags "-s -w" \
-	-o ${BUILD_TARGET_MAC}/build_android/im-service.aar -target=android ../src/api
-	unzip -d $(BUILD_TARGET_MAC)/build_android/sources $(BUILD_TARGET_MAC)/build_android/im-service-sources.jar
+	-o ${BUILD_TARGET_MAC}/build_android/go-im-service.aar -target=android ../src/api
+	unzip -d $(BUILD_TARGET_MAC)/build_android/sources $(BUILD_TARGET_MAC)/build_android/go-im-service-sources.jar

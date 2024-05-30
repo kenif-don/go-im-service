@@ -1,8 +1,8 @@
 package service
 
 import (
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
 	"strings"
 )
 

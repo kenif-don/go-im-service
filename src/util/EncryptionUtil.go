@@ -1,13 +1,13 @@
 package util
 
 import (
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
 	"crypto/aes"
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
 	"math/big"
 	"strconv"
 	"strings"

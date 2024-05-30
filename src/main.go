@@ -1,8 +1,8 @@
 package main
 
 import (
-	"IM-Service/src/util"
 	"fmt"
+	"go-im-service/src/util"
 )
 
 func main() {

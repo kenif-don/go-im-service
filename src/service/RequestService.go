@@ -1,13 +1,13 @@
 package service
 
 import (
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/dto"
-	"IM-Service/src/util"
-	"im-sdk/handler"
-	"im-sdk/model"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/dto"
+	"go-im-service/src/util"
+	"go-nio-client-sdk/handler"
+	"go-nio-client-sdk/model"
 )
 
 var Listener MessageListener

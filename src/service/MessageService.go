@@ -1,17 +1,18 @@
 package service
 
 import (
-	"IM-Service/src/configs/conf"
-	_const "IM-Service/src/configs/const"
-	"IM-Service/src/configs/db"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/repository"
-	"IM-Service/src/util"
-	"github.com/google/uuid"
-	"im-sdk/model"
+	"go-im-service/src/configs/conf"
+	_const "go-im-service/src/configs/const"
+	"go-im-service/src/configs/db"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/repository"
+	"go-im-service/src/util"
+	"go-nio-client-sdk/model"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 type MessageService struct {

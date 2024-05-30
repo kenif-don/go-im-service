@@ -49,7 +49,7 @@ publishing {
             }
             version versionData
             artifact(androidSourcesJar)
-            artifact "../../build_android/im-service.aar"
+            artifact "../../build_android/go-im-service.aar"
         }
     }
     repositories {

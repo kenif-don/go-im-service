@@ -1,9 +1,10 @@
 package repository
 
 import (
-	"IM-Service/src/configs/db"
-	"IM-Service/src/entity"
 	"errors"
+	"go-im-service/src/configs/db"
+	"go-im-service/src/entity"
+
 	"gorm.io/gorm"
 )
 

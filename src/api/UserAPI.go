@@ -1,11 +1,12 @@
 package api
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/im"
-	"IM-Service/src/service"
+	api "go-im-service/build/generated/service/v1"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/im"
+	"go-im-service/src/service"
+
 	"google.golang.org/protobuf/proto"
 )
 
@@ -271,7 +272,7 @@ func Login(data []byte) []byte {
 		conf.UpdateInputPwd2(-1)
 		resp.Code = uint32(api.ResultDTOCode_SUCCESS)
 	}
-	//登录IM
+	//登录IM 这里是输入账号密码后的登录 不是链接成功后的登录所以需要单独调用
 	err = im.LoginIm()
 	if err != nil {
 		return SyncPutErr(err, resp)

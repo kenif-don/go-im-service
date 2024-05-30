@@ -1,16 +1,17 @@
 package log
 
 import (
-	"IM-Service/src/configs/err"
+	"go-im-service/src/configs/err"
+	"io"
+	"os"
+	"path/filepath"
+	"time"
+
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/pkg/errors"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
-	"io"
-	"os"
-	"path/filepath"
-	"time"
 )
 
 var logger *Logger

@@ -1,9 +1,9 @@
 package api
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/service"
+	api "go-im-service/build/generated/service/v1"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/service"
 )
 
 // PagingCashFlow 分页查询资金流水

@@ -1,13 +1,14 @@
 package api
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/service"
-	"IM-Service/src/util"
+	api "go-im-service/build/generated/service/v1"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/service"
+	"go-im-service/src/util"
+
 	"github.com/go-netty/go-netty-transport/websocket"
 	"google.golang.org/protobuf/proto"
 )

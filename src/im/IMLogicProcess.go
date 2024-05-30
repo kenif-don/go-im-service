@@ -1,21 +1,21 @@
 package im
 
 import (
-	"IM-Service/src/configs/conf"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/repository"
-	"IM-Service/src/service"
-	"IM-Service/src/util"
-	"github.com/go-netty/go-netty"
-	"github.com/go-netty/go-netty-transport/websocket"
-	"im-sdk/client"
-	"im-sdk/handler"
-	"im-sdk/model"
+	"go-im-service/src/configs/conf"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/repository"
+	"go-im-service/src/service"
+	"go-im-service/src/util"
+	"go-nio-client-sdk/client"
+	"go-nio-client-sdk/handler"
+	"go-nio-client-sdk/model"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-netty/go-netty"
 )
 
 type LogicProcess struct{}
@@ -31,7 +31,7 @@ func StartIM() {
 			//启动长连接
 			conf.Conf.Connected = true
 			conf.Conf.Client = client.New(conf.Base.WsHost)
-			e := conf.Conf.Client.Startup(GetLogicProcess(), websocket.New())
+			e := conf.Conf.Client.Startup(GetLogicProcess(), "ws")
 			if e != nil {
 				if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
 					log.Error(utils.ERR_NET_FAIL)
@@ -151,10 +151,7 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 func (_self *LogicProcess) Logout() {
 	//进行重连
 	go func() {
-		err := conf.Conf.Client.Reconnect(websocket.New())
-		if err != nil {
-			log.Error(err)
-		}
+		conf.Conf.Client.Reconnect(conf.Base.WsHost)
 	}()
 }
 
@@ -162,11 +159,7 @@ func (_self *LogicProcess) Logout() {
 func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 	//此操作需要登录 但是当前链接未登录 直接重启
 	if protocol.Ack == 500 {
-		log.Error("链接报错 链接重启：%s", protocol.Data)
-		err := conf.Conf.Client.Reconnect(websocket.New())
-		if err == nil {
-			return
-		}
+		log.Error("链接报错 报错信息：%s", protocol.Data)
 	}
 	err := service.NewMessageService().Handler(protocol)
 	if err != nil {
@@ -174,25 +167,5 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 	}
 }
 func (_self *LogicProcess) Exception(ctx netty.ExceptionContext, e netty.Exception) {
-	if service.Listener != nil {
-		service.Listener.OnConnectChange("0")
-	}
 	log.Error(e)
-	conf.Conf.Connected = false
-	log.Debug("服务器断开连接,进行重连")
-	go func() {
-		for {
-			err := conf.Conf.Client.Reconnect(websocket.New())
-			if err == nil {
-				return
-			}
-			log.Error(err)
-			time.Sleep(5 * time.Second)
-		}
-	}()
-}
-
-// HandleEvent 处理事件
-func (_self *LogicProcess) HandleEvent(ctx netty.EventContext, event netty.Event) {
-	log.Debug(event)
 }

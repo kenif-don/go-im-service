@@ -1,11 +1,12 @@
 package api
 
 import (
-	api "IM-Service/build/generated/service/v1"
-	"IM-Service/src/configs/log"
-	"google.golang.org/protobuf/proto"
+	api "go-im-service/build/generated/service/v1"
+	"go-im-service/src/configs/log"
 	"testing"
 	"time"
+
+	"google.golang.org/protobuf/proto"
 )
 
 func TestGetGroupMemberInfo(t *testing.T) {

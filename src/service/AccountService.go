@@ -1,13 +1,14 @@
 package service
 
 import (
-	"IM-Service/src/configs/conf"
-	_const "IM-Service/src/configs/const"
-	utils "IM-Service/src/configs/err"
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
-	"IM-Service/src/repository"
-	"IM-Service/src/util"
+	"go-im-service/src/configs/conf"
+	_const "go-im-service/src/configs/const"
+	utils "go-im-service/src/configs/err"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-im-service/src/repository"
+	"go-im-service/src/util"
+
 	"gorm.io/gorm"
 )
 

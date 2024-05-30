@@ -1,10 +1,10 @@
 package conf
 
 import (
-	"IM-Service/src/configs/log"
-	"IM-Service/src/entity"
 	"encoding/json"
-	"im-sdk/client"
+	"go-im-service/src/configs/log"
+	"go-im-service/src/entity"
+	"go-nio-client-sdk/client"
 	"os"
 	"path/filepath"
 	"sync"
