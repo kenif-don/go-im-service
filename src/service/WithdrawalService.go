@@ -13,15 +13,15 @@ func NewWithdrawalService() *WithdrawalService {
 }
 
 // GetWithdrawalFee 获取提现手续费
-func (_self *WithdrawalService) GetWithdrawalFee() (string, *utils.Error) {
+func (_self *WithdrawalService) GetWithdrawalFee() (map[string]interface{}, *utils.Error) {
 	resultDTO, err := Post("/api/config/selectOne", map[string]string{})
 	if err != nil {
-		return "", log.WithError(err)
+		return nil, log.WithError(err)
 	}
 	if resultDTO.Data == nil {
-		return "", utils.ERR_GET_WITHDRAWAL_FEE_FAIL
+		return nil, utils.ERR_GET_WITHDRAWAL_FEE_FAIL
 	}
-	return resultDTO.Data.(string), nil
+	return resultDTO.Data.(map[string]interface{}), nil
 }
 
 // AddWithdrawal 添加提现

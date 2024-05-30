@@ -55,6 +55,7 @@ func TestLogin(t *testing.T) {
 	user.Password = "ilove1314"
 	req, _ = proto.Marshal(user)
 	LoginPwd2(req)
+	TestGetWithdrawalFee(t)
 }
 func TestAutoLogin(t *testing.T) {
 	resp := AutoLogin()
