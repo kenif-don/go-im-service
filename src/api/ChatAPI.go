@@ -9,7 +9,6 @@ import (
 	"go-im-service/src/service"
 	"go-im-service/src/util"
 
-	"github.com/go-netty/go-netty-transport/websocket"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -79,10 +78,7 @@ func DelLocalChatMsg(data []byte) []byte {
 }
 func ImReConnect() []byte {
 	resp := &api.ResultDTOResp{}
-	e := conf.Conf.Client.Reconnect(websocket.New())
-	if e == nil {
-		return SyncPutErr(utils.ERR_NET_FAIL, resp)
-	}
+	conf.Conf.Client.Reconnect(conf.Base.WsHost)
 	return SyncPutSuccess(nil, resp)
 }
 
