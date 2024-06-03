@@ -52,7 +52,7 @@ func Upload2Bunny(filename string, data []byte) (string, *utils.Error) {
 		log.Error(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	_, e = client.Upload(context.TODO(), "world", filename, "", bytes.NewReader(data))
+	_, e = client.Upload(context.TODO(), "", filename, "", bytes.NewReader(data))
 	if e != nil {
 		log.Error(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
