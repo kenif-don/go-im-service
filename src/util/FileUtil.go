@@ -6,6 +6,7 @@ import (
 	"go-im-service/src/configs/conf"
 	utils "go-im-service/src/configs/err"
 	"go-im-service/src/configs/log"
+	"time"
 
 	"git.sr.ht/~jamesponddotco/bunnystorage-go"
 	"github.com/aws/aws-sdk-go/aws"
@@ -44,6 +45,7 @@ func Upload2Bunny(filename string, data []byte) (string, *utils.Error) {
 		StorageZone: conf.Conf.Aws.Id,
 		Key:         conf.Conf.Aws.Secret,
 		Endpoint:    bunnystorage.EndpointSingapore,
+		Timeout:     60 * 60 * time.Second,
 	}
 	client, e := bunnystorage.NewClient(cfg)
 	if e != nil {
