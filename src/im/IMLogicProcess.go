@@ -174,4 +174,5 @@ func (_self *LogicProcess) Disconnect() {
 		//通知前端 断开连接
 		service.Listener.OnConnectChange("0")
 	}
+	conf.Conf.Client.Reconnect("ws")
 }

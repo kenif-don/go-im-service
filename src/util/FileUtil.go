@@ -6,9 +6,10 @@ import (
 	"go-im-service/src/configs/conf"
 	utils "go-im-service/src/configs/err"
 	"go-im-service/src/configs/log"
+	"io/ioutil"
+	"net/http"
 	"time"
 
-	"git.sr.ht/~jamesponddotco/bunnystorage-go"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -41,22 +42,60 @@ func Upload2S3(filename string, data []byte) (string, *utils.Error) {
 	return "https://" + conf.Conf.Aws.Endpoint + "/" + conf.Conf.Aws.Bucket + "/" + filename, nil
 }
 func Upload2Bunny(filename string, data []byte) (string, *utils.Error) {
-	cfg := &bunnystorage.Config{
-		StorageZone: conf.Conf.Aws.Id,
-		Key:         conf.Conf.Aws.Secret,
-		Endpoint:    bunnystorage.EndpointSingapore,
-		Timeout:     60 * 60 * time.Second,
+	client := &http.Client{
+		Timeout: 60 * 60 * time.Second,
 	}
-	client, e := bunnystorage.NewClient(cfg)
+	// 创建一个新的请求
+	req, e := http.NewRequest("PUT", "https://"+conf.Conf.Aws.Region+".storage.bunnycdn.com/"+conf.Conf.Aws.Id+"/"+filename, bytes.NewReader(data))
 	if e != nil {
 		log.Error(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	_, e = client.Upload(context.TODO(), "", filename, "", bytes.NewReader(data))
+	// 设置请求头
+	req.Header.Set("User-Agent", "Java-BCDN-Client-1.0.4")
+	req.Header.Set("AccessKey", conf.Conf.Aws.Secret)
+	req.Header.Set("Accept", "*/*")
+
+	// 发送请求
+	resp, e := client.Do(req)
 	if e != nil {
 		log.Error(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
 	}
-	// 获取预览URL
+	defer resp.Body.Close()
+
+	// 读取响应体
+	_, e = ioutil.ReadAll(resp.Body)
+	if e != nil {
+		log.Error(e)
+		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+	}
+	// 输出响应
 	return conf.Conf.Aws.Endpoint + "/" + filename, nil
+}
+
+//func Upload2Bunny(filename string, data []byte) (string, *utils.Error) {
+//	cfg := &bunnystorage.Config{
+//		StorageZone: conf.Conf.Aws.Id,
+//		Key:         conf.Conf.Aws.Secret,
+//		Endpoint:    bunnystorage.EndpointSingapore,
+//		Timeout:     60 * 60 * time.Second,
+//		MaxRetries:  3, //重试次数
+//	}
+//	client, e := bunnystorage.NewClient(cfg)
+//	if e != nil {
+//		log.Error(e)
+//		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+//	}
+//	_, e = client.Upload(context.TODO(), "", filename, "", bytes.NewReader(data))
+//	if e != nil {
+//		log.Error(e)
+//		return "", log.WithError(utils.ERR_UPLOAD_FILE)
+//	}
+//	// 获取预览URL
+//	return conf.Conf.Aws.Endpoint + "/" + filename, nil
+//}
+
+func Upload2Cos(filename string, data []byte) (string, *utils.Error) {
+	return "", nil
 }
