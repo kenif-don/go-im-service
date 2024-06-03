@@ -5,6 +5,7 @@ go 1.22
 toolchain go1.22.0
 
 require (
+	git.sr.ht/~jamesponddotco/bunnystorage-go v0.3.0
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/aws/aws-sdk-go v1.53.12
 	github.com/go-netty/go-netty v1.6.5
@@ -23,22 +24,24 @@ require (
 replace go-nio-client-sdk => github.com/kenif-don/go-nio-client-sdk v1.0.3
 
 require (
+	git.sr.ht/~jamesponddotco/httpx-go v0.0.0-20230427215504-7c26a7f028e7 // indirect
+	git.sr.ht/~jamesponddotco/pagecache-go v0.0.0-20230411150210-54b704d32088 // indirect
+	git.sr.ht/~jamesponddotco/recache-go v1.0.1 // indirect
+	git.sr.ht/~jamesponddotco/xstd-go v0.0.0-20230709232003-22489c0e7382 // indirect
 	github.com/go-netty/go-netty-transport v1.7.10 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.4.0 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
-	golang.org/x/mobile v0.0.0-20240520174638-fa72addaaa1b // indirect
-	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
-	golang.org/x/tools v0.21.0 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	golang.org/x/time v0.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

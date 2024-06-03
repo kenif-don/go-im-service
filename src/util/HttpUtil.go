@@ -2,7 +2,6 @@ package util
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"go-im-service/src/configs/conf"
 	utils "go-im-service/src/configs/err"
@@ -16,10 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/h2non/filetype"
 )
 
@@ -108,17 +103,6 @@ func addContent(req *http.Request, data []byte) *utils.Error {
 	return nil
 }
 func UploadData(path string, data []byte, secret string) (string, *utils.Error) {
-	sess, e := session.NewSession(&aws.Config{
-		Credentials:      credentials.NewStaticCredentials(conf.Conf.Aws.Id, conf.Conf.Aws.Secret, ""),
-		Endpoint:         aws.String(conf.Conf.Aws.Endpoint),
-		Region:           aws.String(conf.Conf.Aws.Region),
-		S3ForcePathStyle: aws.Bool(true),
-	})
-	if e != nil {
-		log.Debug(e)
-		return "", log.WithError(utils.ERR_UPLOAD_FILE)
-	}
-	uploader := s3.New(sess)
 	//获取文件后缀
 	endWith, err := GetFileType(path, data)
 	if err != nil {
@@ -139,18 +123,7 @@ func UploadData(path string, data []byte, secret string) (string, *utils.Error) 
 		//如果是加密方式 需要保证文件名唯一,不然多人给自己发同一张图 都会出现解密失败
 		filename = MD5Bytes(append(data, []byte(time.Now().String())...)) + endWith
 	}
-	_, e = uploader.PutObjectWithContext(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String(conf.Conf.Aws.Bucket),
-		Key:    aws.String(filename),
-		Body:   bytes.NewReader(data),
-		ACL:    aws.String("public-read"),
-	})
-	if e != nil {
-		log.Error(e)
-		return "", log.WithError(utils.ERR_UPLOAD_FILE)
-	}
-	// 获取预览URL
-	return "https://" + conf.Conf.Aws.Endpoint + "/" + conf.Conf.Aws.Bucket + "/" + filename, nil
+	return Upload2Bunny(filename, data)
 }
 func Upload(path string, secret string) (string, *utils.Error) {
 	data, err := os.ReadFile(path)
