@@ -46,7 +46,7 @@ func Upload2Bunny(filename string, data []byte) (string, *utils.Error) {
 		Timeout: 60 * 60 * time.Second,
 	}
 	// 创建一个新的请求
-	req, e := http.NewRequest("PUT", "https://"+conf.Conf.Aws.Region+".storage.bunnycdn.com/"+conf.Conf.Aws.Id+"/"+filename, bytes.NewReader(data))
+	req, e := http.NewRequest("PUT", "https://world-master-put.b-cdn.net/"+conf.Conf.Aws.Id+"/"+filename, bytes.NewReader(data))
 	if e != nil {
 		log.Error(e)
 		return "", log.WithError(utils.ERR_UPLOAD_FILE)
