@@ -157,7 +157,7 @@ type Config struct {
 	Pk        string //服务器公钥
 	Aws       *Aws
 	Key       string // 与服务器交互的key
-	Client    *client.WSClient
+	Client    *client.Client
 	Connected bool              //长连接是否链接成功
 	ChatId    uint64            //当前打开的聊天ID
 	Pwds      map[string]string //密聊群的密码

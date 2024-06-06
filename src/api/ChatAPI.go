@@ -78,7 +78,7 @@ func DelLocalChatMsg(data []byte) []byte {
 }
 func ImReConnect() []byte {
 	resp := &api.ResultDTOResp{}
-	conf.Conf.Client.Reconnect("ws")
+	conf.Conf.Client.Reconnect()
 	return SyncPutSuccess(nil, resp)
 }
 

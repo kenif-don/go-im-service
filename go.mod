@@ -20,7 +20,7 @@ require (
 	gorm.io/gorm v1.25.10
 )
 
-replace go-nio-client-sdk => github.com/kenif-don/go-nio-client-sdk v1.0.4
+replace go-nio-client-sdk => github.com/kenif-don/go-nio-client-sdk v1.0.5
 
 require (
 	github.com/go-netty/go-netty-transport v1.7.10 // indirect
@@ -34,7 +34,11 @@ require (
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+	golang.org/x/mobile v0.0.0-20240520174638-fa72addaaa1b // indirect
+	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/tools v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
