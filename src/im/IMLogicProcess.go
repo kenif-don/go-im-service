@@ -30,8 +30,8 @@ func StartIM() {
 		for {
 			//启动长连接
 			conf.Conf.Connected = true
-			conf.Conf.Client = client.New(conf.Base.WsHost)
-			e := conf.Conf.Client.Startup(GetLogicProcess(), "ws")
+			conf.Conf.Client = client.New("ws", conf.Base.WsHost, GetLogicProcess())
+			e := conf.Conf.Client.Startup()
 			if e != nil {
 				if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
 					log.Error(utils.ERR_NET_FAIL)
@@ -67,6 +67,11 @@ func LoginIm() *utils.Error {
 	}
 	mgr.SendLogin(loginInfo)
 	return nil
+}
+func (_self *LogicProcess) OnConnecting() {
+	if service.Listener != nil {
+		service.Listener.OnConnectChange("0")
+	}
 }
 func (_self *LogicProcess) Connected() {
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
@@ -150,9 +155,7 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 // Logout 客户端正常退出
 func (_self *LogicProcess) Logout() {
 	//进行重连
-	go func() {
-		conf.Conf.Client.Reconnect("ws")
-	}()
+	conf.Conf.Client.Reconnect()
 }
 
 // ReceivedMessage 接收到消息
@@ -168,11 +171,4 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 }
 func (_self *LogicProcess) Exception(ctx netty.ExceptionContext, e netty.Exception) {
 	log.Error(e)
-}
-func (_self *LogicProcess) Disconnect() {
-	if service.Listener != nil {
-		//通知前端 断开连接
-		service.Listener.OnConnectChange("0")
-	}
-	conf.Conf.Client.Reconnect("ws")
 }

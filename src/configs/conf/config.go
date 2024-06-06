@@ -85,7 +85,7 @@ func InitConfig(baseConfig *BaseConfig) {
 				//Bucket:   "world",
 				Id:       "world-master-s3",
 				Secret:   "d39c4f9f-1a39-4ff4-ba8618df1e98-cc87-42f5",
-				Endpoint: "https://world-master.b-cdn.net",
+				Endpoint: "http://world-master.b-cdn.net",
 				Region:   "sg",
 				Bucket:   "world",
 			},
