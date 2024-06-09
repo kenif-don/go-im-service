@@ -88,6 +88,19 @@ func (_self *LogicProcess) Connected() {
 	}
 }
 
+// SendOkCallback 发送成功的回调
+// 仅仅是发出去了 如果是Qos消息 此时还未收到服务器反馈
+// SendOk代表发出Qos消息并接收到了服务器反馈
+func (_self *LogicProcess) SendOkCallback(protocol *model.Protocol) {
+
+}
+
+// SendFailedCallback 发送失败的回调
+func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
+	messageService := service.NewMessageService()
+	messageService.UpdateSend(protocol, -1)
+}
+
 // SendOk qos中的消息发送成功 服务器成功返回
 func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 	messageService := service.NewMessageService()
@@ -126,19 +139,6 @@ func (_self *LogicProcess) SendOk(protocol *model.Protocol) {
 			return
 		}
 	}
-}
-
-// SendOkCallback 发送成功的回调
-// 仅仅是发出去了 如果是Qos消息 此时还未收到服务器反馈
-// SendOk代表发出Qos消息并接收到了服务器反馈
-func (_self *LogicProcess) SendOkCallback(protocol *model.Protocol) {
-
-}
-
-// SendFailedCallback 发送失败的回调
-func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
-	messageService := service.NewMessageService()
-	messageService.UpdateSend(protocol, -1)
 }
 
 // LoginOk 长连接登录成功的回调
