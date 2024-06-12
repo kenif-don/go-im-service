@@ -1,6 +1,7 @@
 package im
 
 import (
+	"fmt"
 	"go-im-service/src/configs/conf"
 	utils "go-im-service/src/configs/err"
 	"go-im-service/src/configs/log"
@@ -50,6 +51,7 @@ func StartIM() {
 
 // LoginIm 长连接登录
 func LoginIm() *utils.Error {
+	fmt.Println(conf.Base.DeviceType)
 	//未登录直接返回
 	if conf.GetLoginInfo().User == nil || conf.GetLoginInfo().User.Id == 0 {
 		return nil

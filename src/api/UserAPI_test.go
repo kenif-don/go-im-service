@@ -15,7 +15,8 @@ func init() {
 		LogSwitch:  api.ConfigReq_CONSOLE_FILE,
 		DeviceType: api.ConfigReq_Android,
 		ApiHost:    "http://world-master.online:8886",
-		WsHost:     "ws://world-master.online:8003",
+		//WsHost:     "ws://world-master.online:8003",
+		WsHost: "ws://127.0.0.1:1003",
 	}
 	req, _ := proto.Marshal(config)
 	resp := InitConfig(req, nil)

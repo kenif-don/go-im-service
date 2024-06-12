@@ -4,6 +4,7 @@ import (
 	api "go-im-service/build/generated/service/v1"
 	"go-im-service/src/configs/log"
 	"testing"
+	"time"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -21,4 +22,8 @@ func TestGetVersion(t *testing.T) {
 		log.Error(err)
 	}
 	log.Debug(result)
+	select {
+	case <-time.After(time.Second * 35):
+		log.Debug("测试超时")
+	}
 }
