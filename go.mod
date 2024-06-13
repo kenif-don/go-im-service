@@ -19,7 +19,7 @@ require (
 	gorm.io/gorm v1.25.10
 )
 
-replace go-nio-client-sdk => github.com/kenif-don/go-nio-client-sdk v1.0.6
+replace go-nio-client-sdk => github.com/kenif-don/go-nio-client-sdk v1.0.7
 
 require (
 	github.com/go-netty/go-netty-transport v1.7.10 // indirect

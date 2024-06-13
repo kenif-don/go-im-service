@@ -76,11 +76,6 @@ func DelLocalChatMsg(data []byte) []byte {
 	}
 	return SyncPutSuccess(nil, resp)
 }
-func ImReConnect() []byte {
-	resp := &api.ResultDTOResp{}
-	conf.Conf.Client.Reconnect()
-	return SyncPutSuccess(nil, resp)
-}
 
 // DelLocalChat 删除本地聊天记录
 func DelLocalChat(data []byte) []byte {

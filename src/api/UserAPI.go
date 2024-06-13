@@ -4,7 +4,6 @@ import (
 	api "go-im-service/build/generated/service/v1"
 	"go-im-service/src/configs/conf"
 	utils "go-im-service/src/configs/err"
-	"go-im-service/src/configs/log"
 	"go-im-service/src/im"
 	"go-im-service/src/service"
 
@@ -13,8 +12,6 @@ import (
 
 // ValidatePwd2 判断是否需要输入2级密码 这个接口会清空2级密码的输入状态
 func ValidatePwd2() []byte {
-	log.Debug("ValidatePwd2 -- 重连...\n")
-	conf.Conf.Client.Reconnect()
 	resp := &api.ResultDTOResp{}
 	if conf.GetLoginInfo().User != nil && conf.GetLoginInfo().User.Password2 != "" {
 		//需要输入二级密码

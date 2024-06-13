@@ -156,8 +156,6 @@ func (_self *LogicProcess) LoginFail(protocol *model.Protocol) {
 
 // Logout 客户端正常退出
 func (_self *LogicProcess) Logout() {
-	//进行重连
-	conf.Conf.Client.Reconnect()
 }
 
 // ReceivedMessage 接收到消息
@@ -171,6 +169,6 @@ func (_self *LogicProcess) ReceivedMessage(protocol *model.Protocol) {
 		log.Errorf("解析服务器IM消息失败:%v", err)
 	}
 }
-func (_self *LogicProcess) Exception(ctx netty.ExceptionContext, e netty.Exception) {
+func (_self *LogicProcess) Exception(e netty.Exception) {
 	log.Error(e)
 }
