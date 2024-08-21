@@ -57,3 +57,13 @@ android_mac:proto_go_mac
 	GOARCH=arm64 gomobile bind -v -trimpath -ldflags "-s -w" \
 	-o ${BUILD_TARGET_MAC}/build_android/go-im-service.aar -target=android ../src/api
 	unzip -d $(BUILD_TARGET_MAC)/build_android/sources $(BUILD_TARGET_MAC)/build_android/go-im-service-sources.jar
+
+#--------------------------------------------------------------------Windows WebAssembly JS库打包----------------------------------------------------------------------------------
+web:
+	set GOOS=js
+    set GOARCH=wasm
+    go build -o main.wasm ./src
+# windows powershell
+		#$env:GOOS="js"
+     	#$env:GOARCH="wasm"
+     	#go build -o main.wasm ./src

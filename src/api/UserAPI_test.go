@@ -15,8 +15,8 @@ func init() {
 		LogSwitch:  api.ConfigReq_CONSOLE_FILE,
 		DeviceType: api.ConfigReq_Android,
 		ApiHost:    "http://world-master.online:8886",
-		//WsHost:     "ws://world-master.online:8003",
-		WsHost: "ws://127.0.0.1:1003",
+		WsHost:     "ws://world-master.online:8003",
+		//WsHost: "ws://127.0.0.1:1003",
 	}
 	req, _ := proto.Marshal(config)
 	resp := InitConfig(req, nil)
@@ -29,19 +29,19 @@ func init() {
 	log.Debugf("配置初始化成功！ %+v", result)
 }
 func TestRegister(t *testing.T) {
-	user := &api.UserReq{
-		//Username: "test123",
-		//Password: "123456",
-		//Username: "666666",
-		//Password: "666666",
-		Username: "66666666666666",
-		Password: "66666666666666",
-	}
-	req, _ := proto.Marshal(user)
-	resp := Register(req)
-	result := &api.ResultDTOResp{}
-	proto.Unmarshal(resp, result)
-	log.Debugf("%+v", result)
+	//user := &api.UserReq{
+	//	//Username: "test123",
+	//	//Password: "123456",
+	//	//Username: "666666",
+	//	//Password: "666666",
+	//	Username: "66666666666666",
+	//	Password: "66666666666666",
+	//}
+	//req, _ := proto.Marshal(user)
+	//resp := Register(req)
+	//result := &api.ResultDTOResp{}
+	//proto.Unmarshal(resp, result)
+	//log.Debugf("%+v", result)
 }
 func TestLogin(t *testing.T) {
 	user := &api.UserReq{

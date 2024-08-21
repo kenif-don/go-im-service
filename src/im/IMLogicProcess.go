@@ -2,6 +2,7 @@ package im
 
 import (
 	"fmt"
+	"github.com/go-netty/go-netty"
 	"go-im-service/src/configs/conf"
 	utils "go-im-service/src/configs/err"
 	"go-im-service/src/configs/log"
@@ -13,10 +14,6 @@ import (
 	"go-nio-client-sdk/handler"
 	"go-nio-client-sdk/model"
 	"strconv"
-	"strings"
-	"time"
-
-	"github.com/go-netty/go-netty"
 )
 
 type LogicProcess struct{}
@@ -27,26 +24,10 @@ func GetLogicProcess() *LogicProcess {
 	return process
 }
 func StartIM() {
-	go func() {
-		for {
-			//启动长连接
-			conf.Conf.Connected = true
-			conf.Conf.Client = client.New("ws", conf.Base.WsHost, GetLogicProcess())
-			e := conf.Conf.Client.Startup()
-			if e != nil {
-				if strings.Contains(e.Error(), "An existing connection was forcibly closed by the remote host") {
-					log.Error(utils.ERR_NET_FAIL)
-				} else {
-					log.Error(e)
-				}
-				conf.Conf.Connected = false
-			}
-			if conf.Conf.Connected {
-				return
-			}
-			time.Sleep(time.Second * 2)
-		}
-	}()
+	//启动长连接
+	conf.Conf.Connected = true
+	conf.Conf.Client = client.New("ws", conf.Base.WsHost, GetLogicProcess())
+	conf.Conf.Client.Startup()
 }
 
 // LoginIm 长连接登录
@@ -89,13 +70,7 @@ func (_self *LogicProcess) Connected() {
 		service.Listener.OnConnectChange("1")
 	}
 }
-
-// SendOkCallback 发送成功的回调
-// 仅仅是发出去了 如果是Qos消息 此时还未收到服务器反馈
-// SendOk代表发出Qos消息并接收到了服务器反馈
-func (_self *LogicProcess) SendOkCallback(protocol *model.Protocol) {
-
-}
+func (_self *LogicProcess) SendOkCallback(protocol *model.Protocol) {}
 
 // SendFailedCallback 发送失败的回调
 func (_self *LogicProcess) SendFailedCallback(protocol *model.Protocol) {
